@@ -1,0 +1,9 @@
+node_modules/
+out/
+include/
+*.tsbuildinfo
+sourcemap.json
+/*.rbxlx.lock
+/*.rbxl.lock
+/*.rbxl
+/*.rbxm

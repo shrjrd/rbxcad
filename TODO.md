@@ -1,0 +1,42 @@
+- [x] Change ava syntax to jest syntax (with jest-codemods)
+- [x] Add Jest Lua imports to tests (  import { expect, test } from "@rbxts/jest-globals";  )
+- [x] Add Luau Polyfill (  import { Array, Object, JsMap, Error, Number } from "@rbxts/luau-polyfill";  )
+- [x] Change Jest JS syntax with Jest Lua syntax (  expect().not. -> expect().never.  )
+- [x] Adjust to roblox-ts's syntax
+  - Change requires to imports
+  - Array.length -> Array.size()
+  - Differentiate between empty and undefined values in arrays
+  - NaN -> 0/0
+  - Infinity -> math.huge
+  - toFixed -> string.format
+  - const Number_EPSILON = 2.220446049250313e-16;
+  - const Number_MAX_VALUE = 1.7976931348623157e308;
+  - const Number_MIN_VALUE = 5e-324;
+  - Boolean arithmetic
+  - Strict types
+- [ ] Confirm parity with unit tests
+  - [x] test/helpers
+  - [x] utils
+  - [x] text
+  - [x] colors
+  - [x] path2
+  - [x] curves
+  - [x] line2
+  - [x] line3
+  - [x] mat4
+  - [x] plane
+  - [x] vec2
+  - [x] vec3
+  - [x] vec4
+  - [x] connectors
+  - [x] geom2
+  - [x] geom3
+  - [x] poly2
+  - [x] poly3
+  - [x] measurements
+  - [x] primitives
+  - [ ] operations
+    - [ ] expand
+    - [ ] extrudeFromSlices
+- [ ] General cleanup
+- [ ] Set up as rbxts package
