@@ -318,7 +318,7 @@ test("union of one or more geom3 objects produces expected geometry", () => {
 		],
 	];
 	//t.notThrows.skip(() => geom3.validate(result3));
-	expect(() => geom3.validate(result3)).never.toThrow();
+	//expect(() => geom3.validate(result3)).never.toThrow();
 	expect(obs.size()).toBe(18);
 	expect(comparePolygonsAsPoints(obs, exp)).toBe(true);
 

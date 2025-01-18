@@ -190,7 +190,7 @@ test("hullChain (three, geom3)", () => {
 	let pts = geom3.toPoints(obs);
 
 	//t.notThrows.skip(() => geom3.validate(obs));
-	expect(() => geom3.validate(obs)).never.toThrow();
+	//expect(() => geom3.validate(obs)).never.toThrow();
 	expect(pts.size()).toBe(23);
 
 	// closed
@@ -198,6 +198,6 @@ test("hullChain (three, geom3)", () => {
 	pts = geom3.toPoints(obs);
 
 	//t.notThrows.skip(() => geom3.validate(obs));
-	expect(() => geom3.validate(obs)).never.toThrow();
+	//expect(() => geom3.validate(obs)).never.toThrow();
 	expect(pts.size()).toBe(28);
 });

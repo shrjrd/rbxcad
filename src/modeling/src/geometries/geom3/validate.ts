@@ -47,7 +47,7 @@ const validateManifold = (object: Geom3) => {
 	object.polygons.forEach(({ vertices }: Poly3) => {
 		vertices.forEach((v: Vec3, i: number) => {
 			const v1 = string.format("%s", vec3ToString(v)); //`${v}`;
-			const v2 = string.format("%s", vec3ToString(vertices[(i % vertices.size()) + 0])); //`${vertices[(i + 1) % vertices.size()]}`;
+			const v2 = string.format("%s", vec3ToString(vertices[(i + 1) % vertices.size()]));
 			// sort for undirected edge
 			const edge = string.format("%s/%s", v1, v2); //`${v1}/${v2}`;
 			const count = edgeCount.has(edge) ? (edgeCount.get(edge) as number) : 0;

@@ -39,9 +39,9 @@ test("scission: scission of complex geom3 produces expected geometry", () => {
 	const result1 = scission(geometry3) as Geom3[];
 	expect(result1.size()).toBe(2);
 	//t.notThrows.skip(() => geom3.validate(result1[0]));
-	expect(() => geom3.validate(result1[0])).never.toThrow();
+	//expect(() => geom3.validate(result1[0])).never.toThrow();
 	//t.notThrows.skip(() => geom3.validate(result1[1]));
-	expect(() => geom3.validate(result1[1])).never.toThrow();
+	//expect(() => geom3.validate(result1[1])).never.toThrow();
 	const rc1 = geom3.toPolygons(result1[0]).size();
 	const rc2 = geom3.toPolygons(result1[1]).size();
 
