@@ -14,7 +14,7 @@
   - const Number_MIN_VALUE = 5e-324;
   - Boolean arithmetic
   - Strict types
-- [ ] Confirm parity with unit tests
+- [x] Confirm parity with unit tests
   - [x] test/helpers
   - [x] utils
   - [x] text
@@ -35,8 +35,6 @@
   - [x] poly3
   - [x] measurements
   - [x] primitives
-  - [ ] operations
-    - [ ] expand
-    - [ ] extrudeFromSlices
+  - [x] operations
 - [ ] General cleanup
 - [ ] Set up as rbxts package

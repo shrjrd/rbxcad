@@ -1,5 +1,5 @@
 import { Config } from "@rbxts/jest";
 
 export = {
-	testMatch: ["**/operations/**/*.test"],
+	testMatch: ["**/*.test"],
 } satisfies Config;
