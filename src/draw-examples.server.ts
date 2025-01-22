@@ -33,7 +33,7 @@ for (const Part of PartsToProjectOn.GetChildren()) {
 const SurfaceGeometry = union(...PartGeometries) as Geom3;
 const ProjectionPart = Model.FindFirstChild("ProjectionPart") as Part;
 const ProjectionGeometry = getGeometryFromPart(ProjectionPart) as Geom3;
-const ProjectedGeometry = projection(ProjectionPart.CFrame.LookVector, 10, ProjectionGeometry, SurfaceGeometry);
+const ProjectedGeometry = projection(ProjectionPart.CFrame.LookVector, 11, ProjectionGeometry, SurfaceGeometry);
 draw(Workspace, undefined, ProjectedGeometry);
 
 

@@ -17,7 +17,7 @@ function getPolygonsFacingDirection(geometry: Geom3, direction: Vec3) {
 	const facingPolygons: Poly3[] = [];
 	for (const polygon of geometry.polygons) {
 		const normal = poly3Plane(polygon);
-		if (vec3dot(normal, direction) > 0) {
+		if (vec3dot(normal, direction) > 0.001) {
 			facingPolygons.push(polygon);
 		}
 	}
