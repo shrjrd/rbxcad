@@ -37,4 +37,7 @@
   - [x] primitives
   - [x] operations
 - [ ] General cleanup
+  - [ ] Clean up rbxUtil and examples
+  - [ ] Better types
+  - [ ] Consistent formatting
 - [ ] Set up as rbxts package

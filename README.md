@@ -2,7 +2,7 @@
 
 >Solid Modelling Library for 2D and 3D Geometries
 
->[jscad/modeling@2.12.5](https://github.com/jscad/OpenJSCAD.org/tree/master/packages/modeling) ported to [roblox-ts](https://github.com/roblox-ts/roblox-ts)
+>[jscad/modeling@2.12.5](https://github.com/jscad/OpenJSCAD.org/releases/tag/%40jscad%2Fmodeling%402.12.5) ported to [roblox-ts](https://github.com/roblox-ts/roblox-ts)
 
 > [!NOTE]
 > Work in progress, check TODO
