@@ -21,21 +21,24 @@ import { Workspace } from "@rbxts/services";
 import { draw,getGeometryFromPart } from "./rbxUtil";
 const drawOptions = { applyTransforms: true };
 
+
 import projection from "./examples/projection";
 import { union } from "modeling/src/operations/booleans";
-const PartsToProjectOn = Workspace.FindFirstChild("Model") as Model;
+const Model = Workspace.FindFirstChild("Model1") as Model;
+const PartsToProjectOn = Model.FindFirstChild("Parts") as Model;
 const PartGeometries: Geom3[] = [];
 for (const Part of PartsToProjectOn.GetChildren()) {
     PartGeometries.push(getGeometryFromPart(Part as Part) as Geom3);
 }
 const SurfaceGeometry = union(...PartGeometries) as Geom3;
-const ProjectionPart = Workspace.FindFirstChild("ProjectionPart") as Part;
+const ProjectionPart = Model.FindFirstChild("ProjectionPart") as Part;
 const ProjectionGeometry = getGeometryFromPart(ProjectionPart) as Geom3;
 const ProjectedGeometry = projection(ProjectionPart.CFrame.LookVector, 10, ProjectionGeometry, SurfaceGeometry);
 draw(Workspace, undefined, ProjectedGeometry);
 
-//import navmesh from "./examples/navmesh";
-//navmesh(Workspace)
+
+import navmesh from "./examples/navmesh";
+navmesh(Workspace.FindFirstChild("Model2") as Model);
 
 // import primitives2D from "./examples/primitives/primitives2D";
 // draw(Workspace, drawOptions, ...primitives2D());
