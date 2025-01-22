@@ -16,7 +16,7 @@
 				}
 			},
 			"Project": {
-				"$path": "out/modeling"
+				"$path": "out"
 			}
 		},
 		"ServerScriptService": {

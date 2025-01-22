@@ -1,0 +1,63 @@
+/**
+ * 3D Primitives Demonstration
+ * @category Creating Shapes
+ * @skillLevel 1
+ * @description Demonstrating the basics of a variety of 3D primitives
+ * @tags cube, cuboid, sphere, ellipsoid, cylinder, torus, shape, 3d
+ * @authors Rene K. Mueller, Moissette Mark, Simon Clark
+ * @licence MIT License
+ */
+
+import rbxcad from "../../modeling/src";
+const {
+	cube,
+	cuboid,
+	cylinder,
+	cylinderElliptic,
+	ellipsoid,
+	geodesicSphere,
+	roundedCuboid,
+	roundedCylinder,
+	sphere,
+	torus,
+} = rbxcad.primitives;
+const { translate } = rbxcad.transforms;
+
+const main = () => {
+	const allPrimitives = [
+		cube(),
+		cuboid({ size: [1, 2, 3] }),
+		roundedCuboid({ size: [2, 3, 2], roundRadius: 0.4, segments: 32 }),
+		roundedCuboid({ size: [1, 2, 3], roundRadius: 0.4, segments: 16 }),
+		sphere({ radius: 2, segments: 16 }),
+		geodesicSphere({ radius: 1.5, frequency: 16 }),
+		ellipsoid({
+			radius: [2, 1, 1.5],
+			segments: 64,
+			axes: [
+				[1, 1, 0],
+				[0, -1, 1],
+				[-1, 0, 1],
+			],
+		}),
+		cylinder({ radius: 1, height: 5 }),
+		roundedCylinder({ radius: 1, height: 8, roundRadius: 0.8 }),
+		cylinderElliptic({
+			height: 8,
+			startRadius: [1, 2],
+			startAngle: 0,
+			endRadius: [1, 2],
+			endAngle: math.pi / 8,
+			segments: 32,
+		}),
+		cylinder({ center: [0, 0, 0], radius: 1, height: 3 }),
+		torus({ innerRadius: 1, outerRadius: 1.2 }),
+		torus({ innerRadius: 1, outerRadius: 1.5, innerSegments: 4, outerSegments: 6, innerRotation: 0 }),
+	];
+
+	return allPrimitives.map((primitive, index) =>
+		translate([((index % 4) - 2) * 6, math.floor(index / 4 - 2) * 6, 0], primitive),
+	);
+};
+
+export default main;
