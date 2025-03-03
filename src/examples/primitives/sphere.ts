@@ -1,3 +1,6 @@
+import { scale, translate } from "../../modeling/src/operations/transforms";
+import { geodesicSphere, sphere } from "../../modeling/src/primitives";
+
 /**
  * Spheres of all sorts
  * @category Creating Shapes
@@ -7,11 +10,6 @@
  * @authors Rene K. Mueller
  * @licence MIT License
  */
-
-import rbxcad from "../../modeling/src";
-const { sphere, geodesicSphere } = rbxcad.primitives;
-const { translate, scale } = rbxcad.transforms;
-
 const main = () => [
 	translate([15, -25, 0], sphere({ radius: 10, segments: 12 })),
 	translate([-15, -25, 0], geodesicSphere({ radius: 10, frequency: 6 })),

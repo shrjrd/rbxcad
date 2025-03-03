@@ -1,3 +1,10 @@
+import type { Slice } from "../../../modeling/src/geometries/types";
+
+import * as bezier from "../../../modeling/src/curves/bezier";
+import * as slice from "../../../modeling/src/geometries/slice";
+import * as maths from "../../../modeling/src/maths";
+import * as extrusions from "../../../modeling/src/operations/extrusions";
+
 /**
  * Simple Bezier Extrude
  * @category Creating Shapes
@@ -7,18 +14,10 @@
  * @authors Simon Clark
  * @licence MIT License
  */
-
-import rbxcad from "../../../modeling/src";
-
-const { maths } = rbxcad;
-const { extrusions } = rbxcad;
-const { slice } = extrusions;
-const { bezier } = rbxcad.curves;
-
 const main = () => [extrudeWobble(30)];
 
 const extrudeWobble = (height: number) => {
-	const squareSlice = slice.fromPoints([
+	const squareSlice = slice.fromVertices([
 		[10, 10],
 		[-10, 10],
 		[-10, -10],

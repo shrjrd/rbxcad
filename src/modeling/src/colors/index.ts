@@ -3,41 +3,18 @@
  * In all cases, the function returns the results, and never changes the original shapes.
  * @module modeling/colors
  * @example
- * import { colorize, hexToRgb } from '@jscad/modeling/colors'
+ * import { colors } from '@jscad/modeling'
+ * const { colorize, cssColors } = colors
  */
-import colorize from "./colorize";
-import colorNameToRgb from "./colorNameToRgb";
-import cssColors from "./cssColors";
-import hexToRgb from "./hexToRgb";
-import hslToRgb from "./hslToRgb";
-import hsvToRgb from "./hsvToRgb";
-import hueToColorComponent from "./hueToColorComponent";
-import rgbToHex from "./rgbToHex";
-import rgbToHsl from "./rgbToHsl";
-import rgbToHsv from "./rgbToHsv";
+export { colorize } from "./colorize";
+export { colorNameToRgb } from "./colorNameToRgb";
+export * as cssColors from "./cssColors";
+export { hexToRgb } from "./hexToRgb";
+export { hslToRgb } from "./hslToRgb";
+export { hsvToRgb } from "./hsvToRgb";
+export { hueToColorComponent } from "./hueToColorComponent";
+export { rgbToHex } from "./rgbToHex";
+export { rgbToHsl } from "./rgbToHsl";
+export { rgbToHsv } from "./rgbToHsv";
 
-export default {
-	colorize,
-	colorNameToRgb,
-	cssColors,
-	hexToRgb,
-	hslToRgb,
-	hsvToRgb,
-	hueToColorComponent,
-	rgbToHex,
-	rgbToHsl,
-	rgbToHsv,
-};
-
-export {
-	colorize,
-	colorNameToRgb,
-	cssColors,
-	hexToRgb,
-	hslToRgb,
-	hsvToRgb,
-	hueToColorComponent,
-	rgbToHex,
-	rgbToHsl,
-	rgbToHsv,
-};
+export type * from "./types";

@@ -3,16 +3,14 @@
  * @see {@link vec4} for data structure information.
  * @module modeling/maths/vec4
  */
+export { clone } from "./clone";
+export { copy } from "./copy";
+export { create } from "./create";
+export { dot } from "./dot";
+export { equals } from "./equals";
+export { fromScalar } from "./fromScalar";
+export { fromValues } from "./fromValues";
+export { toString } from "./toString";
+export { transform } from "./transform";
 
-import clone from "./clone";
-import copy from "./copy";
-import create from "./create";
-import dot from "./dot";
-import equals from "./equals";
-import fromScalar from "./fromScalar";
-import fromValues from "./fromValues";
-import toString from "./toString";
-import transform from "./transform";
-
-export { clone, copy, create, dot, equals, fromScalar, fromValues, toString, transform };
-export default { clone, copy, create, dot, equals, fromScalar, fromValues, toString, transform };
+export type { Vec4 } from "./type";

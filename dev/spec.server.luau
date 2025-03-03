@@ -1,5 +1,6 @@
-_G.__DEV__ = true
-_G.NOCOLOR = true
+
+_G.__DEV__ = true -- for luau polyfill
+_G.NOCOLOR = true -- for jest lua
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -10,7 +11,7 @@ local status, result = Jest.runCLI(script, {
 	ci = false,
 	setupFiles = { script.Parent.setup },
 }, {
-	ReplicatedStorage.Project
+	ReplicatedStorage.rbxcad.modeling
 }):awaitStatus()
 
 if status == "Rejected" then

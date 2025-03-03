@@ -1,13 +1,12 @@
+import { Vertex } from "./Vertex";
+
 /*
  * Original source from quickhull3d (https://github.com/mauriciopoppe/quickhull3d)
  * Copyright (c) 2015 Mauricio Poppe
  *
  * Adapted to JSCAD by Jeff Gay
  */
-
-import Vertex from "./Vertex";
-
-class VertexList {
+export class VertexList {
 	head: Vertex;
 	tail: Vertex;
 	constructor() {
@@ -23,8 +22,8 @@ class VertexList {
 	 * Inserts a `node` before `target`, it's assumed that
 	 * `target` belongs to this doubly linked list
 	 *
-	 * @param {*} target
-	 * @param {*} node
+	 * @param {Vertex} target
+	 * @param {Vertex} node
 	 */
 	insertBefore(target: Vertex, node: Vertex) {
 		node.prev = target.prev;
@@ -60,7 +59,7 @@ class VertexList {
 	 * Note: `node.next` will be unlinked from `node`
 	 * Note: if `node` is part of another linked list call `addAll` instead
 	 *
-	 * @param {*} node
+	 * @param {Vertex} node
 	 */
 	add(node: Vertex) {
 		if (!this.head) {
@@ -79,7 +78,7 @@ class VertexList {
 	 * the difference with `add` is that it correctly sets the position
 	 * of the node list `tail` property
 	 *
-	 * @param {*} node
+	 * @param {Vertex} node
 	 */
 	addAll(node: Vertex) {
 		if (!this.head) {
@@ -100,7 +99,7 @@ class VertexList {
 	 * Deletes a `node` from this linked list, it's assumed that `node` is a
 	 * member of this linked list
 	 *
-	 * @param {*} node
+	 * @param {Vertex} node
 	 */
 	remove(node: Vertex) {
 		if (!node.prev) {
@@ -121,8 +120,8 @@ class VertexList {
 	 * it's assumed that `a` and `b` belong to this list and also that `a`
 	 * comes before `b` in the linked list
 	 *
-	 * @param {*} a
-	 * @param {*} b
+	 * @param {Vertex} a
+	 * @param {Vertex} b
 	 */
 	removeChain(a: Vertex, b: Vertex) {
 		if (!a.prev) {
@@ -146,5 +145,3 @@ class VertexList {
 		return !this.head;
 	}
 }
-
-export default VertexList;

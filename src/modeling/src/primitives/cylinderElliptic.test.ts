@@ -1,8 +1,10 @@
+import type { Vec3 } from "../maths/types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import comparePolygonsAsPoints from "../../test/helpers/comparePolygonsAsPoints";
-import geom3 from "../geometries/geom3";
+import { comparePolygonsAsPoints } from "../../test/helpers/index";
+import { geom3 } from "../geometries/index";
 import { TAU } from "../maths/constants";
+import { measureArea, measureVolume } from "../measurements/index";
 import { cylinderElliptic } from "./index";
 
 test("cylinderElliptic (defaults)", () => {
@@ -10,6 +12,8 @@ test("cylinderElliptic (defaults)", () => {
 	const pts = geom3.toPoints(obs);
 
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(18.789084266699856);
+	expect(measureVolume(obs)).toBe(6.2428903045161);
 	expect(pts.size()).toBe(96);
 });
 
@@ -213,6 +217,8 @@ test("cylinderElliptic (options)", () => {
 	];
 
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(68.11657082460499);
+	expect(measureVolume(obs)).toBe(30.00000000000001);
 	expect(pts.size()).toBe(36);
 	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 
@@ -463,6 +469,8 @@ test("cylinderElliptic (options)", () => {
 	];
 
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(32.34210030145122);
+	expect(measureVolume(obs)).toBe(12.999999999999991);
 	expect(pts.size()).toBe(48);
 	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 
@@ -477,6 +485,8 @@ test("cylinderElliptic (options)", () => {
 	pts = geom3.toPoints(obs);
 
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(22.17105015072561);
+	expect(measureVolume(obs)).toBe(6.5);
 	expect(pts.size()).toBe(28);
 
 	// test startAngle and endAngle
@@ -484,6 +494,8 @@ test("cylinderElliptic (options)", () => {
 	pts = geom3.toPoints(obs);
 
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(18.78908426669986);
+	expect(measureVolume(obs)).toBe(6.2428903045160995);
 	expect(pts.size()).toBe(96);
 
 	// test segments
@@ -491,6 +503,8 @@ test("cylinderElliptic (options)", () => {
 	pts = geom3.toPoints(obs);
 
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(17.902724085175244);
+	expect(measureVolume(obs)).toBe(5.6568542494923815);
 	expect(pts.size()).toBe(24);
 
 	// test center
@@ -628,6 +642,8 @@ test("cylinderElliptic (options)", () => {
 	];
 
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(24.025659003016692);
+	expect(measureVolume(obs)).toBe(8.485281374238578);
 	expect(pts.size()).toBe(24);
 	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 });
@@ -637,6 +653,8 @@ test("cylinderElliptic (cone)", () => {
 	const pts = geom3.toPoints(obs);
 
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(10.128239395900382);
+	expect(measureVolume(obs)).toBe(2.080963434838702);
 	expect(pts.size()).toBe(64);
 });
 
@@ -645,5 +663,7 @@ test("cylinderElliptic (squished)", () => {
 	const pts = geom3.toPoints(obs);
 
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(8.47213595499958);
+	expect(measureVolume(obs)).toBe(0.6666666666666666);
 	expect(pts.size()).toBe(8);
 });

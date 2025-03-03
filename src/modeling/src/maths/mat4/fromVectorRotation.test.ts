@@ -1,9 +1,8 @@
 import { expect, test } from "@rbxts/jest-globals";
 
 import { compareVectors } from "../../../test/helpers/index";
-import vec3 from "../vec3";
-import create from "./create";
-import fromVectorRotation from "./fromVectorRotation";
+import { vec3 } from "../index";
+import { create, fromVectorRotation } from "./index";
 
 test("mat4: fromVectorRotation() called with out parameter should return a mat4 with correct values", () => {
 	// unit vectors, same directions

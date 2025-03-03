@@ -1,6 +1,6 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import plane from "../plane";
+import { plane } from "../index";
 import { create, fromScaling, isMirroring, mirrorByPlane, rotate, scale, translate } from "./index";
 
 test("mat4: isMirroring() should determine correctly", () => {

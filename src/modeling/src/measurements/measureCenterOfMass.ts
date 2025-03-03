@@ -1,18 +1,22 @@
-import geom2 from "../geometries/geom2";
-import geom3 from "../geometries/geom3";
-import vec3 from "../maths/vec3";
-import flatten from "../utils/flatten";
+import type { RecursiveArray } from "../utils/recursiveArray";
+import type { Vec3 } from "../maths/types";
+import type { Geometry } from "../geometries/types";
+import type { Geom2, Geom3, Slice } from "../geometries/types";
+import * as geom2 from "../geometries/geom2/index";
+import * as geom3 from "../geometries/geom3/index";
+import * as vec3 from "../maths/vec3/index";
+import { flatten } from "../utils/flatten";
 
-const cacheOfCenterOfMass = new WeakMap();
+const cacheOfCenterOfMass = new WeakMap<Geometry, Vec3>();
 
-/*
+/**
  * Measure the center of mass for the given geometry.
  *
- * @see http://paulbourke.net/geometry/polygonmesh/
+ * @see https://paulbourke.net/geometry/polygonmesh/
  * @return {Array} the center of mass for the geometry
  */
 const measureCenterOfMassGeom2 = (geometry: Geom2) => {
-	let centerOfMass = cacheOfCenterOfMass.get(geometry) as Vec3;
+	let centerOfMass = cacheOfCenterOfMass.get(geometry);
 	if (centerOfMass !== undefined) return centerOfMass;
 
 	const sides = geom2.toSides(geometry);
@@ -43,12 +47,12 @@ const measureCenterOfMassGeom2 = (geometry: Geom2) => {
 	return centerOfMass;
 };
 
-/*
+/**
  * Measure the center of mass for the given geometry.
  * @return {Array} the center of mass for the geometry
  */
 const measureCenterOfMassGeom3 = (geometry: Geom3) => {
-	let centerOfMass = cacheOfCenterOfMass.get(geometry) as Vec3;
+	let centerOfMass = cacheOfCenterOfMass.get(geometry);
 	if (centerOfMass !== undefined) return centerOfMass;
 
 	centerOfMass = vec3.create(); // 0, 0, 0
@@ -89,13 +93,11 @@ const measureCenterOfMassGeom3 = (geometry: Geom3) => {
  * @example
  * let center = measureCenterOfMass(sphere())
  */
-const measureCenterOfMass = (...geometries: object[]) => {
+export const measureCenterOfMass = (...geometries: RecursiveArray<Geometry | Slice>) => {
 	geometries = flatten(geometries);
 
-	if (geometries.size() === 0) {
-		//warn("wrong number of arguments");
-		return [0, 0, 0];
-	}
+	// DEVIATION: undefined in roblox-ts is nil, which is not iterated over in roblox-ts's array.map
+	if (geometries.size() === 0) return [0, 0, 0];
 
 	const results = geometries.map((geometry) => {
 		// NOTE: center of mass for geometry path2 is not possible
@@ -105,5 +107,3 @@ const measureCenterOfMass = (...geometries: object[]) => {
 	});
 	return results.size() === 1 ? results[0] : results;
 };
-
-export default measureCenterOfMass;

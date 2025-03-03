@@ -1,7 +1,7 @@
 import { expect, test } from "@rbxts/jest-globals";
 
 import { compareVectors } from "../../../test/helpers/index";
-import plane from "../plane/";
+import { plane } from "../index";
 import { create, fromPoints, intersectPointOfLineAndPlane } from "./index";
 
 test("line3: intersectPointOfLineAndPlane() should return a new line3 with correct values", () => {

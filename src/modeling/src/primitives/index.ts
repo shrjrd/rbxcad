@@ -1,76 +1,29 @@
-import arc from "./arc";
-import circle from "./circle";
-import cube from "./cube";
-import cuboid from "./cuboid";
-import cylinder from "./cylinder";
-import cylinderElliptic from "./cylinderElliptic";
-import ellipse from "./ellipse";
-import ellipsoid from "./ellipsoid";
-import geodesicSphere from "./geodesicSphere";
-import line from "./line";
-import polygon from "./polygon";
-import polyhedron from "./polyhedron";
-import rectangle from "./rectangle";
-import roundedCuboid from "./roundedCuboid";
-import roundedCylinder from "./roundedCylinder";
-import roundedRectangle from "./roundedRectangle";
-import sphere from "./sphere";
-import square from "./square";
-import star from "./star";
-import torus from "./torus";
-import triangle from "./triangle";
 /**
  * Primitives provide the building blocks for complex parts.
  * Each primitive is a geometrical object that can be described mathematically, and therefore precise.
  * Primitives can be logically combined, transformed, extruded, etc.
  * @module modeling/primitives
  * @example
- * import { cube, ellipse, star } from '@jscad/modeling/primitives'
+ * import { cube, ellipse, star } from '@jscad/modeling'
  */
-export default {
-	arc,
-	circle,
-	cube,
-	cuboid,
-	cylinder,
-	cylinderElliptic,
-	ellipse,
-	ellipsoid,
-	geodesicSphere,
-	line,
-	polygon,
-	polyhedron,
-	rectangle,
-	roundedCuboid,
-	roundedCylinder,
-	roundedRectangle,
-	sphere,
-	square,
-	star,
-	torus,
-	triangle,
-};
-
-export {
-	arc,
-	circle,
-	cube,
-	cuboid,
-	cylinder,
-	cylinderElliptic,
-	ellipse,
-	ellipsoid,
-	geodesicSphere,
-	line,
-	polygon,
-	polyhedron,
-	rectangle,
-	roundedCuboid,
-	roundedCylinder,
-	roundedRectangle,
-	sphere,
-	square,
-	star,
-	torus,
-	triangle,
-};
+export { arc, ArcOptions } from "./arc";
+export { circle, CircleOptions } from "./circle";
+export { cube, CubeOptions } from "./cube";
+export { cuboid, CuboidOptions } from "./cuboid";
+export { cylinder, CylinderOptions } from "./cylinder";
+export { cylinderElliptic, CylinderEllipticOptions } from "./cylinderElliptic";
+export { ellipse, EllipseOptions } from "./ellipse";
+export { ellipsoid, EllipsoidOptions } from "./ellipsoid";
+export { geodesicSphere, GeodesicSphereOptions } from "./geodesicSphere";
+export { line } from "./line";
+export { polygon, PolygonOptions } from "./polygon";
+export { polyhedron, PolyhedronOptions } from "./polyhedron";
+export { rectangle, RectangleOptions } from "./rectangle";
+export { roundedCuboid, RoundedCuboidOptions } from "./roundedCuboid";
+export { roundedCylinder, RoundedCylinderOptions } from "./roundedCylinder";
+export { roundedRectangle, RoundedRectangleOptions } from "./roundedRectangle";
+export { sphere, SphereOptions } from "./sphere";
+export { square, SquareOptions } from "./square";
+export { star, StarOptions } from "./star";
+export { torus, TorusOptions } from "./torus";
+export { triangle, TriangleOptions } from "./triangle";

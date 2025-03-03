@@ -4,19 +4,9 @@
  * In all cases, the function returns the results, and never changes the original shapes.
  * @module modeling/hulls
  * @example
- * const { hull, hullChain, hullPoints2, hullPoints3 } = require('@jscad/modeling').hulls
+ * import { hull, hullChain, hullPoints2, hullPoints3 } from '@jscad/modeling'
  */
-
-import hull from "./hull";
-import hullChain from "./hullChain";
-import hullPoints2 from "./hullPoints2";
-import hullPoints3 from "./hullPoints3";
-
-export default {
-	hull,
-	hullChain,
-	hullPoints2,
-	hullPoints3,
-};
-
-export { hull, hullChain, hullPoints2, hullPoints3 };
+export { hull } from "./hull";
+export { hullChain } from "./hullChain";
+export { hullPoints2 } from "./hullPoints2";
+export { hullPoints3 } from "./hullPoints3";

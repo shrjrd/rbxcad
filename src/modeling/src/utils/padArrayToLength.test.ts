@@ -1,6 +1,6 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import padArrayToLength from "./padArrayToLength";
+import { padArrayToLength } from "./padArrayToLength";
 
 test("padArrayToLength: test an array of the proper length is unchanged.", () => {
 	const srcArray = [2, 3, 4];

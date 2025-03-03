@@ -1,9 +1,10 @@
+import type { Vec3 } from "../../maths/types";
 const Number_EPSILON = 2.220446049250313e-16;
 import { expect, test } from "@rbxts/jest-globals";
 
 import { nearlyEqual } from "../../../test/helpers/index";
-import mat4 from "../../maths/mat4";
-import { create, fromPoints, invert, measureSignedVolume, transform } from "./index";
+import { mat4 } from "../../maths/index";
+import { create, invert, measureSignedVolume, transform } from "./index";
 
 test("poly3: measureSignedVolume() should return correct values", () => {
 	let ply1 = create();
@@ -11,7 +12,7 @@ test("poly3: measureSignedVolume() should return correct values", () => {
 	nearlyEqual(ret1, 0.0, Number_EPSILON);
 
 	// simple triangle
-	let ply2 = fromPoints([
+	let ply2 = create([
 		[5, 5, 5],
 		[5, 15, 5],
 		[5, 15, 15],
@@ -20,7 +21,7 @@ test("poly3: measureSignedVolume() should return correct values", () => {
 	nearlyEqual(ret2, 83.33333333333333, Number_EPSILON);
 
 	// simple square
-	let ply3 = fromPoints([
+	let ply3 = create([
 		[5, 5, 5],
 		[5, 15, 5],
 		[5, 15, 15],
@@ -30,7 +31,7 @@ test("poly3: measureSignedVolume() should return correct values", () => {
 	nearlyEqual(ret3, 166.66666666666666, Number_EPSILON);
 
 	// V-shape
-	const points = [
+	const vertices: Vec3[] = [
 		[-50, 3, 0],
 		[-50, 5, 0],
 		[-50, 8, 2],
@@ -42,7 +43,7 @@ test("poly3: measureSignedVolume() should return correct values", () => {
 		[-50, 1, 3],
 		[-50, 3, 3],
 	];
-	let ply4 = fromPoints(points);
+	let ply4 = create(vertices);
 	let ret4 = measureSignedVolume(ply4);
 	nearlyEqual(ret4, -325.0, Number_EPSILON);
 
@@ -68,10 +69,10 @@ test("poly3: measureSignedVolume() should return correct values", () => {
 	ret2 = measureSignedVolume(ply2);
 	ret3 = measureSignedVolume(ply3);
 	ret4 = measureSignedVolume(ply4);
-	// DEVIATION: different floating point precision
-	nearlyEqual(ret2, -83.33333333333336, Number_EPSILON); //nearlyEqual(ret2, -83.33333333333331, Number_EPSILON);
-	nearlyEqual(ret3, -166.6666666666667, Number_EPSILON); //-166.66666666666663
-	nearlyEqual(ret4, 324.9999999999994, Number_EPSILON); //324.9999999999994
+	// DEVIATION: floating point differs?
+	nearlyEqual(ret2, -83.33333333333336, Number_EPSILON);
+	nearlyEqual(ret3, -166.6666666666667, Number_EPSILON);
+	nearlyEqual(ret4, 324.9999999999994, Number_EPSILON);
 
 	expect(true).toBe(true);
 });

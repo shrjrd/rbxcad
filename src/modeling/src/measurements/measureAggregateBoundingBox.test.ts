@@ -1,9 +1,8 @@
 import { expect, test } from "@rbxts/jest-globals";
 import { HttpService } from "@rbxts/services";
 
-import { cube } from "../primitives";
-import measureAggregateBoundingBox from "./measureAggregateBoundingBox";
-import measureBoundingBox from "./measureBoundingBox";
+import { cube } from "../primitives/index";
+import { measureAggregateBoundingBox, measureBoundingBox } from "./index";
 
 test("measureAggregateBoundingBox (single objects)", () => {
 	const aCube = cube({ size: 4, center: [4, 10, 20] });

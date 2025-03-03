@@ -1,3 +1,10 @@
+import type { Geom3 } from "../../modeling/src/geometries/types";
+
+import { intersect } from "../../modeling/src/operations/booleans";
+import { rotateX, rotateZ, scale } from "../../modeling/src/operations/transforms";
+import { cuboid } from "../../modeling/src/primitives";
+import { degToRad } from "../../modeling/src/utils";
+
 /**
  * Building a Dodecahedron
  * @category Creating Shapes
@@ -8,13 +15,6 @@
  * @reference http://en.wikibooks.org/wiki/OpenSCAD_User_Manual/Commented_Example_Projects
  * @licence MIT License
  */
-
-import rbxcad from "../../modeling/src";
-const { cuboid } = rbxcad.primitives;
-const { intersect } = rbxcad.booleans;
-const { rotateX, rotateZ, scale } = rbxcad.transforms;
-const { degToRad } = rbxcad.utils;
-
 const dodecahedron = (h: number) => {
 	let cuboid1 = cuboid({ size: [20, 20, 10] });
 	for (let i = 0; i <= 4; i++) {

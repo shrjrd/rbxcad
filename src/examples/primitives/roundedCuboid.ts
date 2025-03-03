@@ -8,8 +8,7 @@
  * @licence MIT License
  */
 
-import rbxcad from "../../modeling/src";
-const { cuboid, roundedCuboid } = rbxcad.primitives;
+import { cuboid, roundedCuboid } from "../../modeling/src/primitives";
 
 const getParameterDefinitions = () => [
 	{ name: "width", type: "float", default: 10, caption: "Width:" },

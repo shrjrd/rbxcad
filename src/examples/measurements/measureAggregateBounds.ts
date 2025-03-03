@@ -1,18 +1,11 @@
-/**
- * Measure Aggregate Bounding Box
- * @category Manipulating Shapes
- * @skillLevel 10
- * @description Examples of measureAggregateBoundingBox function
- * @tags measurements, bounds, boundingbox, aggregate
- * @authors Simon Clark
- * @licence MIT License
- */
-import rbxcad from "../../modeling/src";
-const { cuboid } = rbxcad.primitives;
-const { translate, rotate } = rbxcad.transforms;
-const { measureAggregateBoundingBox } = rbxcad.measurements;
-const { colorize } = rbxcad.colors;
-const { subtract } = rbxcad.booleans;
+import type { Geom3 } from "../../modeling/src/geometries/types";
+import type { BoundingBox } from "../../modeling/src/measurements/types";
+
+import { colorize } from "../../modeling/src/colors";
+import { measureAggregateBoundingBox } from "../../modeling/src/measurements";
+import { subtract } from "../../modeling/src/operations/booleans";
+import { rotate, translate } from "../../modeling/src/operations/transforms";
+import { cuboid } from "../../modeling/src/primitives";
 
 const getParameterDefinitions = () => [
 	{ name: "rotatex", type: "slider", initial: 0, min: -3.14, max: 3.14, step: 0.01, caption: "X Rotation:" },
@@ -49,7 +42,16 @@ const buildBoundingBox = (bounds: BoundingBox) => {
 	return boundingBox;
 };
 
-const main = (params: { rotatex: number; rotatey: number; rotatez: number }) => {
+/**
+ * Measure Aggregate Bounding Box
+ * @category Manipulating Shapes
+ * @skillLevel 10
+ * @description Examples of measureAggregateBoundingBox function
+ * @tags measurements, bounds, boundingbox, aggregate
+ * @authors Simon Clark
+ * @licence MIT License
+ */
+const main = (params: { rotatex: number; rotatey: number; rotatez: number }): [Geom3[], Geom3] => {
 	let shapes: Geom3[] = [cuboid({ size: [8, 45, 4] }), cuboid({ size: [38, 17, 6], center: [2, -4, 12] })];
 
 	shapes = rotate([params.rotatex, params.rotatey, params.rotatez], shapes) as Geom3[];

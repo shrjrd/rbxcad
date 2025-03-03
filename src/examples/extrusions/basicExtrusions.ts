@@ -1,3 +1,13 @@
+import type { Geom2, Path2 } from "../../modeling/src/geometries/types";
+
+import { extrudeLinear, extrudeRotate } from "../../modeling/src/operations/extrusions";
+import { offset as expand } from "../../modeling/src/operations/offsets";
+import { translate } from "../../modeling/src/operations/transforms";
+import { line, polygon, star } from "../../modeling/src/primitives";
+
+const extrudeRectangular = (options: { size: number; height: number }, geometry: Geom2 | Path2) =>
+	extrudeLinear(options, expand({ delta: options.size, corners: "round", segments: 32 }, geometry));
+
 /**
  * Basic Extrude Functions
  * @category Creating Shapes
@@ -7,12 +17,6 @@
  * @authors Rene K. Mueller, Moissette Mark, Simon Clark
  * @licence MIT License
  */
-import rbxcad from "../../modeling/src";
-const { line, polygon, star } = rbxcad.primitives;
-const { extrudeRectangular, extrudeLinear, extrudeRotate } = rbxcad.extrusions;
-const { translate } = rbxcad.transforms;
-const { expand } = rbxcad.expansions;
-
 const main = () => {
 	const shapes = [];
 	const aLine = line([

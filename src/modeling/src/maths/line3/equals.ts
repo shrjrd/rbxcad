@@ -1,14 +1,15 @@
-import vec3 from "../vec3";
+import type { Line3 } from "./type";
+import * as vec3 from "../vec3/index";
 
 /**
  * Compare the given lines for equality.
  *
- * @param {line3} line1 - first line to compare
- * @param {line3} line2 - second line to compare
+ * @param {Line3} line1 - first line to compare
+ * @param {Line3} line2 - second line to compare
  * @return {Boolean} true if lines are equal
  * @alias module:modeling/maths/line3.equals
  */
-const equals = (line1: Line3, line2: Line3): boolean => {
+export const equals = (line1: Line3, line2: Line3) => {
 	// compare directions (unit vectors)
 	if (!vec3.equals(line1[1], line2[1])) return false;
 
@@ -21,5 +22,3 @@ const equals = (line1: Line3, line2: Line3): boolean => {
 
 	return true;
 };
-
-export default equals;

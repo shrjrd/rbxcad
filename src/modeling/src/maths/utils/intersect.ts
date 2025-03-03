@@ -1,16 +1,20 @@
+import type { Vec2 } from "../types";
+
 const Number_MIN_VALUE = 5e-324;
 /**
- * Calculate the intersect point of the two line segments (p1-p2 and p3-p4), end points included.
+ * Calculate the intersect point of the two line segments (p1-p2 and p3-p4).
+ * If the endpointTouch parameter is false, intersections at segment end points are excluded.
  * Note: If the line segments do NOT intersect then undefined is returned.
  * @see http://paulbourke.net/geometry/pointlineplane/
- * @param {vec2} p1 - first point of first line segment
- * @param {vec2} p2 - second point of first line segment
- * @param {vec2} p3 - first point of second line segment
- * @param {vec2} p4 - second point of second line segment
- * @returns {vec2} intersection point of the two line segments, or undefined
+ * @param {Vec2} p1 - first point of first line segment
+ * @param {Vec2} p2 - second point of first line segment
+ * @param {Vec2} p3 - first point of second line segment
+ * @param {Vec2} p4 - second point of second line segment
+ * @param {boolean} endpointTouch - include intersections at segment endpoints
+ * @returns {Vec2} intersection point of the two line segments, or undefined
  * @alias module:modeling/maths/utils.intersect
  */
-const intersect = (p1: Vec2, p2: Vec2, p3: Vec2, p4: Vec2): Vec2 | undefined => {
+export const intersect = (p1: Vec2, p2: Vec2, p3: Vec2, p4: Vec2, endpointTouch = true) => {
 	// Check if none of the lines are of length 0
 	if ((p1[0] === p2[0] && p1[1] === p2[1]) || (p3[0] === p4[0] && p3[1] === p4[1])) {
 		return undefined;
@@ -31,11 +35,14 @@ const intersect = (p1: Vec2, p2: Vec2, p3: Vec2, p4: Vec2): Vec2 | undefined => 
 		return undefined;
 	}
 
+	// is the intersection at the end of a segment
+	if (!endpointTouch && (ua === 0 || ua === 1 || ub === 0 || ub === 1)) {
+		return undefined;
+	}
+
 	// Return the x and y coordinates of the intersection
 	const x = p1[0] + ua * (p2[0] - p1[0]);
 	const y = p1[1] + ua * (p2[1] - p1[1]);
 
-	return [x, y];
+	return [x, y] as Vec2;
 };
-
-export default intersect;

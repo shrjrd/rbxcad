@@ -1,6 +1,7 @@
+import type { Vec2 } from "../../maths/types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import { comparePoints } from "../../../test/helpers/";
+import { comparePoints } from "../../../test/helpers/index";
 import { appendBezier, fromPoints, toPoints } from "./index";
 
 test("appendBezier: appending to an empty path produces an error", () => {
@@ -24,7 +25,7 @@ test("appendBezier: appending to a path produces a new path", () => {
 		p1,
 	);
 	const pts = toPoints(obs1);
-	const exp: Vec2[] = [
+	const exp = [
 		[10, -20],
 		[10.410054926134793, -17.32967535436671],
 		[11.524609505100285, -15.244627343392775],
@@ -40,7 +41,10 @@ test("appendBezier: appending to a path produces a new path", () => {
 	expect(pts.size()).toBe(11);
 	expect(comparePoints(pts, exp)).toBe(true);
 
-	const obs2 = appendBezier({ controlPoints: [undefined, [25, -30], [40, -30], [40, -20]], segments: 16 }, obs1);
+	const obs2 = appendBezier(
+		{ controlPoints: [[] as unknown as Vec2, [25, -30], [40, -30], [40, -20]], segments: 16 },
+		obs1,
+	);
 	const pts2 = toPoints(obs2);
 	expect(pts2.size()).toBe(23);
 });

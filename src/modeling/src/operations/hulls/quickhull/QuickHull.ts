@@ -1,13 +1,14 @@
+import type { Vec3 } from "../../../maths/types";
+import { Array as JsArray } from "@rbxts/luau-polyfill";
 const Number_EPSILON = 2.220446049250313e-16;
-import { Array } from "@rbxts/luau-polyfill";
 
-import dot from "../../../maths/vec3/dot";
+import * as plane from "../../../maths/plane/index";
+import { dot } from "../../../maths/vec3/index";
 import { DELETED, Face, NON_CONVEX, VISIBLE } from "./Face";
-import getPlaneNormal from "./get-plane-normal";
-import HalfEdge from "./HalfEdge";
-import pointLineDistance from "./point-line-distance";
-import Vertex from "./Vertex";
-import VertexList from "./VertexList";
+import { HalfEdge } from "./HalfEdge";
+import { pointLineDistance } from "./point-line-distance";
+import { Vertex } from "./Vertex";
+import { VertexList } from "./VertexList";
 
 /*
  * Original source from quickhull3d (https://github.com/mauriciopoppe/quickhull3d)
@@ -17,11 +18,11 @@ import VertexList from "./VertexList";
  */
 
 // merge types
-// non convex with respect to the large face
+// non-convex with respect to the large face
 const MERGE_NON_CONVEX_WRT_LARGER_FACE = 1;
 const MERGE_NON_CONVEX = 2;
 
-class QuickHull {
+export class QuickHull {
 	claimed: VertexList;
 	discardedFaces: Face[];
 	faces: Face[];
@@ -33,11 +34,11 @@ class QuickHull {
 	vertexPointIndices: number[];
 	vertices: Vertex[];
 	constructor(points: Vec3[]) {
-		if (!Array.isArray(points)) {
-			throw error("input is not a valid array"); //TypeError
+		if (!JsArray.isArray(points)) {
+			throw "input is not a valid array";
 		}
 		if (points.size() < 4) {
-			throw error("cannot build a simplex out of <4 points");
+			throw "cannot build a simplex out of <4 points";
 		}
 
 		this.tolerance = -1;
@@ -303,9 +304,9 @@ class QuickHull {
 			}
 		}
 
-		// the next vertes is the one farthest to the plane `v0`, `v1`, `v2`
+		// the next vertex is the one farthest to the plane `v0`, `v1`, `v2`
 		// normalize((v2 - v1) x (v0 - v1))
-		const normal = getPlaneNormal([0, 0, 0], v0.point, v1.point, v2!.point);
+		const normal = plane.fromPoints([0, 0, 0, 0], v0.point, v1.point, v2!.point);
 		// distance from the origin to the plane
 		const distPO = dot(v0.point, normal);
 		maxDistance = -1;
@@ -426,7 +427,7 @@ class QuickHull {
 		const faceIndices = [];
 		for (let i = 0; i < this.faces.size(); i += 1) {
 			if (this.faces[i].mark !== VISIBLE) {
-				throw error("attempt to include a destroyed face in the hull");
+				throw "attempt to include a destroyed face in the hull";
 			}
 			const indices = this.faces[i].collectIndices();
 			if (skipTriangulation) {
@@ -444,11 +445,11 @@ class QuickHull {
 	 * Finds the next vertex to make faces with the current hull
 	 *
 	 * - let `face` be the first face existing in the `claimed` vertex list
-	 *  - if `face` doesn't exist then return since there're no vertices left
+	 *  - if `face` doesn't exist then return since there are no vertices left
 	 *  - otherwise for each `vertex` that face sees find the one furthest away
 	 *  from `face`
 	 *
-	 * @return {Vertex|undefined} Returns undefined when there're no more
+	 * @return {Vertex|undefined} Returns undefined when there are no more
 	 * visible vertices
 	 */
 	nextVertexToAdd() {
@@ -608,7 +609,7 @@ class QuickHull {
 	 *
 	 *    dot(centroid larger face, smaller face normal) - smaller face offset > -tolerance
 	 *
-	 * If true then it means that two faces are non convex (concave), even if the
+	 * If true then it means that two faces are non-convex (concave), even if the
 	 * dot(...) - offset value is > 0 (that's the point of doing the merge in the
 	 * first place)
 	 *
@@ -632,7 +633,7 @@ class QuickHull {
 		let it = 0;
 		do {
 			if (it >= face.nVertices) {
-				throw error("merge recursion limit exceeded");
+				throw "merge recursion limit exceeded";
 			}
 			const oppositeFace = edge.opposite.face;
 			let merge = false;
@@ -734,7 +735,7 @@ class QuickHull {
 		}
 
 		// second merge pass
-		// Do the merge on non convex faces (a face is marked as non convex in the
+		// Do the merge on non-convex faces (a face is marked as non-convex in the
 		// first pass)
 		for (let i = 0; i < this.newFaces.size(); i += 1) {
 			const face = this.newFaces[i];
@@ -757,5 +758,3 @@ class QuickHull {
 		this.reindexFaceAndVertices();
 	}
 }
-
-export default QuickHull;

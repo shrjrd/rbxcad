@@ -1,9 +1,11 @@
+import type { Geom3 } from "../../geometries/types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import { comparePolygonsAsPoints } from "../../../test/helpers";
-import { geom3 } from "../../geometries";
-import { cuboid, sphere } from "../../primitives";
-import { center } from "../transforms/center";
+import { comparePolygonsAsPoints } from "../../../test/helpers/index";
+import { geom3 } from "../../geometries/index";
+import { measureArea, measureVolume } from "../../measurements/index";
+import { cuboid, sphere } from "../../primitives/index";
+import { center } from "../transforms/index";
 import { union } from "./index";
 
 test("union of one or more geom3 objects produces expected geometry", () => {
@@ -12,7 +14,7 @@ test("union of one or more geom3 objects produces expected geometry", () => {
 	// union of one object
 	const result1 = union(geometry1) as Geom3;
 	let obs = geom3.toPoints(result1);
-	let exp: Vec3[][] = [
+	let exp = [
 		[
 			[2, 0, 0],
 			[1.4142135623730951, -1.414213562373095, 0],
@@ -192,14 +194,24 @@ test("union of one or more geom3 objects produces expected geometry", () => {
 	];
 	//t.notThrows.skip(() => geom3.validate(result1));
 	expect(() => geom3.validate(result1)).never.toThrow();
+	// DEVIATION: floating point differs?
+	//expect(measureArea(result1)).toBe(44.053756306589825);
+	expect(measureArea(result1)).toBe(44.05375630658983);
+	// DEVIATION: floating point differs?
+	//expect(measureVolume(result1)).toBe(25.751611331979678);
+	expect(measureVolume(result1)).toBe(25.751611331979685);
+	expect(obs.size()).toBe(32);
 	expect(comparePolygonsAsPoints(obs, exp)).toBe(true);
 
 	// union of two non-overlapping objects
 	const geometry2 = center({ relativeTo: [10, 10, 10] }, cuboid({ size: [4, 4, 4] })) as Geom3;
+
 	const result2 = union(geometry1, geometry2) as Geom3;
 	obs = geom3.toPoints(result2);
 	//t.notThrows.skip(() => geom3.validate(result2));
 	expect(() => geom3.validate(result2)).never.toThrow();
+	expect(measureArea(result2)).toBe(140.05375630658983);
+	expect(measureVolume(result2)).toBe(89.75161133197969);
 	expect(obs.size()).toBe(38);
 
 	// union of two partially overlapping objects
@@ -319,6 +331,8 @@ test("union of one or more geom3 objects produces expected geometry", () => {
 	];
 	//t.notThrows.skip(() => geom3.validate(result3));
 	//expect(() => geom3.validate(result3)).never.toThrow();
+	expect(measureArea(result3)).toBe(2034);
+	expect(measureVolume(result3)).toBe(5895);
 	expect(obs.size()).toBe(18);
 	expect(comparePolygonsAsPoints(obs, exp)).toBe(true);
 
@@ -364,6 +378,8 @@ test("union of one or more geom3 objects produces expected geometry", () => {
 		],
 	];
 	expect(() => geom3.validate(result4)).never.toThrow();
+	expect(measureArea(result4)).toBe(1944);
+	expect(measureVolume(result4)).toBe(5832);
 	expect(obs.size()).toBe(6);
 	expect(comparePolygonsAsPoints(obs, exp)).toBe(true);
 });
@@ -372,8 +388,10 @@ test("union of geom3 with rounding issues #137", () => {
 	const geometry1 = center({ relativeTo: [0, 0, -1] }, cuboid({ size: [44, 26, 5] })) as Geom3;
 	const geometry2 = center({ relativeTo: [0, 0, -4.400001] }, cuboid({ size: [44, 26, 1.8] })) as Geom3; // introduce precision error
 
-	const obs = union(geometry1, geometry2) as Geom3;
-	const pts = geom3.toPoints(obs);
-	expect(() => geom3.validate(obs)).never.toThrow();
+	const result = union(geometry1, geometry2) as Geom3;
+	const pts = geom3.toPoints(result);
+	expect(() => geom3.validate(result)).never.toThrow();
+	expect(measureArea(result)).toBe(3240.00014);
+	expect(measureVolume(result)).toBe(7779.201144000001);
 	expect(pts.size()).toBe(6); // number of polygons in union
 });

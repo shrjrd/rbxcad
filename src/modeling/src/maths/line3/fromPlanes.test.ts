@@ -1,7 +1,7 @@
 import { expect, test } from "@rbxts/jest-globals";
 
 import { compareVectors } from "../../../test/helpers/index";
-import plane from "../plane/";
+import { plane } from "../index";
 import { create, fromPlanes } from "./index";
 
 test("line3: fromPlanes() should return a new line3 with correct values", () => {

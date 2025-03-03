@@ -1,6 +1,5 @@
-import { Error } from "@rbxts/luau-polyfill";
-
-import flatten from "../utils/flatten";
+import type { RGB, RGBA } from "./types";
+import { flatten } from "../utils/flatten";
 
 /**
  * Converts an RGB color value to HSL.
@@ -11,9 +10,9 @@ import flatten from "../utils/flatten";
  * @return {Array} HSL or HSLA color values
  * @alias module:modeling/colors.rgbToHsl
  */
-const rgbToHsl = (...values: number[] | [number[]]) => {
+export const rgbToHsl = (...values: RGB[] | RGBA[] | number[]) => {
 	values = flatten(values);
-	if (values.size() < 3) throw new Error("values must contain R, G and B values");
+	if (values.size() < 3) throw "values must contain R, G and B values";
 
 	const r = values[0];
 	const g = values[1];
@@ -21,7 +20,7 @@ const rgbToHsl = (...values: number[] | [number[]]) => {
 
 	const max = math.max(r, g, b);
 	const min = math.min(r, g, b);
-	let h;
+	let h: number = undefined!;
 	let s;
 	const l = (max + min) / 2;
 
@@ -41,15 +40,13 @@ const rgbToHsl = (...values: number[] | [number[]]) => {
 				h = (r - g) / d + 4;
 				break;
 		}
-		h! /= 6;
+		h /= 6;
 	}
 
 	if (values.size() > 3) {
 		// add alpha value if provided
 		const a = values[3];
-		return [h, s, l, a] as HSLA;
+		return [h, s, l, a];
 	}
-	return [h, s, l] as HSL;
+	return [h, s, l];
 };
-
-export default rgbToHsl;

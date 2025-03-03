@@ -1,3 +1,6 @@
+import type { Geom3 } from "../../modeling/src/geometries/types";
+import type { Vec3 } from "../../modeling/src/maths/types";
+
 /**
  * Color Cube
  * @category Colors
@@ -8,14 +11,13 @@
  * @licence MIT License
  */
 
-import rbxcad from "../../modeling/src";
-const { colorize, hslToRgb, hsvToRgb } = rbxcad.colors;
-const { cuboid } = rbxcad.primitives;
-const { translate } = rbxcad.transforms;
+import { colorize, hslToRgb, hsvToRgb, RGBA } from "../../modeling/src/colors";
+import { translate } from "../../modeling/src/operations/transforms";
+import { cuboid } from "../../modeling/src/primitives";
 
 const getTranslation = (x: number, y: number, z: number, steps: number) => {
 	const spacing = 4;
-	return [(x - steps / 2) * spacing, (y - steps / 2) * spacing, (z - steps / 2) * spacing];
+	return [(x - steps / 2) * spacing, (y - steps / 2) * spacing, (z - steps / 2) * spacing] as Vec3;
 };
 
 const getColor = (a: number, b: number, c: number, method: string) => {

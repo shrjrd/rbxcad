@@ -1,6 +1,7 @@
+import type { Mat4, Vec3 } from "../types";
 import { EPS } from "../constants";
 import { cos, sin } from "../utils/trigonometry";
-import identity from "./identity";
+import { identity } from "./identity";
 
 /**
  * Creates a matrix from a given angle around a given axis
@@ -9,15 +10,15 @@ import identity from "./identity";
  *     mat4.identity(dest)
  *     mat4.rotate(dest, dest, rad, axis)
  *
- * @param {mat4} out - receiving matrix
- * @param {Number} rad - angle to rotate the matrix by
- * @param {vec3} axis - axis of which to rotate around
- * @returns {mat4} out
+ * @param {Mat4} out - receiving matrix
+ * @param {number} rad - angle to rotate the matrix by
+ * @param {Vec3} axis - axis of which to rotate around
+ * @returns {Mat4} out
  * @alias module:modeling/maths/mat4.fromRotation
  * @example
  * let matrix = fromRotation(create(), TAU / 4, [0, 0, 3])
  */
-const fromRotation = (out: Mat4, rad: number, axis: Vec3) => {
+export const fromRotation = (out: Mat4, rad: number, axis: Vec3) => {
 	let [x, y, z] = axis;
 	const lengthSquared = x * x + y * y + z * z;
 
@@ -54,5 +55,3 @@ const fromRotation = (out: Mat4, rad: number, axis: Vec3) => {
 	out[15] = 1;
 	return out;
 };
-
-export default fromRotation;

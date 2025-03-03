@@ -1,6 +1,7 @@
-import { Array, Error, Number } from "@rbxts/luau-polyfill";
+import { Bezier } from "./type";
+import { Array as JsArray, Number } from "@rbxts/luau-polyfill";
 
-import valueAt from "./valueAt";
+import { valueAt } from "./valueAt";
 
 /**
  * Divides the bezier curve into line segments and returns the cumulative length of those segments as an array.
@@ -10,16 +11,16 @@ import valueAt from "./valueAt";
  * const b = bezier.create([[0, 0], [0, 10]]);
  * const totalLength = lengths(100, b).pop(); // the last element of the array is the curve's approximate length
  *
- * @param {Number} segments the number of segments to use when approximating the curve length.
- * @param {Object} bezier a bezier curve.
+ * @param {number} segments the number of segments to use when approximating the curve length.
+ * @param {object} bezier a bezier curve.
  * @returns an array containing the cumulative length of the segments.
  */
-const lengths = (segments: number, bezier: Bezier) => {
+export const lengths = (segments: number, bezier: Bezier) => {
 	let sum = 0;
 	const lengths = [0];
-	let previous = valueAt(0, bezier);
+	let previous = valueAt(0, bezier) as number[];
 	for (let index = 1; index <= segments; index++) {
-		const current = valueAt(index / segments, bezier);
+		const current = valueAt(index / segments, bezier) as number[];
 		sum += distanceBetween(current, previous);
 		lengths.push(sum);
 		previous = current;
@@ -36,14 +37,14 @@ const lengths = (segments: number, bezier: Bezier) => {
  *
  * @param {Array} a - first operand.
  * @param {Array} b - second operand.
- * @returns {Number} - distance.
+ * @returns {number} - distance.
  */
-const distanceBetween = (a: number[] | number, b: number[] | number) => {
+const distanceBetween = (a: number[], b: number[]) => {
 	if (Number.isFinite(a) && Number.isFinite(b)) {
 		return math.abs(a - b);
-	} else if (Array.isArray(a) && Array.isArray(b)) {
+	} else if (JsArray.isArray(a) && JsArray.isArray(b)) {
 		if (a.size() !== b.size()) {
-			throw new Error("The operands must have the same number of dimensions.");
+			throw "The operands must have the same number of dimensions.";
 		}
 		let sum = 0;
 		for (let i = 0; i < a.size(); i++) {
@@ -51,8 +52,6 @@ const distanceBetween = (a: number[] | number, b: number[] | number) => {
 		}
 		return math.sqrt(sum);
 	} else {
-		throw new Error("The operands must be of the same type, either number or array.");
+		throw "The operands must be of the same type, either number or array.";
 	}
 };
-
-export default lengths;

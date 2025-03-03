@@ -1,14 +1,18 @@
+import type { Vec3 } from "../maths/types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import comparePolygonsAsPoints from "../../test/helpers/comparePolygonsAsPoints";
-import geom3 from "../geometries/geom3";
-import { cylinder } from "./cylinder";
+import { comparePolygonsAsPoints } from "../../test/helpers/index";
+import { geom3 } from "../geometries/index";
+import { measureArea, measureVolume } from "../measurements/index";
+import { cylinder } from "./index";
 
 test("cylinder (defaults)", () => {
 	const obs = cylinder();
 	const pts = geom3.toPoints(obs);
 
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(18.789084266699856);
+	expect(measureVolume(obs)).toBe(6.2428903045161);
 	expect(pts.size()).toBe(96);
 });
 
@@ -16,6 +20,8 @@ test("cylinder (zero height)", () => {
 	const obs = cylinder({ height: 0 });
 	const pts = geom3.toPoints(obs);
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(0);
+	expect(measureVolume(obs)).toBe(0);
 	expect(pts.size()).toBe(0);
 });
 
@@ -23,6 +29,8 @@ test("cylinder (zero radius)", () => {
 	const obs = cylinder({ radius: 0 });
 	const pts = geom3.toPoints(obs);
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(0);
+	expect(measureVolume(obs)).toBe(0);
 	expect(pts.size()).toBe(0);
 });
 
@@ -113,6 +121,8 @@ test("cylinder (options)", () => {
 	];
 
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(311.1986222206015);
+	expect(measureVolume(obs)).toBe(380.4226065180614);
 	expect(pts.size()).toBe(15);
 	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 
@@ -203,6 +213,8 @@ test("cylinder (options)", () => {
 	];
 
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(16.51098762732523);
+	expect(measureVolume(obs)).toBe(4.755282581475773);
 	expect(pts.size()).toBe(15);
 	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 });

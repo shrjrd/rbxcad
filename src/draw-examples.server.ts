@@ -17,11 +17,12 @@ drawGeometry3D(inner, Workspace);
 */
 
 /* eslint-disable */
+
 import { Workspace } from "@rbxts/services";
-import { draw,getGeometryFromPart } from "./rbxUtil";
+import { draw, getGeometryFromPart } from "./rbxUtil";
 const drawOptions = { applyTransforms: true };
 
-
+/*
 import projection from "./examples/projection";
 import { union } from "modeling/src/operations/booleans";
 const Model = Workspace.FindFirstChild("Model1") as Model;
@@ -35,10 +36,10 @@ const ProjectionPart = Model.FindFirstChild("ProjectionPart") as Part;
 const ProjectionGeometry = getGeometryFromPart(ProjectionPart) as Geom3;
 const ProjectedGeometry = projection(ProjectionPart.CFrame.LookVector, 11, ProjectionGeometry, SurfaceGeometry);
 draw(Workspace, undefined, ProjectedGeometry);
+*/
 
-
-import navmesh from "./examples/navmesh";
-navmesh(Workspace.FindFirstChild("Model2") as Model);
+// import navmesh from "./examples/navmesh";
+// navmesh(Workspace.FindFirstChild("Model2") as Model);
 
 // import primitives2D from "./examples/primitives/primitives2D";
 // draw(Workspace, drawOptions, ...primitives2D());
@@ -58,14 +59,17 @@ navmesh(Workspace.FindFirstChild("Model2") as Model);
 // import colorCube from "./examples/colors/colorCube";
 // draw(Workspace, drawOptions, ...colorCube({ method: "hsl" }));
 
+// import transparency from "./examples/colors/transparency";
+// draw(Workspace, drawOptions, ...transparency());
+
 // import center from "./examples/transforms/center";
 // draw(Workspace, drawOptions, center({ centerx: true, centery: true, centerz: true }));
 
 // import align from "./examples/transforms/align";
-// draw(Workspace, drawOptions, align({ modes: ["center", "center", "center"] }));
+// draw(Workspace, drawOptions, ...align({ modes: ["center", "center", "center"] }));
 
-//import extrudeAlongPath from "./examples/curves/bezier/extrudeAlongPath";
-//draw(Workspace, drawOptions, ...extrudeAlongPath());
+// import extrudeAlongPath from "./examples/curves/bezier/extrudeAlongPath";
+// draw(Workspace, drawOptions, ...extrudeAlongPath());
 
 // import simpleExtrude from "./examples/curves/bezier/simpleExtrude";
 // draw(Workspace, drawOptions, ...simpleExtrude());
@@ -76,26 +80,27 @@ navmesh(Workspace.FindFirstChild("Model2") as Model);
 // import offset from "./examples/expansions/offset";
 // draw(Workspace, drawOptions, ...offset());
 
-//import basicExtrusions from "./examples/extrusions/basicExtrusions";
-//draw(Workspace, drawOptions, ...basicExtrusions());
+// import basicExtrusions from "./examples/extrusions/basicExtrusions";
+// draw(Workspace, drawOptions, ...basicExtrusions());
 
-//import extrudeFromSlices from "./examples/extrusions/extrudeFromSlices";
-//draw(Workspace, drawOptions, ...extrudeFromSlices());
+// import extrudeFromSlices from "./examples/extrusions/extrudeFromSlices";
+// draw(Workspace, drawOptions, ...extrudeFromSlices());
 
-//import nutsAndBolts from "./examples/extrusions/nutsAndBolts";
-//draw(Workspace, drawOptions, ...nutsAndBolts());
+// import nutsAndBolts from "./examples/extrusions/nutsAndBolts";
+// draw(Workspace, drawOptions, ...nutsAndBolts());
 
 // import hull2D from "./examples/hulls/hull2D";
-// draw(Workspace, drawOptions, hull2D({ doHull: "hull2D" }));
+// draw(Workspace, drawOptions, hull2D({ doHull: "hull" }));
 
 // import hull3D from "./examples/hulls/hull3D";
-// draw(Workspace, drawOptions, hull3D({ doHull: "hull3D" }));
+// draw(Workspace, drawOptions, hull3D({ doHull: "hull" }));
 
 // import measureAggregateBounds from "./examples/measurements/measureAggregateBounds";
-// draw(Workspace, drawOptions, measureAggregateBounds({ rotatex: 0, rotatey: 0, rotatez: 0 }));
+// const [shapes, boundingBox] = measureAggregateBounds({ rotatex: 0, rotatey: 0, rotatez: 0 });
+// draw(Workspace, drawOptions, boundingBox, ...shapes);
 
 // import measureBounds from "./examples/measurements/measureBounds";
-// draw(Workspace, drawOptions, measureBounds({ rotatex: 0, rotatey: 0, rotatez: 0 }));
+// draw(Workspace, drawOptions, ...measureBounds({ rotatex: 0, rotatey: 0, rotatez: 0 }));
 
 // import dodecahedron from "./examples/primitives/dodecahedron";
 // draw(Workspace, drawOptions, dodecahedron());
@@ -107,10 +112,7 @@ navmesh(Workspace.FindFirstChild("Model2") as Model);
 // draw(Workspace, drawOptions, roundedCuboid({ width: 10, height: 10, depth: 10, rounded: 1, radius: 2 }));
 
 // import sphere from "./examples/primitives/sphere";
-// draw(Workspace, drawOptions, sphere());
+// draw(Workspace, drawOptions, ...sphere());
 
-//import torus from "./examples/primitives/torus";
-//draw(Workspace, drawOptions, ...torus());
-
-// import transparency from "./examples/colors/transparency";
-// draw(Workspace, drawOptions, transparency());
+// import torus from "./examples/primitives/torus";
+// draw(Workspace, drawOptions, ...torus());

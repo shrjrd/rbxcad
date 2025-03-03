@@ -1,12 +1,13 @@
+import type { Vec2 } from "../../maths/types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import { comparePoints } from "../../../test/helpers/";
-import { create, fromPoints, toPoints, toString } from "./index";
+import { comparePoints } from "../../../test/helpers/index";
+import { create, toPoints, toString } from "./index";
 
 test("toPoints: creates an empty array of points from a unpopulated geom2", () => {
 	const geometry = create();
-	const pointarray = toPoints(geometry);
-	expect(pointarray).toEqual([]);
+	const pointArray = toPoints(geometry);
+	expect(pointArray).toEqual([]);
 });
 
 test("toPoints: creates an array of points from a populated geom2", () => {
@@ -15,17 +16,17 @@ test("toPoints: creates an array of points from a populated geom2", () => {
 		[1, 0],
 		[0, 1],
 	];
-	const geometry = fromPoints(points);
+	const geometry = create([points]);
 
 	toString(geometry);
 
-	const expected: Vec2[] = [
+	const expected = [
 		[0, 0],
 		[1, 0],
 		[0, 1],
 	];
-	const pointarray = toPoints(geometry);
-	expect(comparePoints(pointarray, expected)).toBe(true);
+	const pointArray = toPoints(geometry);
+	expect(comparePoints(pointArray, expected)).toBe(true);
 
 	toString(geometry);
 });

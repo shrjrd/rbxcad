@@ -1,19 +1,12 @@
-/**
- * Nuts and Bolts
- * @category Creating Shapes
- * @skillLevel 8
- * @description Demonstrating the advanced extrusion using slices to generate screw threads.
- * @tags extrude, slice, slices, extrudefromslices, callback
- * @authors platypii
- * @licence MIT License
- */
+import type { Geom3 } from "../../modeling/src/geometries/types";
+import type { Vec3 } from "../../modeling/src/maths/types";
 
-import rbxcad from "../../modeling/src";
-const { cylinder } = rbxcad.primitives;
-const { subtract, union } = rbxcad.booleans;
-const { colorize } = rbxcad.colors;
-const { extrudeFromSlices, slice } = rbxcad.extrusions;
-const { translate } = rbxcad.transforms;
+import { colorize } from "../../modeling/src/colors";
+import * as slice from "../../modeling/src/geometries/slice";
+import { subtract, union } from "../../modeling/src/operations/booleans";
+import { extrudeFromSlices } from "../../modeling/src/operations/extrusions";
+import { translate } from "../../modeling/src/operations/transforms";
+import { cylinder } from "../../modeling/src/primitives";
 
 const options = {
 	hexWidth: 10,
@@ -26,6 +19,15 @@ const options = {
 	segments: 32,
 };
 
+/**
+ * Nuts and Bolts
+ * @category Creating Shapes
+ * @skillLevel 8
+ * @description Demonstrating the advanced extrusion using slices to generate screw threads.
+ * @tags extrude, slice, slices, extrudefromslices, callback
+ * @authors platypii
+ * @licence MIT License
+ */
 const main = () => {
 	return [colorize([0.9, 0.6, 0.2], bolt(options)), colorize([0.4, 0.4, 0.4], translate([30, 0, 0], nut(options)))];
 };
@@ -41,7 +43,7 @@ const bolt = (options: {
 	slicesPerRevolution: number;
 	segments: number;
 }) => {
-	return union(translate([0, 0, options.threadLength], hex(options)) as Geom3, threads(options));
+	return union(translate([0, 0, options.threadLength], hex(options)) as Geom3, threads(options)) as Geom3;
 };
 
 // generate nut by subtracting threads from a hex block
@@ -55,7 +57,7 @@ const nut = (options: {
 	slicesPerRevolution: number;
 	segments: number;
 }) => {
-	return subtract(hex(options), threads({ ...options, threadLength: options.hexHeight }));
+	return subtract(hex(options), threads({ ...options, threadLength: options.hexHeight })) as Geom3;
 };
 
 // generate hexagonal block
@@ -95,7 +97,7 @@ const threads = (options: {
 					const y = radius * math.sin(pointAngle);
 					points.push([x, y, threadLength * progress]);
 				}
-				return slice.fromPoints(points);
+				return slice.fromVertices(points);
 			},
 		},
 		{},

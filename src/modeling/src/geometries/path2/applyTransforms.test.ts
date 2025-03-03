@@ -1,7 +1,8 @@
+import type { Vec2 } from "../../maths/types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import { comparePoints, compareVectors } from "../../../test/helpers/";
-import applyTransforms from "./applyTransforms";
+import { comparePoints, compareVectors } from "../../../test/helpers/index";
+import { applyTransforms } from "./applyTransforms";
 import { fromPoints } from "./index";
 
 test("applyTransforms: Updates a populated path with transformed points", () => {
@@ -10,7 +11,7 @@ test("applyTransforms: Updates a populated path with transformed points", () => 
 		[1, 0],
 		[0, 1],
 	];
-	const expected: Path2 = {
+	const expected = {
 		points: [
 			[0, 0],
 			[1, 0],

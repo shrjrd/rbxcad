@@ -1,17 +1,9 @@
-import union from "modeling/src/operations/booleans/union";
-
-import rbxcad from "../modeling/src";
-import extrudePolygon from "../modeling/src/operations/expansions/extrudePolygon";
-const poly3Plane = rbxcad.geometries.poly3.plane;
-const vec4equals = rbxcad.maths.vec4.equals;
-const vec3mul = rbxcad.maths.vec3.multiply;
-const vec3dot = rbxcad.maths.vec3.dot;
-const vec3negate = rbxcad.maths.vec3.negate;
-const subtract = rbxcad.booleans.subtract;
-const intersect = rbxcad.booleans.intersect;
-const geom3clone = rbxcad.geometries.geom3.clone;
-const vec3add = rbxcad.maths.vec3.add;
-const poly3clone = rbxcad.geometries.poly3.clone;
+import type { Geom3, Poly3 } from "../modeling/src/geometries/types";
+import type { Vec3 } from "../modeling/src/maths/types";
+import { clone as poly3clone, plane as poly3Plane } from "../modeling/src/geometries/poly3";
+import { add as vec3add, dot as vec3dot, multiply as vec3mul, negate as vec3negate } from "../modeling/src/maths/vec3";
+import { subtract, union, intersect } from "../modeling/src/operations/booleans";
+import { extrudePolygon } from "../modeling/src/operations/offsets/extrudePolygon";
 
 function getPolygonsFacingDirection(geometry: Geom3, direction: Vec3) {
 	const facingPolygons: Poly3[] = [];

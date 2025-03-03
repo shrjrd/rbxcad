@@ -1,3 +1,4 @@
+import type { Mat4 } from "../types";
 import { cos, sin } from "../utils/trigonometry";
 
 /**
@@ -7,14 +8,14 @@ import { cos, sin } from "../utils/trigonometry";
  *     mat4.identity(dest)
  *     mat4.rotateX(dest, dest, radians)
  *
- * @param {mat4} out - receiving matrix
- * @param {Number} radians - angle to rotate the matrix by
- * @returns {mat4} out
+ * @param {Mat4} out - receiving matrix
+ * @param {number} radians - angle to rotate the matrix by
+ * @returns {Mat4} out
  * @alias module:modeling/maths/mat4.fromXRotation
  * @example
  * let matrix = fromXRotation(create(), TAU / 4)
  */
-const fromXRotation = (out: Mat4, radians: number) => {
+export const fromXRotation = (out: Mat4, radians: number) => {
 	const s = sin(radians);
 	const c = cos(radians);
 
@@ -37,5 +38,3 @@ const fromXRotation = (out: Mat4, radians: number) => {
 	out[15] = 1;
 	return out;
 };
-
-export default fromXRotation;

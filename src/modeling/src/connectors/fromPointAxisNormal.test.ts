@@ -1,6 +1,6 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import { compareVectors } from "../../test/helpers/";
+import { compareVectors } from "../../test/helpers/index";
 import { fromPointAxisNormal } from "./index";
 
 test("connector: fromPointAxisNormal() should return a new connector with correct values", () => {

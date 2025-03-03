@@ -1,1 +1,1 @@
-export { default } from "./angleRadians";
+export { angleRadians as angle } from "./angleRadians";

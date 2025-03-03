@@ -1,7 +1,7 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import { cube, cuboid } from "../primitives";
-import measureAggregateVolume from "./measureAggregateVolume";
+import { cube, cuboid } from "../primitives/index";
+import { measureAggregateVolume } from "./index";
 
 test("measureAggregateVolume (single objects)", () => {
 	const aCube = cube({ size: 4, center: [4, 10, 20] });

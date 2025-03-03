@@ -1,3 +1,4 @@
+import type { Mat4 } from "../types";
 import { cos, sin } from "../utils/trigonometry";
 
 /**
@@ -6,16 +7,16 @@ import { cos, sin } from "../utils/trigonometry";
  * Tait-Bryan Euler angle convention using active, intrinsic rotations around the axes in the order z-y-x.
  * @see https://en.wikipedia.org/wiki/Euler_angles
  *
- * @param {mat4} out - receiving matrix
- * @param {Number} yaw - Z rotation in radians
- * @param {Number} pitch - Y rotation in radians
- * @param {Number} roll - X rotation in radians
- * @returns {mat4} out
+ * @param {Mat4} out - receiving matrix
+ * @param {number} yaw - Z rotation in radians
+ * @param {number} pitch - Y rotation in radians
+ * @param {number} roll - X rotation in radians
+ * @returns {Mat4} out
  * @alias module:modeling/maths/mat4.fromTaitBryanRotation
  * @example
  * let matrix = fromTaitBryanRotation(create(), TAU / 4, 0, TAU / 2)
  */
-const fromTaitBryanRotation = (out: Mat4, yaw: number, pitch: number, roll: number) => {
+export const fromTaitBryanRotation = (out: Mat4, yaw: number, pitch: number, roll: number) => {
 	// precompute sines and cosines of Euler angles
 	const sy = sin(yaw);
 	const cy = cos(yaw);
@@ -51,5 +52,3 @@ const fromTaitBryanRotation = (out: Mat4, yaw: number, pitch: number, roll: numb
 	out[15] = 1;
 	return out;
 };
-
-export default fromTaitBryanRotation;

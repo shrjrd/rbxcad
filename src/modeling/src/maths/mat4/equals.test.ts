@@ -1,6 +1,7 @@
+import type { Mat4 } from "../types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import equals from "./equals";
+import { equals } from "./index";
 
 test("vec3: equals() should return correct booleans", () => {
 	const veca: Mat4 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];

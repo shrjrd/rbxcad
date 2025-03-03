@@ -1,8 +1,9 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import comparePoints from "../../test/helpers/comparePoints";
-import geom2 from "../geometries/geom2";
+import { comparePoints } from "../../test/helpers/index";
+import { geom2 } from "../geometries/index";
 import { TAU } from "../maths/constants";
+import { measureArea } from "../measurements/measureArea";
 import { circle } from "./index";
 
 test("circle (defaults)", () => {
@@ -10,14 +11,16 @@ test("circle (defaults)", () => {
 	const pts = geom2.toPoints(geometry);
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(pts.size()).toEqual(32);
+	// DEVIATION: floating point differs?
+	expect(measureArea(geometry)).toBe(3.121445152258053);
+	expect(pts.size()).toBe(32);
 });
 
 test("circle (options)", () => {
 	// test center
 	let geometry = circle({ radius: 3.5, center: [6.5, 6.5] });
 	let pts = geom2.toPoints(geometry);
-	let exp: Vec2[] = [
+	let exp = [
 		[10, 6.5],
 		[9.932748481411306, 7.182816127056449],
 		[9.733578363789503, 7.8393920132778145],
@@ -53,7 +56,8 @@ test("circle (options)", () => {
 	];
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(pts.size()).toEqual(32);
+	expect(measureArea(geometry)).toBe(38.23770311516116);
+	expect(pts.size()).toBe(32);
 	expect(comparePoints(pts, exp)).toBe(true);
 
 	// test radius
@@ -79,7 +83,8 @@ test("circle (options)", () => {
 	];
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(pts.size()).toEqual(16);
+	expect(measureArea(geometry)).toBe(37.5029763717788);
+	expect(pts.size()).toBe(16);
 	expect(comparePoints(pts, exp)).toBe(true);
 
 	// test startAngle
@@ -103,7 +108,8 @@ test("circle (options)", () => {
 	];
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(pts.size()).toEqual(14);
+	expect(measureArea(geometry)).toBe(28.127232278834093);
+	expect(pts.size()).toBe(14);
 	expect(comparePoints(pts, exp)).toBe(true);
 
 	// test endAngle
@@ -119,7 +125,8 @@ test("circle (options)", () => {
 	];
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(pts.size()).toEqual(6);
+	expect(measureArea(geometry)).toBe(9.3757440929447);
+	expect(pts.size()).toBe(6);
 	expect(comparePoints(pts, exp)).toBe(true);
 
 	// test full rotation with non-zero startAngle
@@ -127,7 +134,8 @@ test("circle (options)", () => {
 	pts = geom2.toPoints(geometry);
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(pts.size()).toEqual(32);
+	expect(measureArea(geometry)).toBe(3.1214451522580537);
+	expect(pts.size()).toBe(32);
 
 	// test segments
 	geometry = circle({ radius: 3.5, segments: 5 });
@@ -141,7 +149,8 @@ test("circle (options)", () => {
 	];
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(pts.size()).toEqual(5);
+	expect(measureArea(geometry)).toBe(29.126105811539073);
+	expect(pts.size()).toBe(5);
 	expect(comparePoints(pts, exp)).toBe(true);
 });
 
@@ -149,5 +158,6 @@ test("circle (radius zero)", () => {
 	const geometry = circle({ radius: 0 });
 	const pts = geom2.toPoints(geometry);
 	expect(() => geom2.validate(geometry)).never.toThrow();
+	expect(measureArea(geometry)).toBe(0);
 	expect(pts.size()).toBe(0);
 });

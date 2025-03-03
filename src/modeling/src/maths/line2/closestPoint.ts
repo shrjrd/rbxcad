@@ -1,16 +1,17 @@
-import vec2 from "../vec2";
-import direction from "./direction";
-import origin from "./origin";
+import type { Line2, Vec2 } from "../types";
+import * as vec2 from "../vec2/index";
+import { direction } from "./direction";
+import { origin } from "./origin";
 
 /**
  * Determine the closest point on the given line to the given point.
  *
- * @param {line2} line - line of reference
- * @param {vec2} point - point of reference
- * @returns {vec2} closest point
+ * @param {Line2} line - line of reference
+ * @param {Vec2} point - point of reference
+ * @returns {Vec2} closest point
  * @alias module:modeling/maths/line2.closestPoint
  */
-const closestPoint = (line: Line2, point: Vec2) => {
+export const closestPoint = (line: Line2, point: Vec2) => {
 	const orig = origin(line);
 	const dir = direction(line);
 
@@ -20,5 +21,3 @@ const closestPoint = (line: Line2, point: Vec2) => {
 	vec2.add(v, v, orig);
 	return v;
 };
-
-export default closestPoint;

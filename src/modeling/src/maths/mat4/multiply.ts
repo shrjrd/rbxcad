@@ -1,13 +1,14 @@
+import type { Mat4 } from "../types";
 /**
  * Multiplies the two matrices.
  *
- * @param {mat4} out - receiving matrix
- * @param {mat4} a - first operand
- * @param {mat4} b - second operand
- * @returns {mat4} out
+ * @param {Mat4} out - receiving matrix
+ * @param {Mat4} a - first operand
+ * @param {Mat4} b - second operand
+ * @returns {Mat4} out
  * @alias module:modeling/maths/mat4.multiply
  */
-const multiply = (out: Mat4, a: Mat4, b: Mat4) => {
+export const multiply = (out: Mat4, a: Mat4, b: Mat4) => {
 	const a00 = a[0];
 	const a01 = a[1];
 	const a02 = a[2];
@@ -63,5 +64,3 @@ const multiply = (out: Mat4, a: Mat4, b: Mat4) => {
 	out[15] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
 	return out;
 };
-
-export default multiply;

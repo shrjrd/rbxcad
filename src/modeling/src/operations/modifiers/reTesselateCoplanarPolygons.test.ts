@@ -1,8 +1,10 @@
+import type { Poly3 } from "../../geometries/types";
+import type { Vec3 } from "../../maths/types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import { poly3 } from "../../geometries";
-import mat4 from "../../maths/mat4";
-import reTesselateCoplanarPolygons from "./reTesselateCoplanarPolygons";
+import { poly3 } from "../../geometries/index";
+import { mat4 } from "../../maths/index";
+import { reTesselateCoplanarPolygons } from "./reTesselateCoplanarPolygons";
 
 const translatePoly3 = (offsets: Vec3, polygon: Poly3) => {
 	const matrix = mat4.fromTranslation(mat4.create(), offsets);

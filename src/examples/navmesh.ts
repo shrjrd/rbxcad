@@ -1,27 +1,30 @@
+import type { Geom3, Poly3 } from "../modeling/src/geometries/types";
+import type { Vec3 } from "../modeling/src/maths/types";
+/* eslint-disable */
 import { Array as JsArray, JsMap } from "@rbxts/luau-polyfill";
+import { Workspace } from "@rbxts/services";
+import { drawGeometry3D, drawGeometries3D, drawLine3D, getGeometryFromPart } from "../rbxUtil";
 
-import rbxcad from "../modeling/src";
-import extrudePolygon from "../modeling/src/operations/expansions/extrudePolygon";
-import { drawGeometry3D, getGeometryFromPart } from "../rbxUtil";
-
-const generalize = rbxcad.modifiers.generalize;
-const booleans = rbxcad.booleans;
-const subtract = booleans.subtract;
-const union = booleans.union;
-const poly3Plane = rbxcad.geometries.poly3.plane;
-const vec4equals = rbxcad.maths.vec4.equals;
-const vec3 = rbxcad.maths.vec3;
+import * as poly3 from "../modeling/src/geometries/poly3";
+import * as vec3 from "../modeling/src/maths/vec3";
+import { subtract, union } from "../modeling/src/operations/booleans";
+import { generalize } from "../modeling/src/operations/modifiers/generalize";
+import { extrudePolygon } from "../modeling/src/operations/offsets/extrudePolygon";
+import { geom3 } from "../modeling/src/geometries";
+/* eslint-enable */
+const poly3Plane = poly3.plane;
+const vec4equals = vec3.equals;
 const vec3mul = vec3.multiply;
 const vec3dot = vec3.dot;
 const vec3negate = vec3.negate;
-
 const AgentUp = [0, 1, 0] as Vec3; // The unit normal vector of the agent's up direction
-const AgentHeight = 5; // The height of the agent
-const AgentRadius = 1; // The radius of the agent
-const AgentStepHeight = 2; // The height of the agent's max step height
-const AgentMaxSlope = 0; // The maximum slope of the agent's walkable surface (from AgentUp)
+const AgentHeight = 5; // The height of the agent in studs
+const AgentRadius = 1; // The radius of the agent in studs
+const AgentStepHeight = 2; // The height of the agent's max step height in studs
+const AgentMaxAngle = 80; // The maximum angle the agent can walk on (in degrees)
 
 const AgentDown = vec3negate([0, 0, 0], AgentUp);
+const AgentMaxSlope = math.cos(math.rad(AgentMaxAngle));
 
 function getParts(instance: Instance) {
 	const found: Part[] = [];
@@ -38,11 +41,15 @@ function getPolygonsFacingDirection(geometry: Geom3, direction: Vec3) {
 	const facingPolygons: Poly3[] = [];
 	for (const polygon of geometry.polygons) {
 		const normal = poly3Plane(polygon);
-		if (vec3dot(normal, direction) > AgentMaxSlope) {
+		if (vec3dot(normal, direction) >= AgentMaxSlope) {
 			facingPolygons.push(polygon);
 		}
 	}
 	return { polygons: facingPolygons, transforms: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1] } as Geom3;
+}
+
+function NoValidate(polygon: Poly3, direction: Vec3) {
+	return true;
 }
 
 function ValidateDownwards(polygon: Poly3, direction: Vec3) {
@@ -56,12 +63,11 @@ function extrudeDirection(
 	geometry: Geom3,
 	validate: (polygon: Poly3, direction: Vec3) => boolean,
 	distance: number,
-	direction?: Vec3,
+	direction: Vec3,
 ) {
 	const ExtrudedGeometries: Geom3[] = [];
 	for (const polygon of geometry.polygons) {
 		// Validate function used to determine if the polygon should be extruded
-		direction = direction ? direction : (poly3Plane(polygon) as Vec3);
 		const offset = vec3mul([0, 0, 0], direction, [distance, distance, distance]);
 		if (validate(polygon, direction) === true) {
 			const ExtrudedGeometry = extrudePolygon(offset, polygon);
@@ -74,7 +80,7 @@ function extrudeDirection(
 }
 
 // Workaround to properly subtract a closed watertight geom3 from a open geom3
-function subtractClosedGeom3FromOpenGeom3(closedGeom3: Geom3, openGeom3: Geom3) {
+function subtractClosedGeom3FromOpenGeom3(openGeom3: Geom3, closedGeom3: Geom3) {
 	const resultPolygons: Poly3[] = [];
 	for (const originalPolygon of openGeom3.polygons) {
 		const originalPlane = poly3Plane(originalPolygon);
@@ -101,7 +107,7 @@ const StringToEdge = (s: string) => {
 	return [StringToVec3(v1), StringToVec3(v2)];
 };
 
-/*
+/**
  * Check manifold edge condition: Every edge is in exactly 2 faces
  */
 const validateManifold = (object: Geom3) => {
@@ -119,13 +125,14 @@ const validateManifold = (object: Geom3) => {
 	});
 
 	// check that edges are always matched
-	const nonManifold: string[] = [];
+	const nonManifold = new Map<string, true>();
 	edgeCount.forEach((count, edge) => {
 		const complementEdge = JsArray.reverse(edge.split("/")).join("/"); //edge.split("/").reverse().join("/");
 		const complementCount = edgeCount.get(complementEdge);
 		if (count !== complementCount) {
 			//nonManifold.push(edge.gsub("/", " -> ")[0]); //(edge.replace("/", " -> "));
-			nonManifold.push(edge);
+			//nonManifold.push(edge);
+			nonManifold.set(edge, true);
 		}
 	});
 	return nonManifold;
@@ -135,75 +142,42 @@ function Vec3ToVector3(v: Vec3) {
 	return new Vector3(v[0], v[1], v[2]);
 }
 
-import { Workspace } from "@rbxts/services";
-
-import { hull } from "../modeling/src/operations/hulls";
-import sphere from "../modeling/src/primitives/sphere";
-
+/**
+Inspired by https://dspace.cuni.cz/bitstream/handle/20.500.11956/148644/120397077.pdf
+*/
 function generateNavmesh(parent: Instance) {
-	const startTick = tick();
-	print("Generating Navmesh");
-	const PartGeometries: Geom3[] = [];
+	print("Generating navmesh");
+	const StartTick = tick();
 
-	for (const part of getParts(parent)) {
-		const PartGeometry = getGeometryFromPart(part)!;
-		PartGeometries.push(PartGeometry);
+	let UnionedPartGeometry = geom3.create();
+	const parts = parent.GetDescendants();
+	for (const part of parts) {
+		if (part.IsA("Part")) {
+			UnionedPartGeometry = union(UnionedPartGeometry, getGeometryFromPart(part)!) as Geom3;
+		}
 	}
 
-	const UnionedGeometry = union(...PartGeometries) as Geom3;
-	//drawGeometry3D(UnionedGeometry, Workspace);
+	UnionedPartGeometry = generalize({ snap: false, simplify: false, triangulate: true }, UnionedPartGeometry) as Geom3;
+	UnionedPartGeometry = generalize({ snap: true, simplify: true, triangulate: true }, UnionedPartGeometry) as Geom3;
 
-	const GeometryExtrudedDown = extrudeDirection(UnionedGeometry, ValidateDownwards, AgentHeight, AgentDown)!;
-	//drawGeometry3D(GeometryExtrudedDown, Workspace);
+	/*
+		Current problem:
+		non manifold edges in interior areas
+		the only non manifold edges should be the borders of the mesh
+	*/
 
-	const UpwardFacingPolygons = getPolygonsFacingDirection(UnionedGeometry, AgentUp);
-	//drawGeometry3D(UpwardFacingPolygons, Workspace);
-
-	const GeneralizedUpwardFacingPolygons = generalize(
-		{ snap: true, simplify: true, triangulate: true },
-		UpwardFacingPolygons,
-	) as Geom3;
-	//drawGeometry3D(GeneralizedUpwardFacingPolygons, Workspace);
-
-	const HeightClippedGeometry = subtractClosedGeom3FromOpenGeom3(GeometryExtrudedDown, UpwardFacingPolygons);
-	//drawGeometry3D(HeightClippedGeometry, Workspace);
-
-	const GeneralizedHeightClippedGeometry = generalize(
-		{ snap: true, simplify: true, triangulate: true },
-		HeightClippedGeometry,
-	) as Geom3;
-	//drawGeometry3D(GeneralizedHeightClippedGeometry, Workspace);
-
-	// Needs to be more selective with what borders to extrude
-	const extrudedBorders: Geom3[] = [];
-	for (const edge of validateManifold(GeneralizedHeightClippedGeometry)) {
+	const nonManifold = validateManifold(UnionedPartGeometry);
+	print(nonManifold);
+	for (const [edge] of nonManifold) {
+		print("edge", edge);
 		const [v1, v2] = StringToEdge(edge);
-		//drawLine3D(Vec3ToVector3(v1), Vec3ToVector3(v2), [1, 0, 0], Workspace);
-		const sphere1 = sphere({ radius: AgentRadius, center: v1, segments: 8 }) as Geom3;
-		const sphere2 = sphere({ radius: AgentRadius, center: v2, segments: 8 }) as Geom3;
-		const hulled = hull(sphere1, sphere2) as Geom3;
-		//drawGeometry3D(hulled, Workspace);
-		extrudedBorders.push(hulled);
+		drawLine3D(Vec3ToVector3(v1), Vec3ToVector3(v2), [1, 0, 0], Workspace);
 	}
 
-	const RadiusAndHeightClippedGeometry = subtractClosedGeom3FromOpenGeom3(
-		union(...extrudedBorders) as Geom3,
-		HeightClippedGeometry,
-	);
-	//drawGeometry3D(RadiusAndHeightClippedGeometry, Workspace);
-
-	const GeneralizedRadiusAndHeightClippedGeometry = generalize(
-		{ snap: true, simplify: true, triangulate: true },
-		RadiusAndHeightClippedGeometry,
-	) as Geom3;
-	drawGeometry3D(GeneralizedRadiusAndHeightClippedGeometry, Workspace);
-
-	// Build connectivity graph from WalkableSurfaceGeometry polygons
-	const ConnectivityGraph = undefined;
-
-	const endTick = tick();
-	print(`Navmesh generated in ${endTick - startTick} seconds`);
-	return ConnectivityGraph;
+	const EndTick = tick();
+	print(`Navmesh generation took ${EndTick - StartTick} seconds`);
+	drawGeometry3D(UnionedPartGeometry, Workspace);
+	return;
 }
 
 //import { Workspace } from "@rbxts/services";

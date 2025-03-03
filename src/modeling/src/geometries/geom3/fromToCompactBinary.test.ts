@@ -1,3 +1,4 @@
+import type { Vec3 } from "../../maths/types";
 import { expect, test } from "@rbxts/jest-globals";
 
 import { create, fromCompactBinary, fromPoints, toCompactBinary } from "./index";
@@ -33,8 +34,8 @@ test("toCompactBinary: converts geom3 (default)", () => {
 });
 
 test("toCompactBinary: converts geom3 into a compact form", () => {
-	// two polygons; 3 points, 4 points
-	const points: Vec3[][] = [
+	// two polygons; 3 vertices, 4 vertices
+	const vertices: Vec3[][] = [
 		[
 			[0, 0, 0],
 			[1, 0, 0],
@@ -47,7 +48,7 @@ test("toCompactBinary: converts geom3 into a compact form", () => {
 			[-3, 0, 3],
 		],
 	];
-	const geometry = fromPoints(points);
+	const geometry = fromPoints(vertices);
 	const compacted = toCompactBinary(geometry);
 	const expected = [
 		1, // type
@@ -230,7 +231,7 @@ test("fromCompactBinary: convert a compact form into a geom3", () => {
 		0,
 		3,
 	];
-	const points: Vec3[][] = [
+	const vertices: Vec3[][] = [
 		[
 			[0, 0, 0],
 			[1, 0, 0],
@@ -243,7 +244,7 @@ test("fromCompactBinary: convert a compact form into a geom3", () => {
 			[-3, 0, 3],
 		],
 	];
-	expected = fromPoints(points);
+	expected = fromPoints(vertices);
 	geometry = fromCompactBinary(compacted1);
 
 	expect(geometry).toEqual(expected);

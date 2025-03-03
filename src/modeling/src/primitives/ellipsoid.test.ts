@@ -1,7 +1,8 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import comparePolygonsAsPoints from "../../test/helpers/comparePolygonsAsPoints";
-import geom3 from "../geometries/geom3";
+import { comparePolygonsAsPoints } from "../../test/helpers/index";
+import { geom3 } from "../geometries/index";
+import { measureArea, measureVolume } from "../measurements/index";
 import { ellipsoid } from "./index";
 
 test("ellipsoid (defaults)", () => {
@@ -9,6 +10,8 @@ test("ellipsoid (defaults)", () => {
 	const pts = geom3.toPoints(obs);
 
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(12.465694088650583);
+	expect(measureVolume(obs)).toBe(4.121941740785839);
 	expect(pts.size()).toBe(512);
 });
 
@@ -16,7 +19,7 @@ test("ellipsoid (options)", () => {
 	// test radius
 	let obs = ellipsoid({ radius: [3, 5, 7], segments: 12 });
 	let pts = geom3.toPoints(obs);
-	let exp: Vec3[][] = [
+	let exp = [
 		[
 			[3, 0, 0],
 			[2.598076211353316, -2.4999999999999996, 0],
@@ -427,6 +430,8 @@ test("ellipsoid (options)", () => {
 		],
 	];
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(291.2703265603712);
+	expect(measureVolume(obs)).toBe(391.86533479473223);
 	expect(pts.size()).toBe(72);
 	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 
@@ -434,6 +439,9 @@ test("ellipsoid (options)", () => {
 	obs = ellipsoid({ segments: 8 });
 	pts = geom3.toPoints(obs);
 	expect(() => geom3.validate(obs)).never.toThrow();
+	// DEVIATION: floating point differs?
+	expect(measureArea(obs)).toBe(11.013439076647458);
+	expect(measureVolume(obs)).toBe(3.2189514164974606);
 	expect(pts.size()).toBe(32);
 
 	obs = ellipsoid({ center: [-3, 5, 7], segments: 8 });
@@ -618,6 +626,8 @@ test("ellipsoid (options)", () => {
 	];
 
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(11.013439076647467);
+	expect(measureVolume(obs)).toBe(3.218951416497485);
 	expect(pts.size()).toBe(32);
 	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 });
@@ -626,5 +636,7 @@ test("ellipsoid (zero radius)", () => {
 	const obs = ellipsoid({ radius: [1, 1, 0] });
 	const pts = geom3.toPoints(obs);
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(0);
+	expect(measureVolume(obs)).toBe(0);
 	expect(pts.size()).toBe(0);
 });

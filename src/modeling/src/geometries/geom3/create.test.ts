@@ -1,6 +1,7 @@
+import type { Vec3 } from "../../maths/types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import poly3 from "../poly3";
+import { poly3 } from "../index";
 import { create } from "./index";
 
 test("create: Creates an empty geom3", () => {
@@ -12,12 +13,12 @@ test("create: Creates an empty geom3", () => {
 });
 
 test("create: Creates a populated geom3", () => {
-	const points: Vec3[] = [
+	const vertices: Vec3[] = [
 		[0, 0, 0],
 		[0, 10, 0],
 		[0, 10, 10],
 	];
-	const polygon = poly3.create(points);
+	const polygon = poly3.create(vertices);
 
 	const polygons = [polygon];
 	const expected = {

@@ -1,11 +1,13 @@
+import type { Vec3 } from "../../maths/types";
+import type { Geom3 } from "../types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import { comparePolygons, compareVectors } from "../../../test/helpers/";
-import applyTransforms from "./applyTransforms";
+import { comparePolygons, compareVectors } from "../../../test/helpers/index";
+import { applyTransforms } from "./applyTransforms";
 import { fromPoints } from "./index";
 
 test("applyTransforms: Updates a geom3 with transformed polygons", () => {
-	const points: Vec3[][] = [
+	const vertices: Vec3[][] = [
 		[
 			[0, 0, 0],
 			[1, 0, 0],
@@ -25,7 +27,7 @@ test("applyTransforms: Updates a geom3 with transformed polygons", () => {
 		isRetesselated: false,
 		transforms: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
 	};
-	const geometry = fromPoints(points);
+	const geometry = fromPoints(vertices);
 	const updated = applyTransforms(geometry);
 	expect(geometry).toBe(updated);
 	expect(comparePolygons(updated.polygons[0], expected.polygons[0])).toBe(true);

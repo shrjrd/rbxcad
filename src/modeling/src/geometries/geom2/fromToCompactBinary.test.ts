@@ -35,24 +35,10 @@ test("toCompactBinary: converts geom2 into a compact form", () => {
 		[
 			[10, 10],
 			[-10, -10],
-		],
-		[
-			[-10, -10],
 			[10, -10],
 		],
 		[
-			[10, -10],
-			[10, 10],
-		],
-		[
 			[5, -5],
-			[6, -4],
-		],
-		[
-			[6, -5],
-			[5, -5],
-		],
-		[
 			[6, -4],
 			[6, -5],
 		],
@@ -80,30 +66,20 @@ test("toCompactBinary: converts geom2 into a compact form", () => {
 		-1,
 		-1,
 		-1, // color
+		3,
 		10,
 		10,
 		-10,
-		-10, // sides
-		-10,
 		-10,
 		10,
-		-10,
-		10,
-		-10,
-		10,
-		10,
+		-10, // poly1
+		3,
 		5,
 		-5,
 		6,
 		-4,
 		6,
-		-5,
-		5,
-		-5,
-		6,
-		-4,
-		6,
-		-5,
+		-5, // poly2
 	];
 	expect(compacted2).toEqual(expected2);
 
@@ -132,30 +108,20 @@ test("toCompactBinary: converts geom2 into a compact form", () => {
 		2,
 		3,
 		4, // color
+		3,
 		10,
 		10,
 		-10,
-		-10, // sides
-		-10,
 		-10,
 		10,
-		-10,
-		10,
-		-10,
-		10,
-		10,
+		-10, // poly1
+		3,
 		5,
 		-5,
 		6,
 		-4,
 		6,
-		-5,
-		5,
-		-5,
-		6,
-		-4,
-		6,
-		-5,
+		-5, // poly2
 	];
 	expect(compacted3).toEqual(expected3);
 });
@@ -212,55 +178,31 @@ test("fromCompactBinary: convert a compact form into a geom2", () => {
 		-1,
 		-1,
 		-1, // color
+		3,
 		10,
 		10,
 		-10,
-		-10, // sides
-		-10,
 		-10,
 		10,
-		-10,
-		10,
-		-10,
-		10,
-		10,
+		-10, // poly1
+		3,
 		5,
 		-5,
 		6,
-		-4,
-		6,
-		-5,
-		5,
 		-5,
 		6,
-		-4,
-		6,
-		-5,
+		-4, // poly2
 	];
 	const expected2 = create([
 		[
 			[10, 10],
 			[-10, -10],
-		],
-		[
-			[-10, -10],
 			[10, -10],
 		],
 		[
-			[10, -10],
-			[10, 10],
-		],
-		[
 			[5, -5],
-			[6, -4],
-		],
-		[
 			[6, -5],
-			[5, -5],
-		],
-		[
 			[6, -4],
-			[6, -5],
 		],
 	]);
 	const geometry2 = fromCompactBinary(compacted2);
@@ -290,30 +232,20 @@ test("fromCompactBinary: convert a compact form into a geom2", () => {
 		5,
 		6,
 		7, // color
+		3,
 		10,
 		10,
 		-10,
-		-10, // sides
-		-10,
 		-10,
 		10,
-		-10,
-		10,
-		-10,
-		10,
-		10,
+		-10, // poly1
+		3,
 		5,
 		-5,
 		6,
-		-4,
-		6,
-		-5,
-		5,
 		-5,
 		6,
-		-4,
-		6,
-		-5,
+		-4, // poly2
 	];
 	expected2.color = [4, 5, 6, 7];
 	const geometry3 = fromCompactBinary(compacted3);

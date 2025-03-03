@@ -1,7 +1,6 @@
-import { Error } from "@rbxts/luau-polyfill";
-
-import flatten from "../utils/flatten";
-import hueToColorComponent from "./hueToColorComponent";
+import type { HSL, HSLA, RGB, RGBA } from "./types";
+import { flatten } from "../utils/flatten";
+import { hueToColorComponent } from "./hueToColorComponent";
 
 /**
  * Converts HSL color values to RGB color values.
@@ -12,11 +11,11 @@ import hueToColorComponent from "./hueToColorComponent";
  * @alias module:modeling/colors.hslToRgb
  *
  * @example
- * let mysphere = colorize(hslToRgb([0.9166666666666666, 1, 0.5]), sphere())
+ * let mySphere = colorize(hslToRgb([0.9166666666666666, 1, 0.5]), sphere())
  */
-const hslToRgb = (...values: number[] | [number[]]) => {
+export const hslToRgb = (...values: number[] | [HSL] | [HSLA]): RGB | RGBA => {
 	values = flatten(values);
-	if (values.size() < 3) throw new Error("values must contain H, S and L values");
+	if (values.size() < 3) throw "values must contain H, S and L values";
 
 	const h = values[0];
 	const s = values[1];
@@ -41,5 +40,3 @@ const hslToRgb = (...values: number[] | [number[]]) => {
 	}
 	return [r, g, b] as RGB;
 };
-
-export default hslToRgb;

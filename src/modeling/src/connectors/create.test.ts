@@ -1,6 +1,6 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import { compareVectors } from "../../test/helpers";
+import { compareVectors } from "../../test/helpers/index";
 import { create } from "./index";
 
 test("connector: create() should return a connector with initial values", () => {

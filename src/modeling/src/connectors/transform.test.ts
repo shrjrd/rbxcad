@@ -1,6 +1,7 @@
+import type { Mat4 } from "../maths/types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import { compareVectors } from "../../test/helpers/";
+import { compareVectors } from "../../test/helpers/index";
 import { create, fromPointAxisNormal, transform } from "./index";
 
 test("connector: transform() should return a connector with correct values", () => {

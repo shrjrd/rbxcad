@@ -1,26 +1,23 @@
-import mat4 from "../../maths/mat4";
-import vec2 from "../../maths/vec2";
+import type { Geom2 } from "../types";
+import * as mat4 from "../../maths/mat4/index";
+import * as vec2 from "../../maths/vec2/index";
 
-/*
+/**
  * Apply the transforms of the given geometry.
- * NOTE: This function must be called BEFORE exposing any data. See toSides().
- * @param {geom2} geometry - the geometry to transform
- * @returns {geom2} the given geometry
+ * NOTE: This function must be called BEFORE exposing any data. See toOutlines().
+ * @param {Geom2} geometry - the geometry to transform
+ * @returns {Geom2} the given geometry
  *
  * @example
  * geometry = applyTransforms(geometry)
  */
-const applyTransforms = (geometry: Geom2): Geom2 => {
+export const applyTransforms = (geometry: Geom2) => {
 	if (mat4.isIdentity(geometry.transforms)) return geometry;
 
 	// apply transforms to each side
-	geometry.sides = geometry.sides.map((side) => {
-		const p0 = vec2.transform(vec2.create(), side[0], geometry.transforms);
-		const p1 = vec2.transform(vec2.create(), side[1], geometry.transforms);
-		return [p0, p1];
-	});
+	geometry.outlines = geometry.outlines.map((outline) =>
+		outline.map((point) => vec2.transform(vec2.create(), point, geometry.transforms)),
+	);
 	geometry.transforms = mat4.create();
 	return geometry;
 };
-
-export default applyTransforms;

@@ -1,16 +1,17 @@
-import poly3 from "../poly3";
-import toPolygons from "./toPolygons";
+import type { Geom3 } from "../types";
+import * as poly3 from "../poly3/index";
+import { toPolygons } from "./toPolygons";
 
 /**
  * Create a string representing the contents of the given geometry.
- * @param {geom3} geometry - the geometry
- * @returns {String} a representative string
+ * @param {Geom3} geometry - the geometry
+ * @returns {string} a representative string
  * @alias module:modeling/geometries/geom3.toString
  *
  * @example
  * console.out(toString(geometry))
  */
-const toString = (geometry: Geom3) => {
+export const toString = (geometry: Geom3) => {
 	const polygons = toPolygons(geometry);
 	let result = "geom3 (" + polygons.size() + " polygons):\n";
 	polygons.forEach((polygon) => {
@@ -18,5 +19,3 @@ const toString = (geometry: Geom3) => {
 	});
 	return result;
 };
-
-export default toString;

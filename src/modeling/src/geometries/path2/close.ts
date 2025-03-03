@@ -1,14 +1,15 @@
+import type { Path2 } from "../types";
 import { EPS } from "../../maths/constants";
-import vec2 from "../../maths/vec2";
-import clone from "./clone";
+import * as vec2 from "../../maths/vec2/index";
+import { clone } from "./clone";
 
 /**
  * Close the given geometry.
- * @param {path2} geometry - the path to close
- * @returns {path2} a new path
+ * @param {Path2} geometry - the path to close
+ * @returns {Path2} a new path
  * @alias module:modeling/geometries/path2.close
  */
-const close = (geometry: Path2) => {
+export const close = (geometry: Path2) => {
 	if (geometry.isClosed) return geometry;
 
 	const cloned = clone(geometry);
@@ -27,5 +28,3 @@ const close = (geometry: Path2) => {
 	}
 	return cloned;
 };
-
-export default close;

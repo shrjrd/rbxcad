@@ -1,8 +1,9 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import { geom2, geom3, path2 } from "../geometries";
-import { cuboid, line, rectangle } from "../primitives";
+import { geom2, geom3, path2, slice } from "../geometries/index";
+import { cuboid, line, rectangle } from "../primitives/index";
 import { measureArea } from "./index";
+import { Geometry } from "../geometries/types";
 
 test("measureArea: single objects", () => {
 	const aline = line([
@@ -15,6 +16,7 @@ test("measureArea: single objects", () => {
 	const apath2 = path2.create();
 	const ageom2 = geom2.create();
 	const ageom3 = geom3.create();
+	const aslice = slice.create();
 
 	const n = undefined;
 	const o = {};
@@ -27,10 +29,11 @@ test("measureArea: single objects", () => {
 	const p2area = measureArea(apath2);
 	const g2area = measureArea(ageom2);
 	const g3area = measureArea(ageom3);
+	const slarea = measureArea(aslice);
 
 	const narea = measureArea(n!);
-	const oarea = measureArea(o);
-	const xarea = measureArea(x as unknown as object);
+	const oarea = measureArea(o as Geometry);
+	const xarea = measureArea(x as unknown as Geometry);
 
 	expect(larea).toBe(0);
 	expect(rarea).toBe(4); // 2x2
@@ -39,6 +42,7 @@ test("measureArea: single objects", () => {
 	expect(p2area).toBe(0);
 	expect(g2area).toBe(0);
 	expect(g3area).toBe(0);
+	expect(slarea).toBe(0);
 
 	expect(narea).toBe(0);
 	expect(oarea).toBe(0);
@@ -52,11 +56,25 @@ test("measureArea (multiple objects)", () => {
 	]);
 	const arect = rectangle({ size: [10, 20] });
 	const acube = cuboid({ size: [10, 20, 40] });
-	const o = {};
+	const o = {} as Geometry;
 
 	let allarea = measureArea(aline, arect, acube, o);
 	expect(allarea).toEqual([0, 200, 2800, 0]);
 
 	allarea = measureArea(aline, arect, acube, o);
 	expect(allarea).toEqual([0, 200, 2800, 0]);
+});
+
+test("measureArea of slice", () => {
+	// tilted pythagorean rectangle
+	const rect = slice.create([
+		[
+			[0, 0, 0],
+			[4, 0, 0],
+			[4, 4, 3],
+			[0, 4, 3],
+		],
+	]);
+	const area = measureArea(rect);
+	expect(area).toBe(20);
 });

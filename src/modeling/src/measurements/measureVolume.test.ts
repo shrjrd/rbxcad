@@ -1,8 +1,9 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import { geom2, geom3, path2 } from "../geometries";
-import { cuboid, line, rectangle } from "../primitives";
+import { geom2, geom3, path2, slice } from "../geometries/index";
+import { cuboid, line, rectangle } from "../primitives/index";
 import { measureVolume } from "./index";
+import { Geometry } from "../geometries/types";
 
 test("measureVolume: single objects", () => {
 	const aline = line([
@@ -15,6 +16,7 @@ test("measureVolume: single objects", () => {
 	const apath2 = path2.create();
 	const ageom2 = geom2.create();
 	const ageom3 = geom3.create();
+	const aslice = slice.create();
 
 	const n = undefined;
 	const o = {};
@@ -27,10 +29,11 @@ test("measureVolume: single objects", () => {
 	const p2volume = measureVolume(apath2);
 	const g2volume = measureVolume(ageom2);
 	const g3volume = measureVolume(ageom3);
+	const slvolume = measureVolume(aslice);
 
 	const nvolume = measureVolume(n!);
-	const ovolume = measureVolume(o);
-	const xvolume = measureVolume(x as unknown as object);
+	const ovolume = measureVolume(o as Array<Geometry>);
+	const xvolume = measureVolume(x as unknown as Array<Geometry>);
 
 	expect(lvolume).toBe(0);
 	expect(rvolume).toBe(0);
@@ -39,6 +42,7 @@ test("measureVolume: single objects", () => {
 	expect(p2volume).toBe(0);
 	expect(g2volume).toBe(0);
 	expect(g3volume).toBe(0);
+	expect(slvolume).toBe(0);
 
 	expect(nvolume).toBe(0);
 	expect(ovolume).toBe(0);
@@ -52,7 +56,7 @@ test("measureVolume (multiple objects)", () => {
 	]);
 	const arect = rectangle({ size: [5, 10] });
 	const acube = cuboid({ size: [10, 20, 40] });
-	const o = {};
+	const o = {} as Geometry;
 
 	let allvolume = measureVolume(aline, arect, acube, o);
 	expect(allvolume).toEqual([0, 0, 7999.999999999999, 0]);

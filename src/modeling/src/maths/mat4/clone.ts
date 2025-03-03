@@ -1,13 +1,14 @@
-import create from "./create";
+import type { Mat4 } from "../types";
+import { create } from "./create";
 
 /**
  * Creates a clone of the given matrix.
  *
- * @param {mat4} matrix - matrix to clone
- * @returns {mat4} a new matrix
+ * @param {Mat4} matrix - matrix to clone
+ * @returns {Mat4} a new matrix
  * @alias module:modeling/maths/mat4.clone
  */
-const clone = (matrix: Mat4) => {
+export const clone = (matrix: Mat4) => {
 	const out = create();
 	out[0] = matrix[0];
 	out[1] = matrix[1];
@@ -27,5 +28,3 @@ const clone = (matrix: Mat4) => {
 	out[15] = matrix[15];
 	return out;
 };
-
-export default clone;

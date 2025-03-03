@@ -1,8 +1,6 @@
-import { Array, JsMap } from "@rbxts/luau-polyfill";
-
-import poly3 from "../../geometries/poly3";
-import aboutEqualNormals from "../../maths/utils/aboutEqualNormals";
-import vec3 from "../../maths/vec3";
+import type { Vec3, Plane } from "../../maths/types";
+import type { Poly3 } from "../../geometries/types";
+import { Array as JsArray, JsMap } from "@rbxts/luau-polyfill";
 
 type Edge = {
 	v1: Vec3;
@@ -11,21 +9,25 @@ type Edge = {
 	prev: Edge;
 };
 
+import * as poly3 from "../../geometries/poly3/index";
+import { aboutEqualNormals } from "../../maths/utils/aboutEqualNormals";
+import * as vec3 from "../../maths/vec3/index";
+
 // create a set of edges from the given polygon, and link the edges as well
 const createEdges = (polygon: Poly3) => {
-	const points = poly3.toPoints(polygon);
-	const edges = [];
-	for (let i = 0; i < points.size(); i++) {
-		const j = (i + 1) % points.size();
+	const vertices = poly3.toVertices(polygon);
+	const edges: Edge[] = [];
+	for (let i = 0; i < vertices.size(); i++) {
+		const j = (i + 1) % vertices.size();
 		const edge = {
-			v1: points[i],
-			v2: points[j],
+			v1: vertices[i],
+			v2: vertices[j],
 		} as Edge;
 		edges.push(edge);
 	}
 	// link the edges together
 	for (let i = 0; i < edges.size(); i++) {
-		const j = (i + 1) % points.size();
+		const j = (i + 1) % vertices.size();
 		edges[i].next = edges[j];
 		edges[j].prev = edges[i];
 	}
@@ -49,14 +51,14 @@ const findOppositeEdge = (edges: InstanceType<typeof JsMap<string, Edge>>, edge:
 
 // calculate the two adjoining angles between the opposing edges
 const calculateAnglesBetween = (current: Edge, opposite: Edge, normal: Vec3) => {
-	let v0 = current.prev?.v1;
-	let v1 = current.prev?.v2;
-	let v2 = opposite.next?.v2;
+	let v0 = current.prev.v1;
+	let v1 = current.prev.v2;
+	let v2 = opposite.next.v2;
 	const angle1 = calculateAngle(v0, v1, v2, normal);
 
-	v0 = opposite.prev?.v1;
-	v1 = opposite.prev?.v2;
-	v2 = current.next?.v2;
+	v0 = opposite.prev.v1;
+	v1 = opposite.prev.v2;
+	v2 = current.next.v2;
 	const angle2 = calculateAngle(v0, v1, v2, normal);
 
 	return [angle1, angle2];
@@ -65,21 +67,20 @@ const calculateAnglesBetween = (current: Edge, opposite: Edge, normal: Vec3) => 
 const v1 = vec3.create();
 const v2 = vec3.create();
 
-const calculateAngle = (prevpoint: Vec3, point: Vec3, nextpoint: Vec3, normal: Vec3) => {
-	const d0 = vec3.subtract(v1, point, prevpoint);
-	const d1 = vec3.subtract(v2, nextpoint, point);
+const calculateAngle = (prevVertex: Vec3, midVertex: Vec3, nextVertex: Vec3, normal: Vec3) => {
+	const d0 = vec3.subtract(v1, midVertex, prevVertex);
+	const d1 = vec3.subtract(v2, nextVertex, midVertex);
 	vec3.cross(d0, d0, d1);
 	return vec3.dot(d0, normal);
 };
 
 // create a polygon starting from the given edge (if possible)
 const createPolygonAnd = (edge: Edge) => {
-	let polygon: Poly3 | undefined;
-	const points: Vec3[] = [];
+	const vertices: Vec3[] = [];
 	while (edge.next) {
 		const _next = edge.next;
 
-		points.push(edge.v1);
+		vertices.push(edge.v1);
 
 		edge.v1 = undefined!;
 		edge.v2 = undefined!;
@@ -88,20 +89,19 @@ const createPolygonAnd = (edge: Edge) => {
 
 		edge = _next;
 	}
-	if (points.size() > 0) polygon = poly3.create(points);
-	return polygon;
+	if (vertices.size() > 0) return poly3.create(vertices);
 };
 
-/*
+/**
  * Merge COPLANAR polygons that share common edges.
- * @param {poly3[]} sourcepolygons - list of polygons
- * @returns {poly3[]} new set of polygons
+ * @param {Poly3[]} sourcePolygons - list of polygons
+ * @returns {Poly3[]} new set of polygons
  */
-const mergeCoplanarPolygons = (sourcepolygons: Poly3[]) => {
-	if (sourcepolygons.size() < 2) return sourcepolygons;
+export const mergeCoplanarPolygons = (sourcePolygons: Poly3[]) => {
+	if (sourcePolygons.size() < 2) return sourcePolygons;
 
-	const normal = sourcepolygons[0].plane;
-	const polygons = Array.slice(sourcepolygons); //sourcepolygons.slice();
+	const normal = sourcePolygons[0].plane!;
+	const polygons = JsArray.slice(sourcePolygons); //sourcePolygons.slice();
 	const edgeList = new JsMap<string, Edge>();
 
 	while (polygons.size() > 0) {
@@ -112,7 +112,7 @@ const mergeCoplanarPolygons = (sourcepolygons: Poly3[]) => {
 			const current = edges[i];
 			const opposite = findOppositeEdge(edgeList, current);
 			if (opposite) {
-				const angles = calculateAnglesBetween(current, opposite, normal!);
+				const angles = calculateAnglesBetween(current, opposite, normal);
 				if (angles[0] >= 0 && angles[1] >= 0) {
 					const edge1 = opposite.next;
 					const edge2 = current.next;
@@ -137,15 +137,15 @@ const mergeCoplanarPolygons = (sourcepolygons: Poly3[]) => {
 					opposite.prev = undefined!;
 
 					const mergeEdges = (list: InstanceType<typeof JsMap<string, Edge>>, e1: Edge, e2: Edge) => {
-						const newedge = {
+						const newEdge = {
 							v1: e2.v1,
 							v2: e1.v2,
 							next: e1.next,
 							prev: e2.prev,
 						};
-						// link in newedge
-						e2.prev.next = newedge;
-						e1.next.prev = newedge;
+						// link in newEdge
+						e2.prev.next = newEdge;
+						e1.next.prev = newEdge;
 						// remove old edges
 						deleteEdge(list, e1);
 						e1.v1 = undefined!;
@@ -174,18 +174,18 @@ const mergeCoplanarPolygons = (sourcepolygons: Poly3[]) => {
 	}
 
 	// build a set of polygons from the remaining edges
-	const destpolygons: Poly3[] = [];
+	const destPolygons: Poly3[] = [];
 	edgeList.forEach((edge) => {
 		const polygon = createPolygonAnd(edge);
-		if (polygon) destpolygons.push(polygon);
+		if (polygon) destPolygons.push(polygon);
 	});
 
 	edgeList.clear();
 
-	return destpolygons;
+	return destPolygons;
 };
 
-const coplanar = (plane1: _Plane, plane2: _Plane) => {
+const coplanar = (plane1: Plane, plane2: Plane) => {
 	// expect the same distance from the origin, within tolerance
 	if (math.abs(plane1[3] - plane2[3]) < 0.00000015) {
 		return aboutEqualNormals(plane1, plane2);
@@ -193,9 +193,9 @@ const coplanar = (plane1: _Plane, plane2: _Plane) => {
 	return false;
 };
 
-const mergePolygons = (epsilon: number, polygons: Poly3[]) => {
-	const polygonsPerPlane: [Vec4, Poly3[]][] = []; // elements: [plane, [poly3...]]
-	polygons.forEach((polygon: Poly3) => {
+export const mergePolygons = (epsilon: number, polygons: Poly3[]) => {
+	const polygonsPerPlane: [Plane, Poly3[]][] = []; // elements: [plane, [poly3...]]
+	polygons.forEach((polygon) => {
 		const mapping = polygonsPerPlane.find((element) => coplanar(element[0], poly3.plane(polygon)));
 		if (mapping) {
 			const polygons = mapping[1];
@@ -205,13 +205,11 @@ const mergePolygons = (epsilon: number, polygons: Poly3[]) => {
 		}
 	});
 
-	let destpolygons: Poly3[] = [];
+	let destPolygons: Poly3[] = [];
 	polygonsPerPlane.forEach((mapping) => {
-		const sourcepolygons = mapping[1];
-		const retesselayedpolygons = mergeCoplanarPolygons(sourcepolygons);
-		destpolygons = Array.concat(destpolygons, retesselayedpolygons); //destpolygons.concat(retesselayedpolygons);
+		const sourcePolygons = mapping[1];
+		const retesselatedPolygons = mergeCoplanarPolygons(sourcePolygons);
+		destPolygons = JsArray.concat(destPolygons, retesselatedPolygons); //destPolygons.concat(retesselatedPolygons);
 	});
-	return destpolygons;
+	return destPolygons;
 };
-
-export default mergePolygons;

@@ -1,8 +1,8 @@
 import { expect, test } from "@rbxts/jest-globals";
 
 import { EPS } from "../maths/constants";
-import { cube, square } from "../primitives";
-import measureAggregateEpsilon from "./measureAggregateEpsilon";
+import { cube, square } from "../primitives/index";
+import { measureAggregateEpsilon } from "./index";
 
 test("measureAggregateEpsilon (single objects)", () => {
 	const aCube = cube({ size: 4, center: [4, 10, 20] });

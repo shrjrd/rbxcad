@@ -1,8 +1,10 @@
+import type { Vec3 } from "../maths/types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import comparePolygonsAsPoints from "../../test/helpers/comparePolygonsAsPoints";
-import geom3 from "../geometries/geom3";
-import { cuboid } from "./cuboid";
+import { comparePolygonsAsPoints } from "../../test/helpers/index";
+import { geom3 } from "../geometries/index";
+import { measureArea, measureVolume } from "../measurements/index";
+import { cuboid } from "./index";
 
 test("cuboid (defaults)", () => {
 	const obs = cuboid();
@@ -46,6 +48,8 @@ test("cuboid (defaults)", () => {
 		],
 	];
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(24);
+	expect(measureVolume(obs)).toBe(7.999999999999999);
 	expect(pts.size()).toBe(6);
 	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 });
@@ -94,6 +98,8 @@ test("cuboid (options)", () => {
 	];
 
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(216);
+	expect(measureVolume(obs)).toBe(216);
 	expect(pts.size()).toBe(6);
 	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 
@@ -140,6 +146,8 @@ test("cuboid (options)", () => {
 	];
 
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(97.5);
+	expect(measureVolume(obs)).toBe(47.25);
 	expect(pts.size()).toBe(6);
 	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 });
@@ -148,5 +156,7 @@ test("cuboid (zero size)", () => {
 	const obs = cuboid({ size: [1, 1, 0] });
 	const pts = geom3.toPoints(obs);
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(0);
+	expect(measureVolume(obs)).toBe(0);
 	expect(pts.size()).toBe(0);
 });

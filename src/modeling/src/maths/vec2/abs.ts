@@ -1,15 +1,14 @@
+import type { Vec2 } from "../types";
 /**
  * Calculates the absolute coordinates of the given vector.
  *
- * @param {vec2} out - receiving vector
- * @param {vec2} vector - vector of reference
- * @returns {vec2} out
+ * @param {Vec2} out - receiving vector
+ * @param {Vec2} vector - vector of reference
+ * @returns {Vec2} out
  * @alias module:modeling/maths/vec2.abs
  */
-const abs = (out: Vec2, vector: Vec2) => {
+export const abs = (out: Vec2, vector: Vec2) => {
 	out[0] = math.abs(vector[0]);
 	out[1] = math.abs(vector[1]);
 	return out;
 };
-
-export default abs;

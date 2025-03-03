@@ -1,7 +1,8 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import comparePolygonsAsPoints from "../../test/helpers/comparePolygonsAsPoints";
-import geom3 from "../geometries/geom3";
+import { comparePolygonsAsPoints } from "../../test/helpers/index";
+import { geom3 } from "../geometries/index";
+import { measureArea, measureVolume } from "../measurements/index";
 import { roundedCylinder } from "./index";
 
 test("roundedCylinder (defaults)", () => {
@@ -9,6 +10,9 @@ test("roundedCylinder (defaults)", () => {
 	const pts = geom3.toPoints(obs);
 
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(16.844951865908268);
+	// DEVIATION: floating point differs?
+	expect(measureVolume(obs)).toBe(5.818700591770071);
 	expect(pts.size()).toBe(544);
 });
 
@@ -16,6 +20,8 @@ test("roundedCylinder (zero height)", () => {
 	const obs = roundedCylinder({ height: 0 });
 	const pts = geom3.toPoints(obs);
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(0);
+	expect(measureVolume(obs)).toBe(0);
 	expect(pts.size()).toBe(0);
 });
 
@@ -23,6 +29,8 @@ test("roundedCylinder (zero radius)", () => {
 	const obs = roundedCylinder({ radius: 0, roundRadius: 0 });
 	const pts = geom3.toPoints(obs);
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(0);
+	expect(measureVolume(obs)).toBe(0);
 	expect(pts.size()).toBe(0);
 });
 
@@ -30,6 +38,8 @@ test("roundedCylinder (zero roundRadius)", () => {
 	const obs = roundedCylinder({ roundRadius: 0 });
 	const pts = geom3.toPoints(obs);
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(18.789084266699856);
+	expect(measureVolume(obs)).toBe(6.2428903045161);
 	expect(pts.size()).toBe(96);
 });
 
@@ -37,9 +47,11 @@ test("roundedCylinder (options)", () => {
 	// test segments
 	let obs = roundedCylinder({ segments: 5 });
 	let pts = geom3.toPoints(obs);
-	let exp: Vec3[][] = [];
+	let exp = [];
 
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(14.303000362787825);
+	expect(measureVolume(obs)).toBe(4.121244903945666);
 	expect(pts.size()).toBe(15);
 
 	// test center
@@ -129,6 +141,8 @@ test("roundedCylinder (options)", () => {
 	];
 
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(14.303000362787827);
+	expect(measureVolume(obs)).toBe(4.121244903945658);
 	expect(pts.size()).toBe(15);
 	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 
@@ -219,6 +233,8 @@ test("roundedCylinder (options)", () => {
 	];
 
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(120.104345775433);
+	expect(measureVolume(obs)).toBe(46.91878813722758);
 	expect(pts.size()).toBe(15);
 	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 
@@ -309,6 +325,8 @@ test("roundedCylinder (options)", () => {
 	];
 
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(569.7191848255909);
+	expect(measureVolume(obs)).toBe(412.1244903945666);
 	expect(pts.size()).toBe(15);
 	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 
@@ -399,6 +417,8 @@ test("roundedCylinder (options)", () => {
 	];
 
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(602.8474323274462);
+	expect(measureVolume(obs)).toBe(1030.3112259864165);
 	expect(pts.size()).toBe(15);
 	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 });

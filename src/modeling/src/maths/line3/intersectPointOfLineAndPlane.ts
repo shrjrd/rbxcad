@@ -1,4 +1,5 @@
-import vec3 from "../vec3";
+import type { Line3, Plane } from "../types";
+import * as vec3 from "../vec3/index";
 
 /**
  * Determine the closest point on the given plane to the given line.
@@ -6,24 +7,21 @@ import vec3 from "../vec3";
  * NOTES:
  * The point of intersection will be invalid if the line is parallel to the plane, e.g. NaN.
  *
- * @param {line3} line - line of reference
- * @param {plane} plane - plane of reference
- * @returns {vec3} a point on the line
+ * @param {Line3} line - line of reference
+ * @param {Plane} plane - plane of reference
+ * @returns {Vec3} a point on the line
  * @alias module:modeling/maths/line3.intersectPointOfLineAndPlane
  */
-const intersectToPlane = (line: Line3, plane: _Plane): Vec3 => {
+export const intersectPointOfLineAndPlane = (line: Line3, plane: Plane) => {
 	// plane: plane.normal * p = plane.w
-	const pnormal = plane;
+	const pNormal = plane;
 	const pw = plane[3];
 
-	const lpoint = line[0];
-	const ldirection = line[1];
+	const lPoint = line[0];
+	const lDirection = line[1];
 
 	// point: p = line.point + labda * line.direction
-	const labda = (pw - vec3.dot(pnormal, lpoint)) / vec3.dot(pnormal, ldirection);
+	const labda = (pw - vec3.dot(pNormal, lPoint)) / vec3.dot(pNormal, lDirection);
 
-	const point = vec3.add(vec3.create(), lpoint, vec3.scale(vec3.create(), ldirection, labda));
-	return point;
+	return vec3.add(vec3.create(), lPoint, vec3.scale(vec3.create(), lDirection, labda));
 };
-
-export default intersectToPlane;

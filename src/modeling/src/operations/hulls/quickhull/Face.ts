@@ -1,25 +1,19 @@
-import add from "../../../maths/vec3/add";
-import copy from "../../../maths/vec3/copy";
-import cross from "../../../maths/vec3/cross";
-import dot from "../../../maths/vec3/dot";
-import length from "../../../maths/vec3/length";
-import normalize from "../../../maths/vec3/normalize";
-import scale from "../../../maths/vec3/scale";
-import subtract from "../../../maths/vec3/subtract";
+import type { Vec3 } from "../../../maths/types";
+import { add, copy, cross, dot, length, normalize, scale, subtract } from "../../../maths/vec3/index";
 /*
  * Original source from quickhull3d (https://github.com/mauriciopoppe/quickhull3d)
  * Copyright (c) 2015 Mauricio Poppe
  *
  * Adapted to JSCAD by Jeff Gay
  */
-import HalfEdge from "./HalfEdge";
-import Vertex from "./Vertex";
+import { HalfEdge } from "./HalfEdge";
+import { Vertex } from "./Vertex";
 
-const VISIBLE = 0;
-const NON_CONVEX = 1;
-const DELETED = 2;
+export const VISIBLE = 0;
+export const NON_CONVEX = 1;
+export const DELETED = 2;
 
-class Face {
+export class Face {
 	area!: number;
 	centroid: Vec3;
 	edge: HalfEdge;
@@ -29,11 +23,11 @@ class Face {
 	offset: number;
 	outside: Vertex;
 	constructor() {
-		this.normal = [0, 0, 0] as Vec3;
-		this.centroid = [0, 0, 0] as Vec3;
+		this.normal = [] as unknown as Vec3;
+		this.centroid = [] as unknown as Vec3;
 		// signed distance from face to the origin
 		this.offset = 0;
-		// pointer to the a vertex in a double linked list this face can see
+		// pointer to the vertex in a double linked list this face can see
 		this.outside = undefined!;
 		this.mark = VISIBLE;
 		this.edge = undefined!;
@@ -42,7 +36,7 @@ class Face {
 
 	getEdge(i: number) {
 		if (typeOf(i) !== "number") {
-			throw error("requires a number");
+			throw "requires a number";
 		}
 		let it = this.edge;
 		while (i > 0) {
@@ -61,8 +55,8 @@ class Face {
 		const e1 = e0.next;
 		let e2 = e1.next;
 		const v2 = subtract([0, 0, 0], e1.head().point, e0.head().point);
-		const t: Vec3 = [0, 0, 0];
-		const v1: Vec3 = [0, 0, 0];
+		const t = [] as unknown as Vec3;
+		const v1 = [] as unknown as Vec3;
 
 		this.nVertices = 2;
 		this.normal = [0, 0, 0];
@@ -125,9 +119,9 @@ class Face {
 	}
 
 	computeNormalAndCentroid(minArea?: number) {
-		//if (typeof minArea !== "undefined") {
-		if (typeOf(minArea) !== "nil") {
-			this.computeNormalMinArea(minArea!);
+		// DEVIATION: 0, NaN, and "" are falsy in TS.
+		if (minArea !== undefined && minArea !== 0) {
+			this.computeNormalMinArea(minArea);
 		} else {
 			this.computeNormal();
 		}
@@ -333,11 +327,3 @@ class Face {
 		return face;
 	}
 }
-
-export default {
-	VISIBLE,
-	NON_CONVEX,
-	DELETED,
-	Face,
-};
-export { DELETED, Face, NON_CONVEX, VISIBLE };

@@ -1,11 +1,11 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import { nearlyEqual } from "../../../test/helpers/index";
-import { bezier } from "../index";
-import lengths from "./lengths";
+import { nearlyEqual } from "../../../test/helpers/nearlyEqual";
+import { create } from "./create";
+import { lengths } from "./lengths";
 
 test("calculate lengths for a 1D linear bezier with numeric control points", () => {
-	const bezierCurve = bezier.create([0, 10]);
+	const bezierCurve = create([0, 10]);
 	const result = lengths(100, bezierCurve);
 	expect(result.size()).toBe(101); // with the default number of segments (100) the length of the array should be 101
 	nearlyEqual(result[0], 0, 0.0001); // first element is always 0
@@ -14,7 +14,7 @@ test("calculate lengths for a 1D linear bezier with numeric control points", () 
 });
 
 test("calculate lengths for a 1D linear bezier with array control points", () => {
-	const bezierCurve = bezier.create([[0], [10]]);
+	const bezierCurve = create([[0], [10]]);
 	const result = lengths(100, bezierCurve);
 	expect(result.size()).toBe(101);
 	nearlyEqual(result[0], 0, 0.0001);
@@ -23,7 +23,7 @@ test("calculate lengths for a 1D linear bezier with array control points", () =>
 });
 
 test("calculate lengths for a 2D linear bezier", () => {
-	const bezierCurve = bezier.create([
+	const bezierCurve = create([
 		[0, 0],
 		[10, 10],
 	]);
@@ -35,7 +35,7 @@ test("calculate lengths for a 2D linear bezier", () => {
 });
 
 test("calculate lengths for a 2D quadratic (3 control points) bezier", () => {
-	const bezierCurve = bezier.create([
+	const bezierCurve = create([
 		[0, 0],
 		[0, 10],
 		[10, 10],
@@ -48,7 +48,7 @@ test("calculate lengths for a 2D quadratic (3 control points) bezier", () => {
 });
 
 test("calculate lengths for a 2D cubic (4 control points) bezier", () => {
-	const bezierCurve = bezier.create([
+	const bezierCurve = create([
 		[0, 0],
 		[0, 10],
 		[10, 10],
@@ -62,7 +62,7 @@ test("calculate lengths for a 2D cubic (4 control points) bezier", () => {
 });
 
 test("calculate lengths for a 3D linear bezier", () => {
-	const bezierCurve = bezier.create([
+	const bezierCurve = create([
 		[0, 0, 0],
 		[10, 10, 10],
 	]);
@@ -74,7 +74,7 @@ test("calculate lengths for a 3D linear bezier", () => {
 });
 
 test("calculate lengths for a 3D quadratic (3 control points) bezier", () => {
-	const bezierCurve = bezier.create([
+	const bezierCurve = create([
 		[0, 0, 0],
 		[5, 5, 5],
 		[0, 0, 10],
@@ -87,7 +87,7 @@ test("calculate lengths for a 3D quadratic (3 control points) bezier", () => {
 });
 
 test("calculate lengths for a 3D cubic (4 control points) bezier", () => {
-	const bezierCurve = bezier.create([
+	const bezierCurve = create([
 		[0, 0, 0],
 		[5, 5, 5],
 		[0, 0, 10],

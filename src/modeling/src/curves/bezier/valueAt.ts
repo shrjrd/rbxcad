@@ -1,7 +1,8 @@
+import { Bezier } from "./type";
 /**
  * Calculates the value at a specific position along a bezier easing curve.
  * For multidimensional curves, the tangent is the slope of each dimension at that point.
- * See the example called extrudeAlongPath.js to see this in use.
+ * See the example called extrudeAlongPath to see this in use.
  * Math and explanation comes from {@link https://www.freecodecamp.org/news/nerding-out-with-bezier-curves-6e3c0bc48e2f/}
  *
  * @example
@@ -9,11 +10,11 @@
  * let position = bezier.valueAt(t,b) // where 0 < t < 1
  *
  * @param {number} t : the position of which to calculate the value; 0 < t < 1
- * @param {Object} bezier : a bezier curve created with bezier.create().
+ * @param {object} bezier : a Bézier curve created with bezier.create().
  * @returns {array | number} the value at the requested position.
  * @alias module:modeling/curves/bezier.valueAt
  */
-const valueAt = (t: number, bezier: Bezier) => {
+export const valueAt = (t: number, bezier: Bezier) => {
 	if (t < 0 || t > 1) {
 		throw "Bezier valueAt() input must be between 0 and 1";
 	}
@@ -24,7 +25,7 @@ const valueAt = (t: number, bezier: Bezier) => {
 		for (let i = 0; i < bezier.dimensions; i++) {
 			const singleDimensionPoints = [];
 			for (let j = 0; j < bezier.points.size(); j++) {
-				singleDimensionPoints.push((bezier.points as number[][])[j][i]);
+				singleDimensionPoints.push((bezier.points[j] as number[])[i]);
 			}
 			result.push(bezierFunction(bezier, singleDimensionPoints, t));
 		}
@@ -32,7 +33,7 @@ const valueAt = (t: number, bezier: Bezier) => {
 	}
 };
 
-const bezierFunction = function (bezier: Bezier, p: number[], t: number) {
+const bezierFunction = (bezier: Bezier, p: number[], t: number) => {
 	const n = p.size() - 1;
 	let result = 0;
 	for (let i = 0; i <= n; i++) {
@@ -40,5 +41,3 @@ const bezierFunction = function (bezier: Bezier, p: number[], t: number) {
 	}
 	return result;
 };
-
-export default valueAt;

@@ -1,20 +1,19 @@
-import vec3 from "../../maths/vec3";
+import type { Poly3 } from "./type";
+import * as vec3 from "../../maths/vec3/index";
 
 /**
- * @param {poly3} polygon - the polygon to measure
+ * @param {Poly3} polygon - the polygon to measure
  * @returns {Array} an array of two vectors (3D);  minimum and maximum coordinates
  * @alias module:modeling/geometries/poly3.measureBoundingBox
  */
-const measureBoundingBox = (polygon: Poly3) => {
+export const measureBoundingBox = (polygon: Poly3) => {
 	const vertices = polygon.vertices;
-	const numvertices = vertices.size();
-	const min = numvertices === 0 ? vec3.create() : vec3.clone(vertices[0]);
+	const numVertices = vertices.size();
+	const min = numVertices === 0 ? vec3.create() : vec3.clone(vertices[0]);
 	const max = vec3.clone(min);
-	for (let i = 1; i < numvertices; i++) {
+	for (let i = 1; i < numVertices; i++) {
 		vec3.min(min, min, vertices[i]);
 		vec3.max(max, max, vertices[i]);
 	}
 	return [min, max];
 };
-
-export default measureBoundingBox;

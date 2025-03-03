@@ -1,3 +1,4 @@
+import type { Vec2 } from "../../maths/types";
 import { expect, test } from "@rbxts/jest-globals";
 
 import { create, fromCompactBinary, fromPoints, toCompactBinary } from "./index";

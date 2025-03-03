@@ -1,29 +1,10 @@
 /**
  * @module modeling/connectors
  */
-
-import create from "./create";
-import fromPointAxisNormal from "./fromPointAxisNormal";
-import toString from "./toString";
-import transform from "./transform";
-import transformationBetween from "./transformationBetween";
-
-export {
-	create,
-	// extends,
-	fromPointAxisNormal,
-	// normalize,
-	toString,
-	transform,
-	transformationBetween,
-};
-
-export default {
-	create,
-	// extends,
-	fromPointAxisNormal,
-	// normalize,
-	toString,
-	transform,
-	transformationBetween,
-};
+export { create } from "./create";
+// extends: require('./extends'),
+export { fromPointAxisNormal } from "./fromPointAxisNormal";
+// normalize: require('./normalize'),
+export { toString } from "./toString";
+export { transform } from "./transform";
+export { transformationBetween } from "./transformationBetween";

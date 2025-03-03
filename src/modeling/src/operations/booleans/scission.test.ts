@@ -1,7 +1,9 @@
+import type { Geom3 } from "../../geometries/types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import { geom3 } from "../../geometries";
-import { cube, torus } from "../../primitives";
+import { geom3 } from "../../geometries/index";
+import { measureArea, measureVolume } from "../../measurements/index";
+import { cube, torus } from "../../primitives/index";
 import { scission, union } from "./index";
 
 test("scission: scission of one or more geom3 objects produces expected geometry", () => {
@@ -42,6 +44,16 @@ test("scission: scission of complex geom3 produces expected geometry", () => {
 	//expect(() => geom3.validate(result1[0])).never.toThrow();
 	//t.notThrows.skip(() => geom3.validate(result1[1]));
 	//expect(() => geom3.validate(result1[1])).never.toThrow();
+	// DEVIATION: floating point differs?
+	//expect(measureArea(result1[0])).toBe(7720.0306508548);
+	expect(measureArea(result1[0])).toBe(7720.030650854796);
+	//expect(measureArea(result1[1])).toBe(3860.0153254273987);
+	expect(measureArea(result1[1])).toBe(3860.0153254273996);
+	//expect(measureVolume(result1[0])).toBe(18745.166004060953);
+	expect(measureVolume(result1[0])).toBe(18745.166004060986);
+	//expect(measureVolume(result1[1])).toBe(9372.583002030477);
+	expect(measureVolume(result1[1])).toBe(9372.583002030478);
+
 	const rc1 = geom3.toPolygons(result1[0]).size();
 	const rc2 = geom3.toPolygons(result1[1]).size();
 

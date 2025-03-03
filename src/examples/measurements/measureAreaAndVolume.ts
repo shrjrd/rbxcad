@@ -1,3 +1,5 @@
+import type { Path2 } from "../../modeling/src/geometries/types";
+
 /**
  * Measure Area and Volume
  * @category Manipulating Shapes
@@ -8,12 +10,10 @@
  * @licence MIT License
  */
 
-import rbxcad from "../../modeling/src";
-const { circle, sphere, cube, square, star } = rbxcad.primitives;
-const { translate, scale } = rbxcad.transforms;
-const { measureArea, measureVolume } = rbxcad.measurements;
-const { vectorText } = rbxcad.text;
-const { path2 } = rbxcad.geometries;
+import { measureArea, measureVolume } from "../../modeling/src/measurements";
+import { scale, translate } from "../../modeling/src/operations/transforms";
+import { circle, cube, sphere, square, star } from "../../modeling/src/primitives";
+import { vectorText } from "../../modeling/src/text";
 
 const getParameterDefinitions = () => [
 	{
@@ -28,12 +28,20 @@ const getParameterDefinitions = () => [
 ];
 
 const textPaths = (text: string, y: number) => {
-	const lineSegmentPointArrays = vectorText({ xOffset: -20, yOffset: -10, input: text });
-	let textSegments: Path2[] | Geom3[] = lineSegmentPointArrays.map((points) =>
-		path2.fromPoints({ closed: false }, points as Vec2[]),
-	);
+	const lineSegmentPointArrays = vectorText({ xOffset: -20, yOffset: -10 }, text);
+	//let textSegments: Path2[] | Geom3[] = lineSegmentPointArrays.map((points) =>
+	//	path2.fromPoints({ closed: false }, points),
+	//);
+	let textSegments: Path2[] = [];
+	for (const line of lineSegmentPointArrays) {
+		for (const char of line.chars) {
+			for (const path of char.paths) {
+				textSegments.push(path);
+			}
+		}
+	}
 	textSegments = scale([0.2, 0.2, 0.2], textSegments) as Path2[];
-	return translate([-25, y - 10, 0], textSegments);
+	return translate([-25, y - 10, 0], textSegments) as Path2[];
 };
 
 const getShape = (params: { shape: string; size: number; segments: number }) => {
@@ -62,11 +70,11 @@ const main = (params: { shape: string; size: number; segments: number }) => {
 	const shape = getShape(params);
 
 	const area = measureArea(shape) as number;
-	const areaText = textPaths("area: " + string.format("%.4f", area), -2 - params.size) as Geom3[];
+	const areaText = textPaths("area: " + string.format("%.4f", area), -2 - params.size);
 
 	const volume = measureVolume(shape) as number;
 	//const volumeText = textPaths("volume: " + volume.toFixed(4), -8 - params.size);
-	const volumeText = textPaths("volume: " + string.format("%.4f", volume), -8 - params.size) as Geom3[];
+	const volumeText = textPaths("volume: " + string.format("%.4f", volume), -8 - params.size);
 
 	return [shape, ...areaText, ...volumeText];
 };

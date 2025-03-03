@@ -1,3 +1,11 @@
+import type { Geom2, Slice } from "../../modeling/src/geometries/types";
+
+import { geom2 } from "../../modeling/src/geometries";
+import * as slice from "../../modeling/src/geometries/slice";
+import { mat4 } from "../../modeling/src/maths";
+import { extrudeFromSlices } from "../../modeling/src/operations/extrusions";
+import { circle } from "../../modeling/src/primitives";
+
 /**
  * Extrude From Slices
  * @category Creating Shapes
@@ -7,13 +15,6 @@
  * @authors Jeff Gay, Moissette Mark, Simon Clark
  * @licence MIT License
  */
-
-import rbxcad from "../../modeling/src";
-const { circle } = rbxcad.primitives;
-const { geom2 } = rbxcad.geometries;
-const { extrudeFromSlices, slice } = rbxcad.extrusions;
-const { mat4 } = rbxcad.maths;
-
 const main = () => {
 	// demonstrates manipulating the original base through translation and scale to build a 3D geometry
 	const jigglySquare = (height: number) => {
@@ -51,7 +52,7 @@ const main = () => {
 				[8.0, 8.0],
 			],
 		]);
-		squareWithHole = slice.fromSides(geom2.toSides(squareWithHole));
+		squareWithHole = slice.fromGeom2(squareWithHole); //slice.fromSides(geom2.toSides(squareWithHole));
 		return extrudeFromSlices(
 			{
 				numberOfSlices: 32,
@@ -76,7 +77,7 @@ const main = () => {
 				numberOfSlices: 6,
 				callback: (progress, count, base) => {
 					const newPolygon = circle({ radius: 2 + 5 * progress, segments: 4 + count * count });
-					let newSlice = slice.fromSides(geom2.toSides(newPolygon));
+					let newSlice = slice.fromGeom2(newPolygon); //slice.fromSides(geom2.toSides(newPolygon));
 					newSlice = slice.transform(
 						mat4.fromTranslation(mat4.create(), [0, 0, progress * height]),
 						newSlice,

@@ -1,14 +1,14 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import comparePolygonsAsPoints from "../../test/helpers/comparePolygonsAsPoints";
-import geom3 from "../geometries/geom3";
-import { geodesicSphere } from "./geodesicSphere";
+import { comparePolygonsAsPoints } from "../../test/helpers/index";
+import { geom3 } from "../geometries/index";
+import { measureArea, measureVolume } from "../measurements/index";
+import { geodesicSphere } from "./index";
 
 test("geodesicSphere (defaults)", () => {
 	const obs = geodesicSphere();
 	const pts = geom3.toPoints(obs);
-	//DEVIATION: this throws for some reason
-	//expect(() => geom3.validate(obs)).never.toThrow();
+	expect(() => geom3.validate(obs)).never.toThrow();
 	expect(pts.size()).toBe(20);
 });
 
@@ -16,7 +16,7 @@ test("geodesicSphere (options)", () => {
 	// test radius
 	let obs = geodesicSphere({ radius: 5 });
 	let pts = geom3.toPoints(obs);
-	const exp: Vec3[][] = [
+	const exp = [
 		[
 			[4.253254557317035, 0, 2.628654726407001],
 			[2.628654726407001, -4.253254557317035, 0],
@@ -120,6 +120,8 @@ test("geodesicSphere (options)", () => {
 	];
 
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(239.3635345818432);
+	expect(measureVolume(obs)).toBe(317.0188387650327);
 	expect(pts.size()).toBe(20);
 	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 
@@ -127,8 +129,9 @@ test("geodesicSphere (options)", () => {
 	obs = geodesicSphere({ radius: 5, frequency: 18 });
 	pts = geom3.toPoints(obs);
 
-	//t.notThrows.skip(() => geom3.validate(obs));
-	//expect(() => geom3.validate(obs)).never.toThrow();
+	//expect(() => geom3.validate(obs)).never.toThrow(); //t.notThrows.skip(() => geom3.validate(obs));
+	expect(measureArea(obs)).toBe(303.76605423529395);
+	expect(measureVolume(obs)).toBe(492.6739732379337);
 	expect(pts.size()).toBe(180);
 });
 
@@ -136,5 +139,7 @@ test("geodesicSphere (zero radius)", () => {
 	const obs = geodesicSphere({ radius: 0 });
 	const pts = geom3.toPoints(obs);
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(0);
+	expect(measureVolume(obs)).toBe(0);
 	expect(pts.size()).toBe(0);
 });

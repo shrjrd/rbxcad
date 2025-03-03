@@ -1,15 +1,16 @@
-import vec2 from "../../maths/vec2";
-import toPoints from "./toPoints";
+import type { Path2 } from "../types";
+import * as vec2 from "../../maths/vec2/index";
+import { toPoints } from "./toPoints";
 
 /**
  * Determine if the given paths are equal.
  * For closed paths, this includes equality under point order rotation.
- * @param {path2} a - the first path to compare
- * @param {path2} b - the second path to compare
+ * @param {Path2} a - the first path to compare
+ * @param {Path2} b - the second path to compare
  * @returns {Boolean}
  * @alias module:modeling/geometries/path2.equals
  */
-const equals = (a: Path2, b: Path2) => {
+export const equals = (a: Path2, b: Path2) => {
 	if (a.isClosed !== b.isClosed) {
 		return false;
 	}
@@ -17,17 +18,17 @@ const equals = (a: Path2, b: Path2) => {
 		return false;
 	}
 
-	const apoints = toPoints(a);
-	const bpoints = toPoints(b);
+	const aPoints = toPoints(a);
+	const bPoints = toPoints(b);
 
 	// closed paths might be equal under graph rotation
 	// so try comparison by rotating across all points
-	const length = apoints.size();
+	const length = aPoints.size();
 	let offset = 0;
 	do {
 		let unequal = false;
 		for (let i = 0; i < length; i++) {
-			if (!vec2.equals(apoints[i], bpoints[(i + offset) % length])) {
+			if (!vec2.equals(aPoints[i], bPoints[(i + offset) % length])) {
 				unequal = true;
 				break;
 			}
@@ -42,5 +43,3 @@ const equals = (a: Path2, b: Path2) => {
 	} while (++offset < length);
 	return false;
 };
-
-export default equals;

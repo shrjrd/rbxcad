@@ -1,6 +1,8 @@
+import type { Vec3 } from "../../maths/types";
+import type { Geom3 } from "../types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import { comparePolygons, compareVectors } from "../../../test/helpers/";
+import { comparePolygons, compareVectors } from "../../../test/helpers/index";
 import { create, fromPoints, invert } from "./index";
 
 test("invert: Creates a invert on an empty geom3", () => {
@@ -15,7 +17,7 @@ test("invert: Creates a invert on an empty geom3", () => {
 });
 
 test("invert: Creates a invert of a populated geom3", () => {
-	const points: Vec3[][] = [
+	const vertices: Vec3[][] = [
 		[
 			[0, 0, 0],
 			[1, 0, 0],
@@ -34,7 +36,7 @@ test("invert: Creates a invert of a populated geom3", () => {
 		],
 		transforms: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
 	};
-	const geometry = fromPoints(points);
+	const geometry = fromPoints(vertices);
 	const another = invert(geometry);
 	expect(another).never.toBe(geometry);
 	expect(comparePolygons(another.polygons[0], expected.polygons[0])).toBe(true);

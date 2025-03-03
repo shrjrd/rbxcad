@@ -1,15 +1,16 @@
-import Node from "./Node";
-import PolygonTreeNode from "./PolygonTreeNode";
+import type { Poly3 } from "../../../geometries/types";
+import { Node } from "./Node";
+import { PolygonTreeNode } from "./PolygonTreeNode";
 
 // # class Tree
 // This is the root of a BSP tree.
 // This separate class for the root of the tree in order to hold the PolygonTreeNode root.
 // The actual tree is kept in this.rootnode
-class Tree {
+export class Tree {
 	polygonTree: PolygonTreeNode;
 	rootnode: Node;
 	constructor(polygons: Poly3[]) {
-		this.polygonTree = new PolygonTreeNode();
+		this.polygonTree = new PolygonTreeNode(undefined, undefined);
 		this.rootnode = new Node(undefined!);
 		if (polygons) this.addPolygons(polygons);
 	}
@@ -21,8 +22,8 @@ class Tree {
 
 	// Remove all polygons in this BSP tree that are inside the other BSP tree
 	// `tree`.
-	clipTo(tree: Tree, alsoRemovecoplanarFront = false) {
-		this.rootnode.clipTo(tree, alsoRemovecoplanarFront);
+	clipTo(tree: Tree, alsoRemoveCoplanarFront = false) {
+		this.rootnode.clipTo(tree, alsoRemoveCoplanarFront);
 	}
 
 	allPolygons() {
@@ -32,11 +33,11 @@ class Tree {
 	}
 
 	addPolygons(polygons: Poly3[]) {
-		const polygontreenodes = new Array(polygons.size()) as PolygonTreeNode[];
+		const polygonTreeNodes = new Array<PolygonTreeNode>(polygons.size());
 		for (let i = 0; i < polygons.size(); i++) {
-			polygontreenodes[i] = this.polygonTree.addChild(polygons[i]);
+			polygonTreeNodes[i] = this.polygonTree.addChild(polygons[i]);
 		}
-		this.rootnode.addPolygonTreeNodes(polygontreenodes);
+		this.rootnode.addPolygonTreeNodes(polygonTreeNodes);
 	}
 
 	clear() {
@@ -44,9 +45,6 @@ class Tree {
 	}
 
 	toString() {
-		const result = "Tree: " + this.polygonTree.toString();
-		return result;
+		return "Tree: " + this.polygonTree.toString();
 	}
 }
-
-export default Tree;

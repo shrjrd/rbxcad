@@ -1,16 +1,18 @@
-import vec4 from "../../maths/vec4";
+import type { Poly3 } from "./type";
+import type { Vec4, Vec3 } from "../../maths/types";
+import * as vec4 from "../../maths/vec4/index";
 
-const cache = new WeakMap();
+const cache = new WeakMap<Poly3, Vec4>();
 
 /**
  * Measure the bounding sphere of the given polygon.
- * @param {poly3} polygon - the polygon to measure
- * @returns {vec4} the computed bounding sphere; center point (3D) and radius
+ * @param {Poly3} polygon - the polygon to measure
+ * @returns {Vec4} the computed bounding sphere; center vertex (3D) and radius
  * @alias module:modeling/geometries/poly3.measureBoundingSphere
  */
-const measureBoundingSphere = (polygon: Poly3) => {
+export const measureBoundingSphere = (polygon: Poly3) => {
 	const boundingSphere = cache.get(polygon);
-	if (boundingSphere) return boundingSphere as Vec4;
+	if (boundingSphere) return boundingSphere;
 
 	const vertices = polygon.vertices;
 	const out = vec4.create();
@@ -31,7 +33,7 @@ const measureBoundingSphere = (polygon: Poly3) => {
 	let maxy = minx;
 	let maxz = minx;
 
-	vertices.forEach((v) => {
+	vertices.forEach((v: Vec3) => {
 		if (minx[0] > v[0]) minx = v;
 		if (miny[1] > v[1]) miny = v;
 		if (minz[2] > v[2]) minz = v;
@@ -52,5 +54,3 @@ const measureBoundingSphere = (polygon: Poly3) => {
 
 	return out;
 };
-
-export default measureBoundingSphere;

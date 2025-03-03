@@ -1,135 +1,139 @@
-import { Array, Error, Object } from "@rbxts/luau-polyfill";
+import type { Path2 } from "../types";
+import type { Vec2 } from "../../maths/types";
+import { Array as JsArray, Object } from "@rbxts/luau-polyfill";
 
 import { TAU } from "../../maths/constants";
-import vec2 from "../../maths/vec2";
-import fromPoints from "./fromPoints";
-import toPoints from "./toPoints";
+import * as vec2 from "../../maths/vec2/index";
+import { fromPoints } from "./fromPoints";
+import { toPoints } from "./toPoints";
 
-type AppendArcOptions = {
-	endpoint: Vec2;
-	radius?: Vec2;
-	xaxisrotation?: number;
-	clockwise?: boolean;
-	large?: boolean;
-	segments?: number;
-};
 /**
  * Append a series of points to the given geometry that represent an arc.
  * This implementation follows the SVG specifications.
  * @see http://www.w3.org/TR/SVG/paths.html#PathDataEllipticalArcCommands
- * @param {Object} options - options for construction
- * @param {vec2} options.endpoint - end point of arc (REQUIRED)
- * @param {vec2} [options.radius=[0,0]] - radius of arc (X and Y)
- * @param {Number} [options.xaxisrotation=0] - rotation (RADIANS) of the X axis of the arc with respect to the X axis of the coordinate system
- * @param {Boolean} [options.clockwise=false] - draw an arc clockwise with respect to the center point
- * @param {Boolean} [options.large=false] - draw an arc longer than TAU / 2 radians
- * @param {Number} [options.segments=16] - number of segments per full rotation
- * @param {path2} geometry - the path of which to append the arc
- * @returns {path2} a new path with the appended points
+ * @param {object} options - options for construction
+ * @param {Vec2} options.endpoint - end point of arc (REQUIRED)
+ * @param {Vec2} [options.radius=[0,0]] - radius of arc (X and Y)
+ * @param {number} [options.xaxisRotation=0] - rotation (RADIANS) of the X axis of the arc with respect to the X axis of the coordinate system
+ * @param {boolean} [options.clockwise=false] - draw an arc clockwise with respect to the center point
+ * @param {boolean} [options.large=false] - draw an arc longer than TAU / 2 radians
+ * @param {number} [options.segments=16] - number of segments per full rotation
+ * @param {Path2} geometry - the path of which to append the arc
+ * @returns {Path2} a new path with the appended points
  * @alias module:modeling/geometries/path2.appendArc
  *
  * @example
- * let p1 = path2.fromPoints({}, [[27.5,-22.96875]]);
- * p1 = path2.appendPoints([[27.5,-3.28125]], p1);
- * p1 = path2.appendArc({endpoint: [12.5, -22.96875], radius: [15, -19.6875]}, p1);
+ * let myShape = fromPoints({}, [[27.5,-22.96875]]);
+ * myShape = appendPoints([[27.5,-3.28125]], myShape);
+ * myShape = appendArc({endpoint: [12.5, -22.96875], radius: [15, -19.6875]}, myShape);
  */
-const appendArc = (options: AppendArcOptions, geometry: Path2) => {
+export const appendArc = (
+	options: {
+		endpoint: Vec2;
+		radius?: Vec2;
+		xaxisRotation?: number;
+		clockwise?: boolean;
+		large?: boolean;
+		segments?: number;
+	},
+	geometry: Path2,
+) => {
 	const defaults = {
 		radius: [0, 0], // X and Y radius
-		xaxisrotation: 0,
+		xaxisRotation: 0,
 		clockwise: false,
 		large: false,
 		segments: 16,
 	};
 	// eslint-disable-next-line prefer-const
-	let { endpoint, radius, xaxisrotation, clockwise, large, segments } = Object.assign({}, defaults, options);
+	let { endpoint, radius, xaxisRotation, clockwise, large, segments } = Object.assign({}, defaults, options);
 
 	// validate the given options
-	if (!Array.isArray(endpoint)) throw new Error("endpoint must be an array of X and Y values");
-	if (endpoint.size() < 2) throw new Error("endpoint must contain X and Y values");
+	if (!JsArray.isArray(endpoint)) throw "endpoint must be an array of X and Y values";
+	if (endpoint.size() < 2) throw "endpoint must contain X and Y values";
 	endpoint = vec2.clone(endpoint);
 
-	if (!Array.isArray(radius)) throw new Error("radius must be an array of X and Y values");
-	if (radius.size() < 2) throw new Error("radius must contain X and Y values");
+	if (!JsArray.isArray(radius)) throw "radius must be an array of X and Y values";
+	if (radius.size() < 2) throw "radius must contain X and Y values";
 
-	if (segments < 4) throw new Error("segments must be four or more");
+	if (segments < 4) throw "segments must be four or more";
 
 	const decimals = 100000;
 
 	// validate the given geometry
 	if (geometry.isClosed) {
-		throw new Error("the given path cannot be closed");
+		throw "the given path cannot be closed";
 	}
 
 	const points = toPoints(geometry);
 	if (points.size() < 1) {
-		throw new Error("the given path must contain one or more points (as the starting point for the arc)");
+		throw "the given path must contain one or more points (as the starting point for the arc)";
 	}
 
-	let xradius = radius[0];
-	let yradius = radius[1];
+	let xRadius = radius[0];
+	let yRadius = radius[1];
 	const startpoint = points[points.size() - 1];
 
 	// round to precision in order to have determinate calculations
-	xradius = math.round(xradius * decimals) / decimals;
-	yradius = math.round(yradius * decimals) / decimals;
+	xRadius = math.round(xRadius * decimals) / decimals;
+	yRadius = math.round(yRadius * decimals) / decimals;
 	endpoint = vec2.fromValues(
 		math.round(endpoint[0] * decimals) / decimals,
 		math.round(endpoint[1] * decimals) / decimals,
 	);
 
 	const sweepFlag = !clockwise;
-	let newpoints = [];
-	if (xradius === 0 || yradius === 0) {
+	let newPoints = [];
+	if (xRadius === 0 || yRadius === 0) {
 		// http://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes:
 		// If rx = 0 or ry = 0, then treat this as a straight line from (x1, y1) to (x2, y2) and stop
-		newpoints.push(endpoint);
+		newPoints.push(endpoint);
 	} else {
-		xradius = math.abs(xradius);
-		yradius = math.abs(yradius);
+		xRadius = math.abs(xRadius);
+		yRadius = math.abs(yRadius);
 
 		// see http://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes :
-		const phi = xaxisrotation;
-		const cosphi = math.cos(phi);
-		const sinphi = math.sin(phi);
-		const minushalfdistance = vec2.subtract(vec2.create(), startpoint, endpoint);
-		vec2.scale(minushalfdistance, minushalfdistance, 0.5);
+		const phi = xaxisRotation;
+		const cosPhi = math.cos(phi);
+		const sinPhi = math.sin(phi);
+		const minusHalfDistance = vec2.subtract(vec2.create(), startpoint, endpoint);
+		vec2.scale(minusHalfDistance, minusHalfDistance, 0.5);
 		// F.6.5.1:
 		// round to precision in order to have determinate calculations
-		const x = math.round((cosphi * minushalfdistance[0] + sinphi * minushalfdistance[1]) * decimals) / decimals;
-		const y = math.round((-sinphi * minushalfdistance[0] + cosphi * minushalfdistance[1]) * decimals) / decimals;
+		const x = math.round((cosPhi * minusHalfDistance[0] + sinPhi * minusHalfDistance[1]) * decimals) / decimals;
+		const y = math.round((-sinPhi * minusHalfDistance[0] + cosPhi * minusHalfDistance[1]) * decimals) / decimals;
 		const startTranslated = vec2.fromValues(x, y);
 		// F.6.6.2:
-		const biglambda =
-			(startTranslated[0] * startTranslated[0]) / (xradius * xradius) +
-			(startTranslated[1] * startTranslated[1]) / (yradius * yradius);
-		if (biglambda > 1.0) {
+		const bigLambda =
+			(startTranslated[0] * startTranslated[0]) / (xRadius * xRadius) +
+			(startTranslated[1] * startTranslated[1]) / (yRadius * yRadius);
+		if (bigLambda > 1.0) {
 			// F.6.6.3:
-			const sqrtbiglambda = math.sqrt(biglambda);
-			xradius *= sqrtbiglambda;
-			yradius *= sqrtbiglambda;
+			const sqrtBigLambda = math.sqrt(bigLambda);
+			xRadius *= sqrtBigLambda;
+			yRadius *= sqrtBigLambda;
 			// round to precision in order to have determinate calculations
-			xradius = math.round(xradius * decimals) / decimals;
-			yradius = math.round(yradius * decimals) / decimals;
+			xRadius = math.round(xRadius * decimals) / decimals;
+			yRadius = math.round(yRadius * decimals) / decimals;
 		}
 		// F.6.5.2:
 		let multiplier1 = math.sqrt(
-			(xradius * xradius * yradius * yradius -
-				xradius * xradius * startTranslated[1] * startTranslated[1] -
-				yradius * yradius * startTranslated[0] * startTranslated[0]) /
-				(xradius * xradius * startTranslated[1] * startTranslated[1] +
-					yradius * yradius * startTranslated[0] * startTranslated[0]),
+			(xRadius * xRadius * yRadius * yRadius -
+				xRadius * xRadius * startTranslated[1] * startTranslated[1] -
+				yRadius * yRadius * startTranslated[0] * startTranslated[0]) /
+				(xRadius * xRadius * startTranslated[1] * startTranslated[1] +
+					yRadius * yRadius * startTranslated[0] * startTranslated[0]),
 		);
 		if (sweepFlag === large) multiplier1 = -multiplier1;
 		const centerTranslated = vec2.fromValues(
-			(xradius * startTranslated[1]) / yradius,
-			(-yradius * startTranslated[0]) / xradius,
+			(xRadius * startTranslated[1]) / yRadius,
+			(-yRadius * startTranslated[0]) / xRadius,
 		);
 		vec2.scale(centerTranslated, centerTranslated, multiplier1);
 		// F.6.5.3:
 		let center = vec2.fromValues(
-			cosphi * centerTranslated[0] - sinphi * centerTranslated[1],
-			sinphi * centerTranslated[0] + cosphi * centerTranslated[1],
+			cosPhi * centerTranslated[0] - sinPhi * centerTranslated[1],
+			sinPhi * centerTranslated[0] + cosPhi * centerTranslated[1],
 		);
 		center = vec2.add(
 			center,
@@ -139,12 +143,12 @@ const appendArc = (options: AppendArcOptions, geometry: Path2) => {
 
 		// F.6.5.5:
 		const vector1 = vec2.fromValues(
-			(startTranslated[0] - centerTranslated[0]) / xradius,
-			(startTranslated[1] - centerTranslated[1]) / yradius,
+			(startTranslated[0] - centerTranslated[0]) / xRadius,
+			(startTranslated[1] - centerTranslated[1]) / yRadius,
 		);
 		const vector2 = vec2.fromValues(
-			(-startTranslated[0] - centerTranslated[0]) / xradius,
-			(-startTranslated[1] - centerTranslated[1]) / yradius,
+			(-startTranslated[0] - centerTranslated[0]) / xRadius,
+			(-startTranslated[1] - centerTranslated[1]) / yRadius,
 		);
 		const theta1 = vec2.angleRadians(vector1);
 		const theta2 = vec2.angleRadians(vector2);
@@ -157,26 +161,25 @@ const appendArc = (options: AppendArcOptions, geometry: Path2) => {
 		}
 
 		// Ok, we have the center point and angle range (from theta1, deltatheta radians) so we can create the ellipse
-		let numsteps = math.ceil((math.abs(deltatheta) / TAU) * segments) + 1;
-		if (numsteps < 1) numsteps = 1;
-		for (let step = 1; step < numsteps; step++) {
-			const theta = theta1 + (step / numsteps) * deltatheta;
-			const costheta = math.cos(theta);
-			const sintheta = math.sin(theta);
+		let numSteps = math.ceil((math.abs(deltatheta) / TAU) * segments) + 1;
+		if (numSteps < 1) numSteps = 1;
+		for (let step = 1; step < numSteps; step++) {
+			const theta = theta1 + (step / numSteps) * deltatheta;
+			const cosTheta = math.cos(theta);
+			const sinTheta = math.sin(theta);
 			// F.6.3.1:
 			const point = vec2.fromValues(
-				cosphi * xradius * costheta - sinphi * yradius * sintheta,
-				sinphi * xradius * costheta + cosphi * yradius * sintheta,
+				cosPhi * xRadius * cosTheta - sinPhi * yRadius * sinTheta,
+				sinPhi * xRadius * cosTheta + cosPhi * yRadius * sinTheta,
 			);
 			vec2.add(point, point, center);
-			newpoints.push(point);
+			newPoints.push(point);
 		}
 		// ensure end point is precisely what user gave as parameter
-		if (numsteps) newpoints.push(options.endpoint);
+		// DEVIATION: 0, NaN, and "" are falsy in TS.
+		if (numSteps > 0) newPoints.push(options.endpoint);
 	}
-	newpoints = Array.concat(points, newpoints); //points.concat(newpoints);
-	const result = fromPoints({}, newpoints);
+	newPoints = JsArray.concat(points, newPoints);
+	const result = fromPoints({}, newPoints);
 	return result;
 };
-
-export default appendArc;

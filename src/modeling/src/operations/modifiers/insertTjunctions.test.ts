@@ -1,9 +1,9 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import { comparePolygonLists } from "../../../test/helpers";
-import { geom3, poly3 } from "../../geometries";
-import { cuboid } from "../../primitives";
-import insertTjunctions from "./insertTjunctions";
+import { comparePolygonLists } from "../../../test/helpers/index";
+import { geom3, poly3 } from "../../geometries/index";
+import { cuboid } from "../../primitives/index";
+import { insertTjunctions } from "./insertTjunctions";
 
 test("insertTjunctions: insertTjunctions produces expected polygons", () => {
 	const geometry1 = geom3.create();

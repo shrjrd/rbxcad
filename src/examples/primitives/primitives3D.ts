@@ -1,15 +1,5 @@
-/**
- * 3D Primitives Demonstration
- * @category Creating Shapes
- * @skillLevel 1
- * @description Demonstrating the basics of a variety of 3D primitives
- * @tags cube, cuboid, sphere, ellipsoid, cylinder, torus, shape, 3d
- * @authors Rene K. Mueller, Moissette Mark, Simon Clark
- * @licence MIT License
- */
-
-import rbxcad from "../../modeling/src";
-const {
+import { translate } from "../../modeling/src/operations/transforms";
+import {
 	cube,
 	cuboid,
 	cylinder,
@@ -20,9 +10,17 @@ const {
 	roundedCylinder,
 	sphere,
 	torus,
-} = rbxcad.primitives;
-const { translate } = rbxcad.transforms;
+} from "../../modeling/src/primitives";
 
+/**
+ * 3D Primitives Demonstration
+ * @category Creating Shapes
+ * @skillLevel 1
+ * @description Demonstrating the basics of a variety of 3D primitives
+ * @tags cube, cuboid, sphere, ellipsoid, cylinder, torus, shape, 3d
+ * @authors Rene K. Mueller, Moissette Mark, Simon Clark
+ * @licence MIT License
+ */
 const main = () => {
 	const allPrimitives = [
 		cube(),

@@ -1,7 +1,8 @@
+import type { BoundingBox } from "./types";
 import { expect, test } from "@rbxts/jest-globals";
 
 import { EPS } from "../maths/constants";
-import calculateEpsilonFromBounds from "./calculateEpsilonFromBounds";
+import { calculateEpsilonFromBounds } from "./calculateEpsilonFromBounds";
 
 test("calculateEpsilonFromBounds: 2 dimension", () => {
 	const bounds = [

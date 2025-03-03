@@ -1,27 +1,30 @@
-import { Array as JsArray, Error, Object } from "@rbxts/luau-polyfill";
+import type { Vec3 } from "../maths/types";
 
-import geom3 from "../geometries/geom3";
-import mat4 from "../maths/mat4";
-import vec3 from "../maths/vec3";
-import { isGTE } from "./commonChecks";
-import polyhedron from "./polyhedron";
-
-type GeodesicSphereOptions = {
+export interface GeodesicSphereOptions {
 	radius?: number;
 	frequency?: number;
-};
+}
+
+import { Array as JsArray, Object } from "@rbxts/luau-polyfill";
+
+import * as geom3 from "../geometries/geom3/index";
+import * as mat4 from "../maths/mat4/index";
+import * as vec3 from "../maths/vec3/index";
+import { isGTE } from "./commonChecks";
+import { polyhedron } from "./polyhedron";
+
 /**
  * Construct a geodesic sphere based on icosahedron symmetry.
- * @param {Object} [options] - options for construction
- * @param {Number} [options.radius=1] - target radius of sphere
- * @param {Number} [options.frequency=6] - subdivision frequency per face, multiples of 6
- * @returns {geom3} new 3D geometry
+ * @param {object} [options] - options for construction
+ * @param {number} [options.radius=1] - target radius of sphere
+ * @param {number} [options.frequency=6] - subdivision frequency per face, multiples of 6
+ * @returns {Geom3} new 3D geometry
  * @alias module:modeling/primitives.geodesicSphere
  *
  * @example
  * let myshape = geodesicSphere({radius: 15, frequency: 18})
  */
-const geodesicSphere = (options?: GeodesicSphereOptions) => {
+export const geodesicSphere = (options?: GeodesicSphereOptions) => {
 	const defaults = {
 		radius: 1,
 		frequency: 6,
@@ -29,8 +32,8 @@ const geodesicSphere = (options?: GeodesicSphereOptions) => {
 	// eslint-disable-next-line prefer-const
 	let { radius, frequency } = Object.assign({}, defaults, options);
 
-	if (!isGTE(radius, 0)) throw new Error("radius must be positive");
-	if (!isGTE(frequency, 6)) throw new Error("frequency must be six or more");
+	if (!isGTE(radius, 0)) throw "radius must be positive";
+	if (!isGTE(frequency, 6)) throw "frequency must be six or more";
 
 	// if radius is zero return empty geometry
 	if (radius === 0) return geom3.create();
@@ -38,7 +41,7 @@ const geodesicSphere = (options?: GeodesicSphereOptions) => {
 	// adjust the frequency to base 6
 	frequency = math.floor(frequency / 6);
 
-	const ci: Vec3[] = [
+	const ci = [
 		// hard-coded data of icosahedron (20 faces, all triangles)
 		[0.850651, 0.0, -0.525731],
 		[0.850651, -0.0, 0.525731],
@@ -54,7 +57,7 @@ const geodesicSphere = (options?: GeodesicSphereOptions) => {
 		[-0.525731, 0.850651, 0.0],
 	];
 
-	const ti: Vec3[] = [
+	const ti = [
 		[0, 9, 1],
 		[1, 10, 0],
 		[6, 7, 0],
@@ -77,12 +80,12 @@ const geodesicSphere = (options?: GeodesicSphereOptions) => {
 		[8, 9, 7],
 	];
 
-	const geodesicSubDivide = (p: Vec3[], frequency: number, offset: number) => {
+	const geodesicSubDivide = (p: number[][], frequency: number, offset: number) => {
 		const p1 = p[0];
 		const p2 = p[1];
 		const p3 = p[2];
 		let n = offset;
-		const c = [];
+		const c: Vec3[] = [];
 		const f = [];
 
 		//           p3
@@ -100,7 +103,8 @@ const geodesicSphere = (options?: GeodesicSphereOptions) => {
 				const t1 = (i + 1) / frequency;
 				const s0 = j / (frequency - i);
 				const s1 = (j + 1) / (frequency - i);
-				const s2 = frequency - i - 1 ? j / (frequency - i - 1) : 1;
+				// DEVIATION: 0, NaN, and "" are falsy in TS.
+				const s2 = frequency - i - 1 !== 0 ? j / (frequency - i - 1) : 1;
 				const q = [];
 
 				q[0] = mix3(mix3(p1, p2, s0), p3, t0);
@@ -109,7 +113,7 @@ const geodesicSphere = (options?: GeodesicSphereOptions) => {
 
 				// -- normalize
 				for (let k = 0; k < 3; k++) {
-					const r = vec3.length(q[k] as Vec3);
+					const r = vec3.length(q[k]);
 					for (let l = 0; l < 3; l++) {
 						q[k][l] /= r;
 					}
@@ -119,14 +123,15 @@ const geodesicSphere = (options?: GeodesicSphereOptions) => {
 				n += 3;
 
 				if (j < frequency - i - 1) {
-					const s3 = frequency - i - 1 ? (j + 1) / (frequency - i - 1) : 1;
+					// DEVIATION: 0, NaN, and "" are falsy in TS.
+					const s3 = frequency - i - 1 !== 0 ? (j + 1) / (frequency - i - 1) : 1;
 					q[0] = mix3(mix3(p1, p2, s1), p3, t0);
 					q[1] = mix3(mix3(p1, p2, s3), p3, t1);
 					q[2] = mix3(mix3(p1, p2, s2), p3, t1);
 
 					// -- normalize
 					for (let k = 0; k < 3; k++) {
-						const r = vec3.length(q[k] as Vec3);
+						const r = vec3.length(q[k]);
 						for (let l = 0; l < 3; l++) {
 							q[k][l] /= r;
 						}
@@ -137,33 +142,35 @@ const geodesicSphere = (options?: GeodesicSphereOptions) => {
 				}
 			}
 		}
-		return { points: c, triangles: f, offset: n };
+		return { vertices: c, triangles: f, offset: n };
 	};
 
-	const mix3 = (a: Vec3, b: Vec3, f: number) => {
+	const mix3 = (a: number[], b: number[], f: number) => {
 		const _f = 1 - f;
 		const c = [];
 		for (let i = 0; i < 3; i++) {
-			c[i] = a[i] * _f + b[i] * f;
+			//c[i] = a[i] * _f + b[i] * f;
+			let v = a[i] * _f + b[i] * f;
+			// DEVIATION: to fix float precision resulting in -0
+			// eslint-disable-next-line
+			if (v === -0) v = 0;
+			c[i] = v;
 		}
 		return c as Vec3;
 	};
 
-	let points: Vec3[] = [];
+	let vertices: Vec3[] = [];
 	let faces: number[][] = [];
 	let offset = 0;
 
 	for (let i = 0; i < ti.size(); i++) {
 		const g = geodesicSubDivide([ci[ti[i][0]], ci[ti[i][1]], ci[ti[i][2]]], frequency, offset);
-		points = JsArray.concat(points, g.points); //points.concat(g.points);
+		vertices = JsArray.concat(vertices, g.vertices); //vertices.concat(g.vertices);
 		faces = JsArray.concat(faces, g.triangles); //faces.concat(g.triangles);
 		offset = g.offset;
 	}
 
-	let geometry = polyhedron({ points: points, faces: faces, orientation: "inward" });
+	let geometry = polyhedron({ points: vertices, faces: faces, orientation: "inward" });
 	if (radius !== 1) geometry = geom3.transform(mat4.fromScaling(mat4.create(), [radius, radius, radius]), geometry);
 	return geometry;
 };
-
-export default geodesicSphere;
-export { geodesicSphere };

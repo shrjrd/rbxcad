@@ -1,8 +1,10 @@
+import type { Geometry, Geom2, Geom3, Path2 } from "../../geometries/types";
+import type { Vec3 } from "../../maths/types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import { comparePoints, comparePolygonsAsPoints } from "../../../test/helpers";
-import { geom2, geom3, path2 } from "../../geometries";
-import { measureArea } from "../../measurements";
+import { comparePoints, comparePolygonsAsPoints } from "../../../test/helpers/index";
+import { geom2, geom3, path2 } from "../../geometries/index";
+import { measureArea, measureVolume } from "../../measurements/index";
 import { mirror, mirrorX, mirrorY, mirrorZ } from "./index";
 
 test("mirror: mirroring of path2 about X/Y produces expected changes to points", () => {
@@ -16,7 +18,7 @@ test("mirror: mirroring of path2 about X/Y produces expected changes to points",
 	// mirror about X
 	let mirrored = mirror({ normal: [1, 0, 0] }, geometry) as Path2;
 	let obs = path2.toPoints(mirrored);
-	let exp: Vec2[] = [
+	let exp = [
 		[5, 5],
 		[-5, 5],
 		[5, -5],
@@ -49,19 +51,21 @@ test("mirror: mirroring of path2 about X/Y produces expected changes to points",
 });
 
 test("mirror: mirroring of geom2 about X/Y produces expected changes to points", () => {
-	const geometry = geom2.fromPoints([
-		[-5, -5],
-		[0, 5],
-		[10, -5],
+	const geometry = geom2.create([
+		[
+			[-5, -5],
+			[0, 5],
+			[10, -5],
+		],
 	]);
 
 	// mirror about X
 	let mirrored = mirror({ normal: [1, 0, 0] }, geometry) as Geom2;
 	let obs = geom2.toPoints(mirrored);
-	let exp: Vec2[] = [
+	let exp = [
+		[-10, -5],
 		[0, 5],
 		[5, -5],
-		[-10, -5],
 	];
 	expect(() => geom2.validate(mirrored)).never.toThrow();
 	expect(measureArea(mirrored)).toBe(measureArea(geometry));
@@ -77,9 +81,9 @@ test("mirror: mirroring of geom2 about X/Y produces expected changes to points",
 	mirrored = mirror({ normal: [0, 1, 0] }, geometry) as Geom2;
 	obs = geom2.toPoints(mirrored);
 	exp = [
+		[10, 5],
 		[0, -5],
 		[-5, 5],
-		[10, 5],
 	];
 	expect(() => geom2.validate(mirrored)).never.toThrow();
 	expect(measureArea(mirrored)).toBe(measureArea(geometry));
@@ -136,7 +140,7 @@ test("mirror: mirroring of geom3 about X/Y/Z produces expected changes to polygo
 	// mirror about X
 	let mirrored = mirror({ normal: [1, 0, 0] }, geometry) as Geom3;
 	let obs = geom3.toPoints(mirrored);
-	let exp: Vec3[][] = [
+	let exp = [
 		[
 			[2, 13, -12],
 			[2, 13, 18],
@@ -175,12 +179,14 @@ test("mirror: mirroring of geom3 about X/Y/Z produces expected changes to polygo
 		],
 	];
 	expect(() => geom3.validate(mirrored)).never.toThrow();
+	expect(measureVolume(mirrored)).toBe(measureVolume(geometry));
 	expect(comparePolygonsAsPoints(obs, exp)).toBe(true);
 	expect(obs).toEqual(exp);
 
 	mirrored = mirrorX(geometry) as Geom3;
 	obs = geom3.toPoints(mirrored);
 	expect(() => geom3.validate(mirrored)).never.toThrow();
+	expect(measureVolume(mirrored)).toBe(measureVolume(geometry));
 	expect(comparePolygonsAsPoints(obs, exp)).toBe(true);
 
 	// mirror about Y
@@ -225,11 +231,13 @@ test("mirror: mirroring of geom3 about X/Y/Z produces expected changes to polygo
 		],
 	];
 	expect(() => geom3.validate(mirrored)).never.toThrow();
+	expect(measureVolume(mirrored)).toBe(measureVolume(geometry));
 	expect(comparePolygonsAsPoints(obs, exp)).toBe(true);
 
 	mirrored = mirrorY(geometry) as Geom3;
 	obs = geom3.toPoints(mirrored);
 	expect(() => geom3.validate(mirrored)).never.toThrow();
+	expect(measureVolume(mirrored)).toBe(measureVolume(geometry));
 	expect(comparePolygonsAsPoints(obs, exp)).toBe(true);
 
 	// mirror about Z
@@ -274,33 +282,37 @@ test("mirror: mirroring of geom3 about X/Y/Z produces expected changes to polygo
 		],
 	];
 	expect(() => geom3.validate(mirrored)).never.toThrow();
+	expect(measureVolume(mirrored)).toBe(measureVolume(geometry));
 	expect(comparePolygonsAsPoints(obs, exp)).toBe(true);
 
 	mirrored = mirrorZ(geometry) as Geom3;
 	obs = geom3.toPoints(mirrored);
 	expect(() => geom3.validate(mirrored)).never.toThrow();
+	expect(measureVolume(mirrored)).toBe(measureVolume(geometry));
 	expect(comparePolygonsAsPoints(obs, exp)).toBe(true);
 });
 
 test("mirror: mirroring of multiple objects produces an array of mirrored objects", () => {
-	const junk = "hello";
+	const junk = "hello" as unknown as Geometry;
 	const geometry1 = path2.fromPoints({}, [
 		[-5, 5],
 		[5, 5],
 		[-5, -5],
 		[10, -5],
 	]);
-	const geometry2 = geom2.fromPoints([
-		[-5, -5],
-		[0, 5],
-		[10, -5],
+	const geometry2 = geom2.create([
+		[
+			[-5, -5],
+			[0, 5],
+			[10, -5],
+		],
 	]);
 
-	const mirrored = mirror({ normal: [0, 1, 0] }, junk as unknown as object, geometry1, geometry2) as object[];
+	const mirrored = mirror({ normal: [0, 1, 0] }, junk, geometry1, geometry2) as Geometry[];
 	expect(mirrored[0]).toBe(junk);
 
 	let obs = path2.toPoints(mirrored[1] as Path2);
-	let exp: Vec2[] = [
+	let exp = [
 		[-5, -5],
 		[5, -5],
 		[-5, 5],
@@ -311,9 +323,9 @@ test("mirror: mirroring of multiple objects produces an array of mirrored object
 
 	obs = geom2.toPoints(mirrored[2] as Geom2);
 	exp = [
+		[10, 5],
 		[0, -5],
 		[-5, 5],
-		[10, 5],
 	];
 	expect(() => geom2.validate(mirrored[2] as Geom2)).never.toThrow();
 	expect(comparePoints(obs, exp)).toBe(true);

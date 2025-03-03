@@ -1,15 +1,16 @@
-import mat4 from "../../maths/mat4";
-import poly3 from "../poly3";
+import type { Geom3 } from "../types";
+import * as mat4 from "../../maths/mat4/index";
+import * as poly3 from "../poly3/index";
 
-/*
+/**
  * Apply the transforms of the given geometry.
  * NOTE: This function must be called BEFORE exposing any data. See toPolygons.
- * @param {geom3} geometry - the geometry to transform
- * @returns {geom3} the given geometry
+ * @param {Geom3} geometry - the geometry to transform
+ * @returns {Geom3} the given geometry
  * @example
  * geometry = applyTransforms(geometry)
  */
-const applyTransforms = (geometry: Geom3) => {
+export const applyTransforms = (geometry: Geom3) => {
 	if (mat4.isIdentity(geometry.transforms)) return geometry;
 
 	// apply transforms to each polygon
@@ -18,5 +19,3 @@ const applyTransforms = (geometry: Geom3) => {
 	geometry.transforms = mat4.create();
 	return geometry;
 };
-
-export default applyTransforms;

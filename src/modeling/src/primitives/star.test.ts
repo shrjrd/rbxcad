@@ -1,13 +1,14 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import comparePoints from "../../test/helpers/comparePoints";
-import geom2 from "../geometries/geom2";
+import { comparePoints } from "../../test/helpers/index";
+import { geom2 } from "../geometries/index";
+import { measureArea } from "../measurements/index";
 import { star } from "./index";
 
 test("star (defaults)", () => {
 	const geometry = star();
 	const pts = geom2.toPoints(geometry);
-	const exp: Vec2[] = [
+	const exp = [
 		[1, 0],
 		[0.30901699437494745, 0.2245139882897927],
 		[0.30901699437494745, 0.9510565162951535],
@@ -21,7 +22,8 @@ test("star (defaults)", () => {
 	];
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(pts.size()).toEqual(10);
+	expect(measureArea(geometry)).toBe(1.1225699414489634);
+	expect(pts.size()).toBe(10);
 	expect(comparePoints(pts, exp)).toBe(true);
 });
 
@@ -29,7 +31,7 @@ test("star (options)", () => {
 	// test center
 	let geometry = star({ outerRadius: 5, center: [5, 5] });
 	let pts = geom2.toPoints(geometry);
-	let exp: Vec2[] = [
+	let exp = [
 		[10, 5],
 		[6.545084971874737, 6.122569941448964],
 		[6.545084971874737, 9.755282581475768],
@@ -43,7 +45,8 @@ test("star (options)", () => {
 	];
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(pts.size()).toEqual(10);
+	expect(measureArea(geometry)).toBe(28.06424853622408);
+	expect(pts.size()).toBe(10);
 	expect(comparePoints(pts, exp)).toBe(true);
 
 	// test vertices
@@ -69,7 +72,9 @@ test("star (options)", () => {
 	];
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(pts.size()).toEqual(16);
+	// DEVIATION: floating point differs?
+	expect(measureArea(geometry)).toBe(58.578643762690504);
+	expect(pts.size()).toBe(16);
 	expect(comparePoints(pts, exp)).toBe(true);
 
 	// test density
@@ -95,7 +100,8 @@ test("star (options)", () => {
 	];
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(pts.size()).toEqual(16);
+	expect(measureArea(geometry)).toBe(41.42135623730952);
+	expect(pts.size()).toBe(16);
 	expect(comparePoints(pts, exp)).toBe(true);
 
 	// test innerRadius
@@ -121,7 +127,8 @@ test("star (options)", () => {
 	];
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(pts.size()).toEqual(16);
+	expect(measureArea(geometry)).toBe(15.30733729460359);
+	expect(pts.size()).toBe(16);
 	expect(comparePoints(pts, exp)).toBe(true);
 
 	// test start angle
@@ -141,6 +148,7 @@ test("star (options)", () => {
 	];
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(pts.size()).toEqual(10);
+	expect(measureArea(geometry)).toBe(28.06424853622409);
+	expect(pts.size()).toBe(10);
 	expect(comparePoints(pts, exp)).toBe(true);
 });

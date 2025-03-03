@@ -1,11 +1,12 @@
+import type { Mat4 } from "../types";
 /**
  * Set a matrix to the identity transform.
  *
- * @param {mat4} out - receiving matrix
- * @returns {mat4} out
+ * @param {Mat4} out - receiving matrix
+ * @returns {Mat4} out
  * @alias module:modeling/maths/mat4.identity
  */
-const identity = (out: Mat4): Mat4 => {
+export const identity = (out: Mat4) => {
 	out[0] = 1;
 	out[1] = 0;
 	out[2] = 0;
@@ -24,5 +25,3 @@ const identity = (out: Mat4): Mat4 => {
 	out[15] = 1;
 	return out;
 };
-
-export default identity;

@@ -1,8 +1,9 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import { geom2, geom3, path2 } from "../geometries";
-import { cuboid, line, rectangle } from "../primitives";
-import { measureDimensions } from "./index";
+import { geom2, geom3, path2, slice } from "../geometries/index";
+import { cuboid, line, rectangle } from "../primitives/index";
+import { measureDimensions } from "./measureDimensions";
+import { Geometry } from "../geometries/types";
 
 test("measureDimensions (single objects)", () => {
 	const aline = line([
@@ -15,6 +16,7 @@ test("measureDimensions (single objects)", () => {
 	const apath2 = path2.create();
 	const ageom2 = geom2.create();
 	const ageom3 = geom3.create();
+	const aslice = slice.create();
 
 	const n = undefined;
 	const o = {};
@@ -27,10 +29,11 @@ test("measureDimensions (single objects)", () => {
 	const p2bounds = measureDimensions(apath2);
 	const g2bounds = measureDimensions(ageom2);
 	const g3bounds = measureDimensions(ageom3);
+	const slbounds = measureDimensions(aslice);
 
 	const nbounds = measureDimensions(n!);
-	const obounds = measureDimensions(o);
-	const xbounds = measureDimensions(x as unknown as object);
+	const obounds = measureDimensions(o as Array<Geometry>);
+	const xbounds = measureDimensions(x as unknown as Array<Geometry>);
 
 	expect(lbounds).toEqual([5, 5, 0]);
 	expect(rbounds).toEqual([2, 2, 0]);
@@ -39,6 +42,7 @@ test("measureDimensions (single objects)", () => {
 	expect(p2bounds).toEqual([0, 0, 0]);
 	expect(g2bounds).toEqual([0, 0, 0]);
 	expect(g3bounds).toEqual([0, 0, 0]);
+	expect(slbounds).toEqual([0, 0, 0]);
 
 	expect(nbounds).toEqual([0, 0, 0]);
 	expect(obounds).toEqual([0, 0, 0]);
@@ -52,7 +56,7 @@ test("measureDimensions (multiple objects)", () => {
 	]);
 	const arect = rectangle({ size: [10, 20] });
 	const acube = cuboid();
-	const o = {};
+	const o = {} as Geometry;
 
 	let allbounds = measureDimensions(aline, arect, acube, o);
 	expect(allbounds).toEqual([

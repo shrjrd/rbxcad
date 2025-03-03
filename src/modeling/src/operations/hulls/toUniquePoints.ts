@@ -1,21 +1,21 @@
+import type { Geometry, Geom2, Geom3, Path2 } from "../../geometries/types";
 import { JsSet } from "@rbxts/luau-polyfill";
-
-import geom2 from "../../geometries/geom2";
-import geom3 from "../../geometries/geom3";
-import path2 from "../../geometries/path2";
-
 function VecToString(vec: number[]) {
-	if (vec[2]) {
+	if (vec[2] !== undefined) {
 		return `${vec[0]},${vec[1]},${vec[2]}`;
 	} else {
 		return `${vec[0]},${vec[1]}`;
 	}
 }
+import * as geom2 from "../../geometries/geom2/index";
+import * as geom3 from "../../geometries/geom3/index";
+import * as path2 from "../../geometries/path2/index";
+
 /**
  * Return the unique vertices of a geometry
  */
-const toUniquePoints = (geometries: object[]) => {
-	const found = new JsSet();
+export const toUniquePoints = (geometries: Geometry[]) => {
+	const found = new JsSet<string>();
 	const uniquePoints: number[][] = [];
 
 	const addPoint = (point: number[]) => {
@@ -26,7 +26,7 @@ const toUniquePoints = (geometries: object[]) => {
 		}
 	};
 
-	geometries.forEach((geometry: object) => {
+	geometries.forEach((geometry) => {
 		if (geom2.isA(geometry)) {
 			geom2.toPoints(geometry as Geom2).forEach(addPoint);
 		} else if (geom3.isA(geometry)) {
@@ -39,5 +39,3 @@ const toUniquePoints = (geometries: object[]) => {
 
 	return uniquePoints;
 };
-
-export default toUniquePoints;

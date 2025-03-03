@@ -1,7 +1,9 @@
+import type { Mat4 } from "../../maths/types";
+import type { Poly3 } from "./type";
 import { expect, test } from "@rbxts/jest-globals";
 
 import { comparePolygons } from "../../../test/helpers/index";
-import { fromPoints, transform } from "./index";
+import { create, transform } from "./index";
 
 test("poly3: transform() should return a new poly3 with correct values", () => {
 	const identityMatrix: Mat4 = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
@@ -13,7 +15,7 @@ test("poly3: transform() should return a new poly3 with correct values", () => {
 			[1, 1, 0],
 		],
 	};
-	const org1 = fromPoints([
+	const org1 = create([
 		[0, 0, 0],
 		[1, 0, 0],
 		[1, 1, 0],
@@ -34,7 +36,7 @@ test("poly3: transform() should return a new poly3 with correct values", () => {
 			[2, 6, 7],
 		],
 	};
-	const org2 = fromPoints([
+	const org2 = create([
 		[0, 0, 0],
 		[1, 0, 0],
 		[1, 1, 0],
@@ -70,7 +72,7 @@ test("poly3: transform() should return a new poly3 with correct values", () => {
 			[1, -1, 0],
 		],
 	};
-	const org3 = fromPoints([
+	const org3 = create([
 		[0, 0, 0],
 		[1, 0, 0],
 		[1, 1, 0],
@@ -87,7 +89,7 @@ test("poly3: transform() should return a new poly3 with correct values", () => {
 			[0, 0, 0],
 		],
 	};
-	const org4 = fromPoints([
+	const org4 = create([
 		[0, 0, 0],
 		[1, 0, 0],
 		[1, 1, 0],

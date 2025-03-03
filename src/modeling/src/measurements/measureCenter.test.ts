@@ -1,8 +1,9 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import { geom2, geom3, path2 } from "../geometries";
-import { cuboid, line, rectangle } from "../primitives";
+import { geom2, geom3, path2, slice } from "../geometries/index";
+import { cuboid, line, rectangle } from "../primitives/index";
 import { measureCenter } from "./index";
+import { Geometry } from "../geometries/types";
 
 test("measureCenter (single objects)", () => {
 	const aline = line([
@@ -15,6 +16,7 @@ test("measureCenter (single objects)", () => {
 	const apath2 = path2.create();
 	const ageom2 = geom2.create();
 	const ageom3 = geom3.create();
+	const aslice = slice.create();
 
 	const n = undefined;
 	const o = {};
@@ -27,10 +29,11 @@ test("measureCenter (single objects)", () => {
 	const p2center = measureCenter(apath2);
 	const g2center = measureCenter(ageom2);
 	const g3center = measureCenter(ageom3);
+	const slcenter = measureCenter(aslice);
 
 	const ncenter = measureCenter(n!);
-	const ocenter = measureCenter(o);
-	const xcenter = measureCenter(x as unknown as object);
+	const ocenter = measureCenter(o as Array<Geometry>);
+	const xcenter = measureCenter(x as unknown as Array<Geometry>);
 
 	expect(lcenter).toEqual([12.5, 12.5, 0]);
 	expect(rcenter).toEqual([5, 5, 0]);
@@ -39,6 +42,7 @@ test("measureCenter (single objects)", () => {
 	expect(p2center).toEqual([0, 0, 0]);
 	expect(g2center).toEqual([0, 0, 0]);
 	expect(g3center).toEqual([0, 0, 0]);
+	expect(slcenter).toEqual([0, 0, 0]);
 
 	expect(ncenter).toEqual([0, 0, 0]);
 	expect(ocenter).toEqual([0, 0, 0]);
@@ -52,7 +56,7 @@ test("measureCenter (multiple objects)", () => {
 	]);
 	const arect = rectangle({ size: [10, 20] });
 	const acube = cuboid({ center: [-5, -5, -5] });
-	const o = {};
+	const o = {} as Geometry;
 
 	let allcenters = measureCenter(aline, arect, acube, o);
 	expect(allcenters).toEqual([

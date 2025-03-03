@@ -1,0 +1,67 @@
+import type { Geom2 } from "../../geometries/types";
+import type { Vec2 } from "../../maths/types";
+import type { Corners } from "../../utils/corners";
+import { Number, Object } from "@rbxts/luau-polyfill";
+
+import * as geom2 from "../../geometries/geom2/index";
+import * as poly2 from "../../geometries/poly2/index";
+import { offsetFromPoints } from "./offsetFromPoints";
+
+/**
+ * Create an offset geometry from the given geom2 using the given options (if any).
+ * @param {object} options - options for offset
+ * @param {number} [options.delta=1] - delta of offset (+ to exterior, - from interior)
+ * @param {string} [options.corners='edge'] - type corner to create during of expansion; edge, chamfer, round
+ * @param {number} [options.segments=16] - number of segments when creating round corners
+ * @param {Geom2} geometry - geometry from which to create the offset
+ * @returns {Geom2} offset geometry, plus rounded corners
+ */
+export const offsetGeom2 = (
+	options: { delta?: number; corners?: Corners; segments?: number; expandHoles?: boolean },
+	geometry: Geom2,
+) => {
+	const defaults = {
+		delta: 1,
+		corners: "edge",
+		segments: 16,
+		expandHoles: false,
+	};
+	const { delta, corners, segments, expandHoles } = Object.assign({}, defaults, options);
+
+	if (!(corners === "edge" || corners === "chamfer" || corners === "round")) {
+		throw 'corners must be "edge", "chamfer", or "round"';
+	}
+	if (!Number.isFinite(delta)) throw "delta must be a finite number";
+	if (corners === "round" && !Number.isFinite(segments)) throw "segments must be a finite number";
+	if (corners === "round" && !(segments > 0)) throw "segments must be greater than zero";
+
+	// convert the geometry to outlines, and generate offsets from each
+	const outlines = geom2.toOutlines(geometry);
+	const newOutlines = outlines.map((outline) => {
+		let outside = true;
+		// if expanding holes, we need to determine if the outline is inside or outside
+		if (expandHoles) {
+			const level = outlines.reduce(
+				(acc: number, polygon: Vec2[]) => acc + poly2.arePointsInside(outline, poly2.create(polygon)),
+				0,
+			);
+			outside = level % 2 === 0;
+		}
+
+		return offsetFromPoints(
+			{
+				delta: outside ? delta : -delta,
+				corners,
+				closed: true,
+				segments,
+			},
+			outline,
+		);
+	});
+	// TODO: union outlines that expanded into each other
+
+	// create a composite geometry from the new outlines
+	const output = geom2.create(newOutlines);
+	if (geometry.color) output.color = geometry.color;
+	return output;
+};

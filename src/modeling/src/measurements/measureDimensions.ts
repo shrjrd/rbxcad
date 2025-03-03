@@ -1,5 +1,8 @@
-import flatten from "../utils/flatten";
-import measureBoundingBox from "./measureBoundingBox";
+import type { BoundingBox } from "./types";
+import type { Geometry, Slice } from "../geometries/types";
+import type { RecursiveArray } from "../utils/recursiveArray";
+import { flatten } from "../utils/flatten";
+import { measureBoundingBox } from "./measureBoundingBox";
 
 /**
  * Measure the dimensions of the given geometries.
@@ -10,13 +13,11 @@ import measureBoundingBox from "./measureBoundingBox";
  * @example
  * let dimensions = measureDimensions(sphere())
  */
-const measureDimensions = (...geometries: object[]) => {
+export const measureDimensions = (...geometries: RecursiveArray<Geometry | Slice>) => {
 	geometries = flatten(geometries);
 
-	if (geometries.size() === 0) {
-		//warn("wrong number of arguments");
-		return [0, 0, 0];
-	}
+	// DEVIATION: undefined in roblox-ts is nil, which is not iterated over in roblox-ts's array.map
+	if (geometries.size() === 0) return [0, 0, 0];
 
 	const results = geometries.map((geometry) => {
 		const boundingBox = measureBoundingBox(geometry) as BoundingBox;
@@ -28,5 +29,3 @@ const measureDimensions = (...geometries: object[]) => {
 	});
 	return results.size() === 1 ? results[0] : results;
 };
-
-export default measureDimensions;

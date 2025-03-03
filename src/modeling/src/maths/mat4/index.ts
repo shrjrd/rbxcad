@@ -3,97 +3,34 @@
  * @see {@link mat4} for data structure information.
  * @module modeling/maths/mat4
  */
+export { add } from "./add";
+export { clone } from "./clone";
+export { copy } from "./copy";
+export { create } from "./create";
+export { equals } from "./equals";
+export { fromRotation } from "./fromRotation";
+export { fromScaling } from "./fromScaling";
+export { fromTaitBryanRotation } from "./fromTaitBryanRotation";
+export { fromTranslation } from "./fromTranslation";
+export { fromValues } from "./fromValues";
+export { fromVectorRotation } from "./fromVectorRotation";
+export { fromXRotation } from "./fromXRotation";
+export { fromYRotation } from "./fromYRotation";
+export { fromZRotation } from "./fromZRotation";
+export { identity } from "./identity";
+export { invert } from "./invert";
+export { isIdentity } from "./isIdentity";
+export { isMirroring } from "./isMirroring";
+export { isOnlyTransformScale } from "./isOnlyTransformScale";
+export { mirrorByPlane } from "./mirrorByPlane";
+export { multiply } from "./multiply";
+export { rotate } from "./rotate";
+export { rotateX } from "./rotateX";
+export { rotateY } from "./rotateY";
+export { rotateZ } from "./rotateZ";
+export { scale } from "./scale";
+export { subtract } from "./subtract";
+export { toString } from "./toString";
+export { translate } from "./translate";
 
-import add from "./add";
-import clone from "./clone";
-import copy from "./copy";
-import create from "./create";
-import equals from "./equals";
-import fromRotation from "./fromRotation";
-import fromScaling from "./fromScaling";
-import fromTaitBryanRotation from "./fromTaitBryanRotation";
-import fromTranslation from "./fromTranslation";
-import fromValues from "./fromValues";
-import fromVectorRotation from "./fromVectorRotation";
-import fromXRotation from "./fromXRotation";
-import fromYRotation from "./fromYRotation";
-import fromZRotation from "./fromZRotation";
-import identity from "./identity";
-import invert from "./invert";
-import isIdentity from "./isIdentity";
-import isMirroring from "./isMirroring";
-import isOnlyTransformScale from "./isOnlyTransformScale";
-import mirrorByPlane from "./mirrorByPlane";
-import multiply from "./multiply";
-import rotate from "./rotate";
-import rotateX from "./rotateX";
-import rotateY from "./rotateY";
-import rotateZ from "./rotateZ";
-import scale from "./scale";
-import subtract from "./subtract";
-import toString from "./toString";
-import translate from "./translate";
-
-export default {
-	add,
-	clone,
-	copy,
-	create,
-	invert,
-	equals,
-	fromRotation,
-	fromScaling,
-	fromTaitBryanRotation,
-	fromTranslation,
-	fromValues,
-	fromVectorRotation,
-	fromXRotation,
-	fromYRotation,
-	fromZRotation,
-	identity,
-	isIdentity,
-	isOnlyTransformScale,
-	isMirroring,
-	mirrorByPlane,
-	multiply,
-	rotate,
-	rotateX,
-	rotateY,
-	rotateZ,
-	scale,
-	subtract,
-	toString,
-	translate,
-};
-
-export {
-	add,
-	clone,
-	copy,
-	create,
-	equals,
-	fromRotation,
-	fromScaling,
-	fromTaitBryanRotation,
-	fromTranslation,
-	fromValues,
-	fromVectorRotation,
-	fromXRotation,
-	fromYRotation,
-	fromZRotation,
-	identity,
-	invert,
-	isIdentity,
-	isMirroring,
-	isOnlyTransformScale,
-	mirrorByPlane,
-	multiply,
-	rotate,
-	rotateX,
-	rotateY,
-	rotateZ,
-	scale,
-	subtract,
-	toString,
-	translate,
-};
+export type { Mat4 } from "./type";

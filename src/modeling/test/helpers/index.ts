@@ -1,8 +1,6 @@
-import comparePoints from "./comparePoints";
-import comparePolygonLists from "./comparePolygonLists";
-import comparePolygons from "./comparePolygons";
-import comparePolygonsAsPoints from "./comparePolygonsAsPoints";
-import compareVectors from "./compareVectors";
-import nearlyEqual from "./nearlyEqual";
-
-export { comparePoints, comparePolygonLists, comparePolygons, comparePolygonsAsPoints, compareVectors, nearlyEqual };
+export { comparePoints } from "./comparePoints";
+export { comparePolygonLists } from "./comparePolygonLists";
+export { comparePolygons } from "./comparePolygons";
+export { comparePolygonsAsPoints } from "./comparePolygonsAsPoints";
+export { compareVectors } from "./compareVectors";
+export { nearlyEqual } from "./nearlyEqual";

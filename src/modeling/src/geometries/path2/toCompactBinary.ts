@@ -1,18 +1,19 @@
+import type { Path2 } from "../types";
+
 /**
  * Produce a compact binary representation from the given path.
- * @param {path2} geometry - the path geometry
+ * @param {Path2} geometry - the path geometry
  * @returns {TypedArray} compact binary representation
  * @alias module:modeling/geometries/path2.toCompactBinary
  */
-const toCompactBinary = (geometry: Path2): number[] => {
+export const toCompactBinary = (geometry: Path2) => {
 	const points = geometry.points;
 	const transforms = geometry.transforms;
 	let color = [-1, -1, -1, -1];
 	if (geometry.color) color = geometry.color;
 
 	// FIXME why Float32Array?
-	const compacted: number[] = table.create(1 + 16 + 1 + 4 + points.size() * 2); // type + transforms + isClosed + color + points data
-
+	const compacted = new Array(1 + 16 + 1 + 4 + points.size() * 2); // type + transforms + isClosed + color + points data
 	compacted[0] = 2; // type code: 0 => geom2, 1 => geom3 , 2 => path2
 
 	compacted[1] = transforms[0];
@@ -48,5 +49,3 @@ const toCompactBinary = (geometry: Path2): number[] => {
 	// TODO: how about custom properties or fields ?
 	return compacted;
 };
-
-export default toCompactBinary;

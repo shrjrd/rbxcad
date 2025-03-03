@@ -1,14 +1,18 @@
+import type { Mat4 } from "../types";
+
 /**
- * Creates a invert copy of the given matrix.
- * @author Julian Lloyd
- * code from https://github.com/jlmakes/rematrix/blob/master/src/index.js
+ * Creates an inverted copy of the given matrix.
+ * Returns null if matrix is determinant is zero
  *
- * @param {mat4} out - receiving matrix
- * @param {mat4} matrix - matrix to invert
- * @returns {mat4} out
+ * @author Julian Lloyd
+ * code from https://github.com/jlmakes/rematrix/blob/master/src/index
+ *
+ * @param {Mat4} out - receiving matrix
+ * @param {Mat4} matrix - matrix to invert
+ * @returns {Mat4?} out
  * @alias module:modeling/maths/mat4.invert
  */
-const invert = (out: Mat4, matrix: Mat4) => {
+export const invert = (out: Mat4, matrix: Mat4) => {
 	const a00 = matrix[0];
 	const a01 = matrix[1];
 	const a02 = matrix[2];
@@ -41,8 +45,8 @@ const invert = (out: Mat4, matrix: Mat4) => {
 
 	// Calculate the determinant
 	let det = b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06;
-
-	if (!det) {
+	// DEVIATION: 0, NaN, and "" are falsy in TS.
+	if (det <= 0) {
 		return undefined;
 	}
 	det = 1.0 / det;
@@ -66,5 +70,3 @@ const invert = (out: Mat4, matrix: Mat4) => {
 
 	return out;
 };
-
-export default invert;

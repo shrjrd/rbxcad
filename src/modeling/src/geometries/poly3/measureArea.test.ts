@@ -1,9 +1,10 @@
+import type { Vec3 } from "../../maths/types";
 const Number_EPSILON = 2.220446049250313e-16;
 import { expect, test } from "@rbxts/jest-globals";
 
 import { nearlyEqual } from "../../../test/helpers/index";
-import mat4 from "../../maths/mat4";
-import { create, fromPoints, invert, measureArea, transform } from "./index";
+import { mat4 } from "../../maths/index";
+import { create, invert, measureArea, transform } from "./index";
 
 test("poly3: measureArea() should return correct values", () => {
 	let ply1 = create();
@@ -11,7 +12,7 @@ test("poly3: measureArea() should return correct values", () => {
 	expect(ret1).toBe(0.0);
 
 	// simple triangle
-	let ply2 = fromPoints([
+	let ply2 = create([
 		[0, 0, 0],
 		[0, 10, 0],
 		[0, 10, 10],
@@ -20,7 +21,7 @@ test("poly3: measureArea() should return correct values", () => {
 	expect(ret2).toBe(50.0);
 
 	// simple square
-	let ply3 = fromPoints([
+	let ply3 = create([
 		[0, 0, 0],
 		[0, 10, 0],
 		[0, 10, 10],
@@ -30,7 +31,7 @@ test("poly3: measureArea() should return correct values", () => {
 	expect(ret3).toBe(100.0);
 
 	// V-shape
-	const points = [
+	const vertices: Vec3[] = [
 		[0, 3, 0],
 		[0, 5, 0],
 		[0, 8, 2],
@@ -42,12 +43,12 @@ test("poly3: measureArea() should return correct values", () => {
 		[0, 1, 3],
 		[0, 3, 3],
 	];
-	let ply4 = fromPoints(points);
+	let ply4 = create(vertices);
 	let ret4 = measureArea(ply4);
 	expect(ret4).toBe(19.5);
 
 	// colinear vertices non-zero area
-	const ply5 = fromPoints([
+	const ply5 = create([
 		[0, 0, 0],
 		[1, 0, 0],
 		[2, 0, 0],
@@ -57,7 +58,7 @@ test("poly3: measureArea() should return correct values", () => {
 	expect(ret5).toBe(1);
 
 	// colinear vertices empty area
-	const ply6 = fromPoints([
+	const ply6 = create([
 		[0, 0, 0],
 		[1, 0, 0],
 		[2, 0, 0],
@@ -66,7 +67,7 @@ test("poly3: measureArea() should return correct values", () => {
 	expect(ret6).toBe(0);
 
 	// duplicate vertices empty area
-	const ply7 = fromPoints([
+	const ply7 = create([
 		[0, 0, 0],
 		[0, 0, 0],
 		[0, 0, 0],
@@ -87,10 +88,9 @@ test("poly3: measureArea() should return correct values", () => {
 	nearlyEqual(ret1, 0.0, Number_EPSILON);
 	nearlyEqual(ret2, 50.0, Number_EPSILON);
 	nearlyEqual(ret3, 100.0, Number_EPSILON);
-	nearlyEqual(ret4, 19.5, Number_EPSILON);
-
-	// DEVIATION: different floating point precision
-	rotation = mat4.fromYRotation(mat4.create(), 45 * 0.017453292519943292); //0.017453292519943295
+	expect(() => nearlyEqual(ret4, 19.5, Number_EPSILON)).never.toThrow();
+	// DEVIATION: floating point differs?
+	rotation = mat4.fromYRotation(mat4.create(), 45 * 0.017453292519943292);
 	ply1 = transform(rotation, ply1);
 	ply2 = transform(rotation, ply2);
 	ply3 = transform(rotation, ply3);
@@ -102,7 +102,7 @@ test("poly3: measureArea() should return correct values", () => {
 	nearlyEqual(ret1, 0.0, Number_EPSILON);
 	nearlyEqual(ret2, 50.0, Number_EPSILON);
 	nearlyEqual(ret3, 100.0, Number_EPSILON);
-	nearlyEqual(ret4, 19.5, Number_EPSILON);
+	expect(() => nearlyEqual(ret4, 19.5, Number_EPSILON)).never.toThrow();
 
 	rotation = mat4.fromXRotation(mat4.create(), 45 * 0.017453292519943295);
 	ply1 = transform(rotation, ply1);
@@ -116,7 +116,7 @@ test("poly3: measureArea() should return correct values", () => {
 	nearlyEqual(ret1, 0.0, Number_EPSILON);
 	nearlyEqual(ret2, 50.0, Number_EPSILON);
 	nearlyEqual(ret3, 100.0, Number_EPSILON);
-	nearlyEqual(ret4, 19.5, Number_EPSILON);
+	expect(() => nearlyEqual(ret4, 19.5, Number_EPSILON)).never.toThrow();
 
 	// inverted
 	ply1 = invert(ply1);
@@ -130,5 +130,5 @@ test("poly3: measureArea() should return correct values", () => {
 	nearlyEqual(ret1, 0.0, Number_EPSILON);
 	nearlyEqual(ret2, 50.0, Number_EPSILON);
 	nearlyEqual(ret3, 100.0, Number_EPSILON);
-	nearlyEqual(ret4, 19.5, Number_EPSILON * 2);
+	expect(() => nearlyEqual(ret4, 19.5, Number_EPSILON * 2)).never.toThrow();
 });

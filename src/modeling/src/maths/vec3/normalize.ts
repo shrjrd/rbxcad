@@ -1,12 +1,13 @@
+import type { Vec3 } from "./type";
 /**
  * Normalize the given vector.
  *
- * @param {vec3} out - receiving vector
- * @param {vec3} vector - vector to normalize
- * @returns {vec3} out
+ * @param {Vec3} out - receiving vector
+ * @param {Vec3} vector - vector to normalize
+ * @returns {Vec3} out
  * @alias module:modeling/maths/vec3.normalize
  */
-const normalize = (out: Vec3, vector: Vec3) => {
+export const normalize = (out: Vec3, vector: Vec3) => {
 	const x = vector[0];
 	const y = vector[1];
 	const z = vector[2];
@@ -19,5 +20,3 @@ const normalize = (out: Vec3, vector: Vec3) => {
 	out[2] = z * len;
 	return out;
 };
-
-export default normalize;

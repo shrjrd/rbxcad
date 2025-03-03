@@ -1,9 +1,11 @@
+import type { Path2, Geom2, Geom3 } from "../../geometries/types";
+import type { Vec2, Vec3 } from "../../maths/types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import { comparePoints, comparePolygonsAsPoints } from "../../../test/helpers";
-import { geom2, geom3, path2 } from "../../geometries";
+import { comparePoints, comparePolygonsAsPoints } from "../../../test/helpers/index";
+import { geom2, geom3, path2 } from "../../geometries/index";
 import { TAU } from "../../maths/constants";
-import { arc, cuboid, rectangle } from "../../primitives";
+import { arc, cuboid, rectangle } from "../../primitives/index";
 import { snap } from "./index";
 
 test("snap: snap of a path2 produces an expected path2", () => {
@@ -12,7 +14,7 @@ test("snap: snap of a path2 produces an expected path2", () => {
 	const geometry3 = arc({ radius: 1.3333333333333333 / 2, segments: 8 });
 	const geometry4 = arc({ radius: (TAU / 4) * 1000, segments: 8 });
 
-	const results = snap(geometry1, geometry2, geometry3, geometry4) as Path2[];
+	const results = snap(geometry1, geometry2, geometry3, geometry4) as Array<Path2>;
 	expect(results.size()).toBe(4);
 
 	let pts = path2.toPoints(results[0]);
@@ -68,7 +70,7 @@ test("snap: snap of a geom2 produces an expected geom2", () => {
 	const geometry3 = rectangle({ size: [1.3333333333333333, 1.3333333333333333, 1.3333333333333333] });
 	const geometry4 = rectangle({ size: [(TAU / 2) * 1000, (TAU / 2) * 1000, (TAU / 2) * 1000] });
 
-	const results = snap(geometry1, geometry2, geometry3, geometry4) as Geom2[];
+	const results = snap(geometry1, geometry2, geometry3, geometry4) as Array<Geom2>;
 	expect(results.size()).toBe(4);
 
 	let pts = geom2.toPoints(results[0]);
@@ -103,13 +105,48 @@ test("snap: snap of a geom2 produces an expected geom2", () => {
 	expect(comparePoints(pts, exp)).toBe(true);
 });
 
+test("snap: snap of a geom2 removes duplicate points after snap", () => {
+	const geometry = geom2.create([
+		[
+			[0, 0],
+			[0, 1],
+			[2, 0],
+			[1.999999, 0],
+		],
+	]);
+	const result = snap(geometry) as Geom2;
+	const pts = geom2.toPoints(result);
+	const exp = [
+		[0, 0],
+		[0, 1.000005],
+		[1.9999950000000002, 0],
+	];
+	expect(pts.size()).toBe(3);
+	expect(comparePoints(pts, exp)).toBe(true);
+});
+
+test("snap: snap of a geom2 removes empty outlines after snap", () => {
+	const geometry = geom2.create([
+		[
+			[0, 0],
+			[0, 1.000001],
+			[0, 0.999999],
+		],
+	]);
+	const result = snap(geometry) as Geom2;
+	const pts = geom2.toPoints(result);
+	const exp: Vec2[] = [];
+	expect(pts.size()).toBe(0);
+	expect(comparePoints(pts, exp)).toBe(true);
+});
+
 test("snap: snap of a geom3 produces an expected geom3", () => {
 	const geometry1 = geom3.create();
 	const geometry2 = cuboid({ size: [1, 1, 1] });
 	const geometry3 = cuboid({ size: [1.3333333333333333, 1.3333333333333333, 1.3333333333333333] });
 	const geometry4 = cuboid({ size: [(TAU / 2) * 1000, (TAU / 2) * 1000, (TAU / 2) * 1000] });
 
-	const results = snap(geometry1, geometry2, geometry3, geometry4) as Geom3[];
+	const results = snap(geometry1, geometry2, geometry3, geometry4) as Array<Geom3>;
 	expect(results.size()).toBe(4);
 
 	let pts = geom3.toPoints(results[0]);

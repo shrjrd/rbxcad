@@ -1,3 +1,7 @@
+import { colorize, colorNameToRgb, hslToRgb, RGB } from "../../modeling/src/colors";
+import { translate } from "../../modeling/src/operations/transforms";
+import { cuboid, cylinder } from "../../modeling/src/primitives";
+
 /**
  * Transparency
  * @category Colors
@@ -7,12 +11,6 @@
  * @authors Rene K. Mueller, Moissette Mark, Simon Clark
  * @licence MIT License
  */
-
-import rbxcad from "../../modeling/src";
-const { colorize, hslToRgb, colorNameToRgb } = rbxcad.colors;
-const { cuboid, cylinder } = rbxcad.primitives;
-const { translate } = rbxcad.transforms;
-
 const main = () => {
 	const shapes = [];
 	for (let i = 7; i >= 0; i--) {

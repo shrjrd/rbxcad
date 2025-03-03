@@ -1,5 +1,6 @@
-import poly3 from "../../geometries/poly3";
-import quickhull from "./quickhull";
+import type { Vec3 } from "../../maths/types";
+import * as poly3 from "../../geometries/poly3/index";
+import { runner } from "./quickhull/index";
 
 /**
  * Create a convex hull of the given set of points, where each point is an array of [x,y,z].
@@ -8,15 +9,13 @@ import quickhull from "./quickhull";
  * @returns {Array} a list of polygons (poly3)
  * @alias module:modeling/hulls.hullPoints3
  */
-const hullPoints3 = (uniquePoints: Vec3[]) => {
-	const faces = quickhull(uniquePoints, { skipTriangulation: true });
+export const hullPoints3 = (uniquePoints: Vec3[]) => {
+	const faces = runner(uniquePoints, { skipTriangulation: true });
 
 	const polygons = faces.map((face) => {
-		const vertices = face.map((index: number) => uniquePoints[index]);
+		const vertices = face.map((index) => uniquePoints[index]);
 		return poly3.create(vertices);
 	});
 
 	return polygons;
 };
-
-export default hullPoints3;

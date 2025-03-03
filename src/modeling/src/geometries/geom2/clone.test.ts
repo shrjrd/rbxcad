@@ -1,10 +1,11 @@
+import type { Vec2 } from "../../maths/types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import { clone, create, fromPoints } from "./index";
+import { clone, create } from "./index";
 
 test("clone: Creates a clone on an empty geom2", () => {
 	const expected = {
-		sides: [],
+		outlines: [],
 		transforms: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
 	};
 	const geometry = create();
@@ -20,23 +21,16 @@ test("clone: Creates a clone of a complete geom2", () => {
 		[0, 1],
 	];
 	const expected = {
-		sides: [
-			[
-				[0, 1],
-				[0, 0],
-			],
+		outlines: [
 			[
 				[0, 0],
-				[1, 0],
-			],
-			[
 				[1, 0],
 				[0, 1],
 			],
 		],
 		transforms: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
 	};
-	const geometry = fromPoints(points);
+	const geometry = create([points]);
 	const another = clone(geometry);
 	expect(another).never.toBe(geometry);
 	expect(another).toEqual(expected);

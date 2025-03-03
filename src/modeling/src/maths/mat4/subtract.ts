@@ -1,13 +1,14 @@
+import type { Mat4 } from "../types";
 /**
  * Subtracts matrix b from matrix a. (A-B)
  *
- * @param {mat4} out - receiving matrix
- * @param {mat4} a - first operand
- * @param {mat4} b - second operand
- * @returns {mat4} out
+ * @param {Mat4} out - receiving matrix
+ * @param {Mat4} a - first operand
+ * @param {Mat4} b - second operand
+ * @returns {Mat4} out
  * @alias module:modeling/maths/mat4.subtract
  */
-const subtract = (out: Mat4, a: Mat4, b: Mat4) => {
+export const subtract = (out: Mat4, a: Mat4, b: Mat4) => {
 	out[0] = a[0] - b[0];
 	out[1] = a[1] - b[1];
 	out[2] = a[2] - b[2];
@@ -26,5 +27,3 @@ const subtract = (out: Mat4, a: Mat4, b: Mat4) => {
 	out[15] = a[15] - b[15];
 	return out;
 };
-
-export default subtract;

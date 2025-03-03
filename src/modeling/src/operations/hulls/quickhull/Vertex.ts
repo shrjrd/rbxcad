@@ -1,3 +1,5 @@
+import type { Vec3 } from "../../../maths/types";
+
 /*
  * Original source from quickhull3d (https://github.com/mauriciopoppe/quickhull3d)
  * Copyright (c) 2015 Mauricio Poppe
@@ -7,7 +9,7 @@
 
 import { Face } from "./Face";
 
-class Vertex {
+export class Vertex {
 	face: Face;
 	index: number;
 	next: Vertex;
@@ -24,5 +26,3 @@ class Vertex {
 		this.face = undefined!;
 	}
 }
-
-export default Vertex;

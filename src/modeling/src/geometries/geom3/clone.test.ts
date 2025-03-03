@@ -1,6 +1,8 @@
+import type { Vec3 } from "../../maths/types";
+import type { Geom3 } from "../types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import { comparePolygons, compareVectors } from "../../../test/helpers/";
+import { comparePolygons, compareVectors } from "../../../test/helpers/index";
 import { clone, create, fromPoints } from "./index";
 
 test("clone: Creates a clone on an empty geom3", () => {
@@ -15,7 +17,7 @@ test("clone: Creates a clone on an empty geom3", () => {
 });
 
 test("clone: Creates a clone of a populated geom3", () => {
-	const points: Vec3[][] = [
+	const vertices: Vec3[][] = [
 		[
 			[0, 0, 0],
 			[1, 0, 0],
@@ -34,7 +36,7 @@ test("clone: Creates a clone of a populated geom3", () => {
 		],
 		transforms: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
 	};
-	const geometry = fromPoints(points);
+	const geometry = fromPoints(vertices);
 	const another = clone(geometry);
 	expect(another).never.toBe(geometry);
 	expect(comparePolygons(another.polygons[0], expected.polygons[0])).toBe(true);

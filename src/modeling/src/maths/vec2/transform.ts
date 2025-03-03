@@ -1,18 +1,18 @@
+import type { Mat4, Vec2 } from "../types";
+
 /**
  * Transforms the given vector using the given matrix.
  *
- * @param {vec2} out - receiving vector
- * @param {vec2} vector - vector to transform
- * @param {mat4} matrix - matrix to transform with
- * @returns {vec2} out
+ * @param {Vec2} out - receiving vector
+ * @param {Vec2} vector - vector to transform
+ * @param {Mat4} matrix - matrix to transform with
+ * @returns {Vec2} out
  * @alias module:modeling/maths/vec2.transform
  */
-const transform = (out: Vec2, vector: Vec2, matrix: Mat4): Vec2 => {
+export const transform = (out: Vec2, vector: Vec2, matrix: Mat4) => {
 	const x = vector[0];
 	const y = vector[1];
 	out[0] = matrix[0] * x + matrix[4] * y + matrix[12];
 	out[1] = matrix[1] * x + matrix[5] * y + matrix[13];
 	return out;
 };
-
-export default transform;

@@ -1,7 +1,7 @@
 import { expect, test } from "@rbxts/jest-globals";
 
 import { comparePolygons } from "../../../test/helpers/index";
-import { clone, create, fromPoints } from "./index";
+import { clone, create } from "./index";
 
 test("poly3: clone() should return a new poly3 with same values", () => {
 	const org1 = create();
@@ -9,7 +9,7 @@ test("poly3: clone() should return a new poly3 with same values", () => {
 	expect(comparePolygons(ret1, org1)).toBe(true);
 	expect(ret1).never.toBe(org1);
 
-	const org2 = fromPoints([
+	const org2 = create([
 		[1, 1, 0],
 		[-1, 1, 0],
 		[-1, -1, 0],
@@ -30,7 +30,7 @@ test("poly3: clone() with two params should update a poly3 with same values", ()
 	expect(ret1).never.toBe(org1);
 	expect(ret1).toBe(out1);
 
-	const org2 = fromPoints([
+	const org2 = create([
 		[1, 1, 0],
 		[-1, 1, 0],
 		[-1, -1, 0],

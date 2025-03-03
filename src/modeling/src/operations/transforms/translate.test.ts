@@ -1,7 +1,10 @@
+import type { Geometry, Geom2, Geom3, Path2 } from "../../geometries/types";
+import type { Vec3 } from "../../maths/types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import { comparePoints, comparePolygonsAsPoints } from "../../../test/helpers";
-import { geom2, geom3, path2 } from "../../geometries";
+import { comparePoints, comparePolygonsAsPoints } from "../../../test/helpers/index";
+import { geom2, geom3, path2 } from "../../geometries/index";
+import { measureArea, measureVolume } from "../../measurements/index";
 import { translate, translateX, translateY, translateZ } from "./index";
 
 test("translate: translating of a path2 produces expected changes to points", () => {
@@ -13,7 +16,7 @@ test("translate: translating of a path2 produces expected changes to points", ()
 	// translate X
 	let translated = translate([1], line) as Path2;
 	let obs = path2.toPoints(translated);
-	let exp: Vec2[] = [
+	let exp = [
 		[1, 0],
 		[2, 0],
 	];
@@ -42,26 +45,30 @@ test("translate: translating of a path2 produces expected changes to points", ()
 });
 
 test("translate: translating of a geom2 produces expected changes to points", () => {
-	const geometry = geom2.fromPoints([
-		[0, 0],
-		[1, 0],
-		[0, 1],
+	const geometry = geom2.create([
+		[
+			[0, 0],
+			[1, 0],
+			[0, 1],
+		],
 	]);
 
 	// translate X
 	let translated = translate([1], geometry) as Geom2;
 	let obs = geom2.toPoints(translated);
-	let exp: Vec2[] = [
+	let exp = [
 		[1, 0],
 		[2, 0],
 		[1, 1],
 	];
 	expect(() => geom2.validate(translated)).never.toThrow();
+	expect(measureArea(translated)).toBe(measureArea(geometry));
 	expect(comparePoints(obs, exp)).toBe(true);
 
 	translated = translateX(1, geometry) as Geom2;
 	obs = geom2.toPoints(translated);
 	expect(() => geom2.validate(translated)).never.toThrow();
+	expect(measureArea(translated)).toBe(measureArea(geometry));
 	expect(comparePoints(obs, exp)).toBe(true);
 
 	// translate Y
@@ -73,11 +80,13 @@ test("translate: translating of a geom2 produces expected changes to points", ()
 		[0, 2],
 	];
 	expect(() => geom2.validate(translated)).never.toThrow();
+	expect(measureArea(translated)).toBe(measureArea(geometry));
 	expect(comparePoints(obs, exp)).toBe(true);
 
 	translated = translateY(1, geometry) as Geom2;
 	obs = geom2.toPoints(translated);
 	expect(() => geom2.validate(translated)).never.toThrow();
+	expect(measureArea(translated)).toBe(measureArea(geometry));
 	expect(comparePoints(obs, exp)).toBe(true);
 });
 
@@ -125,7 +134,7 @@ test("translate: translating of a geom3 produces expected changes to polygons", 
 	// translate X
 	let translated = translate([3], geometry) as Geom3;
 	let obs = geom3.toPoints(translated);
-	let exp: Vec3[][] = [
+	let exp = [
 		[
 			[1, -7, -12],
 			[1, -7, 18],
@@ -164,11 +173,13 @@ test("translate: translating of a geom3 produces expected changes to polygons", 
 		],
 	];
 	expect(() => geom3.validate(translated)).never.toThrow();
+	expect(measureVolume(translated)).toBe(measureVolume(geometry));
 	expect(comparePolygonsAsPoints(obs, exp)).toBe(true);
 
 	translated = translateX(3, geometry) as Geom3;
 	obs = geom3.toPoints(translated);
 	expect(() => geom3.validate(translated)).never.toThrow();
+	expect(measureVolume(translated)).toBe(measureVolume(geometry));
 	expect(comparePolygonsAsPoints(obs, exp)).toBe(true);
 
 	// translated Y
@@ -213,11 +224,13 @@ test("translate: translating of a geom3 produces expected changes to polygons", 
 		],
 	];
 	expect(() => geom3.validate(translated)).never.toThrow();
+	expect(measureVolume(translated)).toBe(measureVolume(geometry));
 	expect(comparePolygonsAsPoints(obs, exp)).toBe(true);
 
 	translated = translateY(3, geometry) as Geom3;
 	obs = geom3.toPoints(translated);
 	expect(() => geom3.validate(translated)).never.toThrow();
+	expect(measureVolume(translated)).toBe(measureVolume(geometry));
 	expect(comparePolygonsAsPoints(obs, exp)).toBe(true);
 
 	// translate Z
@@ -262,33 +275,37 @@ test("translate: translating of a geom3 produces expected changes to polygons", 
 		],
 	];
 	expect(() => geom3.validate(translated)).never.toThrow();
+	expect(measureVolume(translated)).toBe(measureVolume(geometry));
 	expect(comparePolygonsAsPoints(obs, exp)).toBe(true);
 
 	translated = translateZ(3, geometry) as Geom3;
 	obs = geom3.toPoints(translated);
 	expect(() => geom3.validate(translated)).never.toThrow();
+	expect(measureVolume(translated)).toBe(measureVolume(geometry));
 	expect(comparePolygonsAsPoints(obs, exp)).toBe(true);
 });
 
 test("translate: translating of multiple objects produces expected changes", () => {
-	const junk = "hello";
+	const junk = "hello" as unknown as Geometry;
 	const geometry1 = path2.fromPoints({}, [
 		[-5, 5],
 		[5, 5],
 		[-5, -5],
 		[10, -5],
 	]);
-	const geometry2 = geom2.fromPoints([
-		[-5, -5],
-		[0, 5],
-		[10, -5],
+	const geometry2 = geom2.create([
+		[
+			[-5, -5],
+			[0, 5],
+			[10, -5],
+		],
 	]);
 
-	const translated = translate([3, 3, 3], junk as unknown as object, geometry1, geometry2) as object[];
+	const translated = translate([3, 3, 3], junk, geometry1, geometry2) as Geometry[];
 	expect(translated[0]).toBe(junk);
 
 	let obs = path2.toPoints(translated[1] as Path2);
-	let exp: Vec2[] = [
+	let exp = [
 		[-2, 8],
 		[8, 8],
 		[-2, -2],

@@ -1,7 +1,8 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import comparePoints from "../../test/helpers/comparePoints";
-import geom2 from "../geometries/geom2";
+import { comparePoints } from "../../test/helpers/index";
+import { geom2 } from "../geometries/index";
+import { measureArea } from "../measurements/index";
 import { roundedRectangle } from "./index";
 
 test("roundedRectangle (defaults)", () => {
@@ -9,13 +10,15 @@ test("roundedRectangle (defaults)", () => {
 	const obs = geom2.toPoints(geometry);
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(obs.size()).toEqual(36);
+	expect(measureArea(geometry)).toBe(3.964857806090323);
+	expect(obs.size()).toBe(36);
 });
 
 test("roundedRectangle (zero size)", () => {
 	const obs = roundedRectangle({ size: [1, 0] });
 	const pts = geom2.toPoints(obs);
 	expect(() => geom2.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(0);
 	expect(pts.size()).toBe(0);
 });
 
@@ -23,14 +26,15 @@ test("roundedRectangle (zero radius)", () => {
 	const obs = roundedRectangle({ roundRadius: 0 });
 	const pts = geom2.toPoints(obs);
 	expect(() => geom2.validate(obs)).never.toThrow();
-	expect(pts.size()).toEqual(4);
+	expect(measureArea(obs)).toBe(4);
+	expect(pts.size()).toBe(4);
 });
 
 test("roundedRectangle (options)", () => {
 	// test center
 	let geometry = roundedRectangle({ center: [4, 5], segments: 16 });
 	let obs = geom2.toPoints(geometry);
-	let exp: Vec2[] = [
+	let exp = [
 		[5, 5.8],
 		[4.984775906502257, 5.876536686473018],
 		[4.941421356237309, 5.941421356237309],
@@ -53,7 +57,8 @@ test("roundedRectangle (options)", () => {
 		[5, 4.2],
 	];
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(obs.size()).toEqual(20);
+	expect(measureArea(geometry)).toBe(3.962458698356829);
+	expect(obs.size()).toBe(20);
 	expect(comparePoints(obs, exp)).toBe(true);
 
 	// test size
@@ -82,7 +87,8 @@ test("roundedRectangle (options)", () => {
 		[5, -2.8],
 	];
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(obs.size()).toEqual(20);
+	expect(measureArea(geometry)).toBe(59.96245869835682);
+	expect(obs.size()).toBe(20);
 	expect(comparePoints(obs, exp)).toBe(true);
 
 	// test roundRadius
@@ -111,12 +117,14 @@ test("roundedRectangle (options)", () => {
 		[5, -1.0000000000000004],
 	];
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(obs.size()).toEqual(20);
+	expect(measureArea(geometry)).toBe(56.24586983568288);
+	expect(obs.size()).toBe(20);
 	expect(comparePoints(obs, exp)).toBe(true);
 
 	// test segments
 	geometry = roundedRectangle({ size: [10, 6], roundRadius: 2, segments: 64 });
 	obs = geom2.toPoints(geometry);
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(obs.size()).toEqual(68);
+	expect(measureArea(geometry)).toBe(56.546193962183764);
+	expect(obs.size()).toBe(68);
 });

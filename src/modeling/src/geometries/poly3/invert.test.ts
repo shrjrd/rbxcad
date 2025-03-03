@@ -1,7 +1,8 @@
+import type { Poly3 } from "./type";
 import { expect, test } from "@rbxts/jest-globals";
 
 import { comparePolygons } from "../../../test/helpers/index";
-import { fromPoints, invert } from "./index";
+import { create, invert } from "./index";
 
 test("poly3: invert() should return a new poly3 with correct values", () => {
 	const exp1: Poly3 = {
@@ -11,7 +12,7 @@ test("poly3: invert() should return a new poly3 with correct values", () => {
 			[0, 0, 0],
 		],
 	};
-	const org1 = fromPoints([
+	const org1 = create([
 		[0, 0, 0],
 		[1, 0, 0],
 		[1, 1, 0],
@@ -26,7 +27,7 @@ test("poly3: invert() should return a new poly3 with correct values", () => {
 			[1, 1, 0],
 		],
 	};
-	const org2 = fromPoints([
+	const org2 = create([
 		[1, 1, 0],
 		[1, 0, 0],
 		[0, 0, 0],

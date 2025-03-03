@@ -1,4 +1,5 @@
-import vec3 from "../vec3";
+import type { Line3, Vec3 } from "../types";
+import * as vec3 from "../vec3/index";
 
 /**
  * Create a line from the given point (origin) and direction.
@@ -8,18 +9,16 @@ import vec3 from "../vec3";
  *
  * See the logic of fromPoints() for appropriate values.
  *
- * @param {line3} out - receiving line
- * @param {vec3} point - start point of the line segment
- * @param {vec3} direction - direction of the line segment
- * @returns {line3} out
+ * @param {Line3} out - receiving line
+ * @param {Vec3} point - start point of the line segment
+ * @param {Vec3} direction - direction of the line segment
+ * @returns {Line3} out
  * @alias module:modeling/maths/line3.fromPointAndDirection
  */
-const fromPointAndDirection = (out: Line3, point: Vec3, direction: Vec3): Line3 => {
+export const fromPointAndDirection = (out: Line3, point: Vec3, direction: Vec3) => {
 	const unit = vec3.normalize(vec3.create(), direction);
 
 	vec3.copy(out[0], point);
 	vec3.copy(out[1], unit);
 	return out;
 };
-
-export default fromPointAndDirection;

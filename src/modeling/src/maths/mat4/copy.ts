@@ -1,12 +1,13 @@
+import type { Mat4 } from "../types";
 /**
  * Creates a copy of the given matrix.
  *
- * @param {mat4} out - receiving matrix
- * @param {mat4} matrix - matrix to copy
- * @returns {mat4} out
+ * @param {Mat4} out - receiving matrix
+ * @param {Mat4} matrix - matrix to copy
+ * @returns {Mat4} out
  * @alias module:modeling/maths/mat4.copy
  */
-const copy = (out: Mat4, matrix: Mat4) => {
+export const copy = (out: Mat4, matrix: Mat4) => {
 	out[0] = matrix[0];
 	out[1] = matrix[1];
 	out[2] = matrix[2];
@@ -25,5 +26,3 @@ const copy = (out: Mat4, matrix: Mat4) => {
 	out[15] = matrix[15];
 	return out;
 };
-
-export default copy;

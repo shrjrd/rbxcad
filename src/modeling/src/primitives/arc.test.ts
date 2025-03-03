@@ -1,7 +1,7 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import comparePoints from "../../test/helpers/comparePoints";
-import path2 from "../geometries/path2";
+import { comparePoints } from "../../test/helpers/index";
+import { path2 } from "../geometries/index";
 import { TAU } from "../maths/constants";
 import { arc } from "./index";
 
@@ -10,12 +10,12 @@ test("arc (defaults)", () => {
 	const obs = path2.toPoints(geometry);
 
 	expect(() => path2.validate(geometry)).never.toThrow();
-	expect(obs.size()).toEqual(33);
+	expect(obs.size()).toBe(33);
 });
 
 test("arc (options)", () => {
 	// test center
-	let exp: Vec2[] = [
+	let exp = [
 		[3, 2],
 		[2.9324722294043557, 2.361241666187153],
 		[2.739008917220659, 2.6736956436465573],
@@ -38,7 +38,7 @@ test("arc (options)", () => {
 	let obs = path2.toPoints(geometry);
 
 	expect(() => path2.validate(geometry)).never.toThrow();
-	expect(obs.size()).toEqual(17);
+	expect(obs.size()).toBe(17);
 	expect(comparePoints(obs, exp)).toBe(true);
 
 	// test radius
@@ -65,7 +65,7 @@ test("arc (options)", () => {
 	obs = path2.toPoints(geometry);
 
 	expect(() => path2.validate(geometry)).never.toThrow();
-	expect(obs.size()).toEqual(17);
+	expect(obs.size()).toBe(17);
 	expect(comparePoints(obs, exp)).toBe(true);
 
 	// test startAngle
@@ -89,7 +89,7 @@ test("arc (options)", () => {
 	obs = path2.toPoints(geometry);
 
 	expect(() => path2.validate(geometry)).never.toThrow();
-	expect(obs.size()).toEqual(14);
+	expect(obs.size()).toBe(14);
 	expect(comparePoints(obs, exp)).toBe(true);
 
 	// test endAngle
@@ -105,7 +105,7 @@ test("arc (options)", () => {
 	obs = path2.toPoints(geometry);
 
 	expect(() => path2.validate(geometry)).never.toThrow();
-	expect(obs.size()).toEqual(6);
+	expect(obs.size()).toBe(6);
 	expect(comparePoints(obs, exp)).toBe(true);
 
 	// test makeTangent
@@ -134,7 +134,7 @@ test("arc (options)", () => {
 	obs = path2.toPoints(geometry);
 
 	expect(() => path2.validate(geometry)).never.toThrow();
-	expect(obs.size()).toEqual(19);
+	expect(obs.size()).toBe(19);
 	expect(comparePoints(obs, exp)).toBe(true);
 
 	// test segments
@@ -153,12 +153,12 @@ test("arc (options)", () => {
 	obs = path2.toPoints(geometry);
 
 	expect(() => path2.validate(geometry)).never.toThrow();
-	expect(obs.size()).toEqual(9);
+	expect(obs.size()).toBe(9);
 	expect(comparePoints(obs, exp)).toBe(true);
 });
 
 test("arc (rotations)", () => {
-	let exp: Vec2[] = [
+	let exp = [
 		[6.123233995736766e-17, 1],
 		[-0.30901699437494734, 0.9510565162951536],
 		[-0.587785252292473, 0.8090169943749475],
@@ -170,7 +170,7 @@ test("arc (rotations)", () => {
 	let obs = path2.toPoints(geometry);
 
 	expect(() => path2.validate(geometry)).never.toThrow();
-	expect(obs.size()).toEqual(6);
+	expect(obs.size()).toBe(6);
 	expect(comparePoints(obs, exp)).toBe(true);
 
 	exp = [
@@ -189,7 +189,7 @@ test("arc (rotations)", () => {
 	obs = path2.toPoints(geometry);
 
 	expect(() => path2.validate(geometry)).never.toThrow();
-	expect(obs.size()).toEqual(10);
+	expect(obs.size()).toBe(10);
 	expect(comparePoints(obs, exp)).toBe(true);
 
 	exp = [
@@ -208,7 +208,7 @@ test("arc (rotations)", () => {
 	obs = path2.toPoints(geometry);
 
 	expect(() => path2.validate(geometry)).never.toThrow();
-	expect(obs.size()).toEqual(10);
+	expect(obs.size()).toBe(10);
 	expect(comparePoints(obs, exp)).toBe(true);
 
 	exp = [[-1.8369701987210297e-16, -1]];
@@ -216,6 +216,6 @@ test("arc (rotations)", () => {
 	obs = path2.toPoints(geometry);
 
 	expect(() => path2.validate(geometry)).never.toThrow();
-	expect(obs.size()).toEqual(1);
+	expect(obs.size()).toBe(1);
 	expect(comparePoints(obs, exp)).toBe(true);
 });

@@ -1,21 +1,22 @@
-import vec3 from "../vec3";
+import type { Vec3, Plane } from "../types";
+import * as vec3 from "../vec3/index";
 
 /**
  * Create a plane from the given points.
  *
- * @param {plane} out - receiving plane
+ * @param {Plane} out - receiving plane
  * @param {Array} vertices - points on the plane
- * @returns {plane} out
+ * @returns {Plane} out
  * @alias module:modeling/maths/plane.fromPoints
  */
-const fromPoints = (out: _Plane, ...vertices: Vec3[]) => {
+export const fromPoints = (out: Plane, ...vertices: Vec3[]) => {
 	const len = vertices.size();
 
 	// Calculate normal vector for a single vertex
 	// Inline to avoid allocations
 	const ba = vec3.create();
 	const ca = vec3.create();
-	const vertexNormal = (index: number): Vec3 => {
+	const vertexNormal = (index: number) => {
 		const a = vertices[index];
 		const b = vertices[(index + 1) % len];
 		const c = vertices[(index + 2) % len];
@@ -43,5 +44,3 @@ const fromPoints = (out: _Plane, ...vertices: Vec3[]) => {
 	out[3] = vec3.dot(out, vertices[0]);
 	return out;
 };
-
-export default fromPoints;

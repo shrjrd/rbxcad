@@ -1,6 +1,6 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import { compareVectors } from "../../test/helpers";
+import { compareVectors } from "../../test/helpers/index";
 import { create, fromPointAxisNormal, transformationBetween } from "./index";
 
 test("connector: transformationBetween() should return correct transform matrices", () => {
@@ -17,23 +17,23 @@ test("connector: transformationBetween() should return correct transform matrice
 	expect(compareVectors(obs, exp)).toBe(true);
 
 	// connectors as taken from V1 cube
-	const facecenter0 = fromPointAxisNormal([3, 0, 0], [1, 0, 0], [0, 0, 1]);
-	const facecenter1 = fromPointAxisNormal([-3, 0, 0], [-1, 0, 0], [0, 0, 1]);
-	const facecenter2 = fromPointAxisNormal([0, 3, 0], [0, 1, 0], [0, 0, 1]);
-	// const facecenter3 = fromPointAxisNormal([0, -3, 0], [0, -1, 0], [0, 0, 1])
-	// const facecenter4 = fromPointAxisNormal([0, 0, 3], [0, 0, 1], [1, 0, 0])
-	const facecenter5 = fromPointAxisNormal([0, 0, -3], [0, 0, -1], [1, 0, 0]);
+	const faceCenter0 = fromPointAxisNormal([3, 0, 0], [1, 0, 0], [0, 0, 1]);
+	const faceCenter1 = fromPointAxisNormal([-3, 0, 0], [-1, 0, 0], [0, 0, 1]);
+	const faceCcenter2 = fromPointAxisNormal([0, 3, 0], [0, 1, 0], [0, 0, 1]);
+	// const faceCenter3 = fromPointAxisNormal([0, -3, 0], [0, -1, 0], [0, 0, 1])
+	// const faceCenter4 = fromPointAxisNormal([0, 0, 3], [0, 0, 1], [1, 0, 0])
+	const faceCenter5 = fromPointAxisNormal([0, 0, -3], [0, 0, -1], [1, 0, 0]);
 
-	obs = transformationBetween({}, facecenter0, facecenter1); // opposing faces
+	obs = transformationBetween({}, faceCenter0, faceCenter1); // opposing faces
 	exp = [-1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 0, -3.6739405577555036e-16, 0, 1];
 	expect(compareVectors(obs, exp)).toBe(true);
 
-	obs = transformationBetween({}, facecenter2, facecenter5); // adjacent faces
+	obs = transformationBetween({}, faceCcenter2, faceCenter5); // adjacent faces
 	exp = [0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, 0, 3, -3, 0, 1];
 	expect(compareVectors(obs, exp)).toBe(true);
 
 	// test mirror option
-	obs = transformationBetween({ mirror: true }, facecenter0, facecenter1); // opposing faces
+	obs = transformationBetween({ mirror: true }, faceCenter0, faceCenter1); // opposing faces
 	exp = [
 		1, -2.4492937051703357e-16, 0, 0, 2.4492937051703357e-16, 1, 0, 0, 0, 0, 1, 0, -6, 7.347881115511007e-16, 0, 1,
 	];

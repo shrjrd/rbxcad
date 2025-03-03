@@ -1,8 +1,11 @@
+import type { Geometry, Geom2, Geom3, Path2 } from "../../geometries/types";
+import type { Vec3 } from "../../maths/types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import { comparePoints, comparePolygonsAsPoints } from "../../../test/helpers";
-import { geom2, geom3, path2 } from "../../geometries";
+import { comparePoints, comparePolygonsAsPoints } from "../../../test/helpers/index";
+import { geom2, geom3, path2 } from "../../geometries/index";
 import { TAU } from "../../maths/constants";
+import { measureArea, measureVolume } from "../../measurements/index";
 import { rotate, rotateX, rotateY, rotateZ } from "./index";
 
 test("rotate: rotating of a path2 produces expected changes to points", () => {
@@ -15,7 +18,7 @@ test("rotate: rotating of a path2 produces expected changes to points", () => {
 	// rotate about Z
 	let rotated = rotate([0, 0, TAU / 4], geometry) as Path2;
 	let obs = path2.toPoints(rotated);
-	const exp: Vec2[] = [
+	const exp = [
 		[0, 1],
 		[-1, 0],
 		[-0, -1],
@@ -29,26 +32,30 @@ test("rotate: rotating of a path2 produces expected changes to points", () => {
 });
 
 test("rotate: rotating of a geom2 produces expected changes to points", () => {
-	const geometry = geom2.fromPoints([
-		[0, 0],
-		[1, 0],
-		[0, 1],
+	const geometry = geom2.create([
+		[
+			[0, 0],
+			[1, 0],
+			[0, 1],
+		],
 	]);
 
 	// rotate about Z
 	let rotated = rotate([0, 0, -TAU / 4], geometry) as Geom2;
 	let obs = geom2.toPoints(rotated);
-	const exp: Vec2[] = [
+	const exp = [
 		[0, 0],
 		[0, -1],
 		[1, 0],
 	];
 	expect(() => geom2.validate(rotated)).never.toThrow();
+	expect(measureArea(rotated)).toBe(measureArea(geometry));
 	expect(comparePoints(obs, exp)).toBe(true);
 
 	rotated = rotateZ(-TAU / 4, geometry) as Geom2;
 	obs = geom2.toPoints(rotated);
 	expect(() => geom2.validate(rotated)).never.toThrow();
+	expect(measureArea(rotated)).toBe(measureArea(geometry));
 	expect(comparePoints(obs, exp)).toBe(true);
 });
 
@@ -96,7 +103,7 @@ test("rotate: rotating of a geom3 produces expected changes to polygons", () => 
 	// rotate about X
 	let rotated = rotate([TAU / 4], geometry) as Geom3;
 	let obs = geom3.toPoints(rotated);
-	let exp: Vec3[][] = [
+	let exp = [
 		[
 			[-2, 12, -7.000000000000001],
 			[-2, -18, -6.999999999999999],
@@ -135,11 +142,13 @@ test("rotate: rotating of a geom3 produces expected changes to polygons", () => 
 		],
 	];
 	expect(() => geom3.validate(rotated)).never.toThrow();
+	expect(measureVolume(rotated)).toBe(measureVolume(geometry));
 	expect(comparePolygonsAsPoints(obs, exp)).toBe(true);
 
 	rotated = rotateX(TAU / 4, geometry) as Geom3;
 	obs = geom3.toPoints(rotated);
 	expect(() => geom3.validate(rotated)).never.toThrow();
+	expect(measureVolume(rotated)).toBe(measureVolume(geometry));
 	expect(comparePolygonsAsPoints(obs, exp)).toBe(true);
 
 	// rotate about Y
@@ -184,10 +193,13 @@ test("rotate: rotating of a geom3 produces expected changes to polygons", () => 
 		],
 	];
 	expect(() => geom3.validate(rotated)).never.toThrow();
+	expect(measureVolume(rotated)).toBe(measureVolume(geometry));
 	expect(comparePolygonsAsPoints(obs, exp)).toBe(true);
 
 	rotated = rotateY(-TAU / 4, geometry) as Geom3;
 	obs = geom3.toPoints(rotated);
+	expect(() => geom3.validate(rotated)).never.toThrow();
+	expect(measureVolume(rotated)).toBe(measureVolume(geometry));
 	expect(comparePolygonsAsPoints(obs, exp)).toBe(true);
 
 	// rotate about Z
@@ -232,34 +244,38 @@ test("rotate: rotating of a geom3 produces expected changes to polygons", () => 
 		],
 	];
 	expect(() => geom3.validate(rotated)).never.toThrow();
+	expect(measureVolume(rotated)).toBe(measureVolume(geometry));
 	expect(comparePolygonsAsPoints(obs, exp)).toBe(true);
 
 	rotated = rotateZ(TAU / 2, geometry) as Geom3;
 	obs = geom3.toPoints(rotated);
 	expect(() => geom3.validate(rotated)).never.toThrow();
+	expect(measureVolume(rotated)).toBe(measureVolume(geometry));
 	expect(comparePolygonsAsPoints(obs, exp)).toBe(true);
 });
 
 test("rotate: rotating of multiple objects produces expected changes", () => {
-	const junk = "hello";
+	const junk = "hello" as unknown as Geometry;
 	const geometry1 = path2.fromPoints({}, [
 		[-5, 5],
 		[5, 5],
 		[-5, -5],
 		[10, -5],
 	]);
-	const geometry2 = geom2.fromPoints([
-		[-5, -5],
-		[0, 5],
-		[10, -5],
+	const geometry2 = geom2.create([
+		[
+			[-5, -5],
+			[0, 5],
+			[10, -5],
+		],
 	]);
 
-	const rotated = rotate([0, 0, TAU / 4], junk as unknown as object, geometry1, geometry2) as object[];
+	const rotated = rotate([0, 0, TAU / 4], junk, geometry1, geometry2) as Geometry[];
 
 	expect(rotated[0]).toBe(junk);
 
 	const obs1 = path2.toPoints(rotated[1] as Path2);
-	const exp1: Vec2[] = [
+	const exp1 = [
 		[-5, -5],
 		[-5, 5],
 		[5, -5],
@@ -269,7 +285,7 @@ test("rotate: rotating of multiple objects produces expected changes", () => {
 	expect(comparePoints(obs1, exp1)).toBe(true);
 
 	const obs2 = geom2.toPoints(rotated[2] as Geom2);
-	const exp2: Vec2[] = [
+	const exp2 = [
 		[5, -5],
 		[-5, 3.061616997868383e-16],
 		[5.000000000000001, 10],

@@ -1,7 +1,7 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import { compareVectors } from "../../../test/helpers";
-import plane from "../plane";
+import { compareVectors } from "../../../test/helpers/index";
+import { plane } from "../index";
 import { create, mirrorByPlane } from "./index";
 
 test("mat4: mirrorByPlane() called with out parameter should return a new mat4 with correct values", () => {

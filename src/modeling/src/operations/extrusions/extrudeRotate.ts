@@ -1,37 +1,39 @@
+import type { Geom2, Slice } from "../../geometries/types";
+
+export interface ExtrudeRotateOptions {
+	angle?: number;
+	startAngle?: number;
+	overflow?: "cap";
+	segments?: number;
+}
+
 import { Object } from "@rbxts/luau-polyfill";
 
-import geom2 from "../../geometries/geom2";
+import * as geom2 from "../../geometries/geom2/index";
+import * as geom3 from "../../geometries/geom3/index";
+import * as slice from "../../geometries/slice/index";
 import { TAU } from "../../maths/constants";
-import mat4 from "../../maths/mat4";
+import * as mat4 from "../../maths/mat4/index";
 import { mirrorX } from "../transforms/mirror";
-import extrudeFromSlices from "./extrudeFromSlices";
-import slice from "./slice";
+import { extrudeFromSlices } from "./extrudeFromSlices";
 
 /**
  * Rotate extrude the given geometry using the given options.
  *
- * @param {Object} options - options for extrusion
- * @param {Number} [options.angle=TAU] - angle of the extrusion (RADIANS)
- * @param {Number} [options.startAngle=0] - start angle of the extrusion (RADIANS)
- * @param {String} [options.overflow='cap'] - what to do with points outside of bounds (+ / - x) :
+ * @param {object} options - options for extrusion
+ * @param {number} [options.angle=TAU] - angle of the extrusion (RADIANS)
+ * @param {number} [options.startAngle=0] - start angle of the extrusion (RADIANS)
+ * @param {string} [options.overflow='cap'] - what to do with points outside of bounds (+ / - x) :
  * defaults to capping those points to 0 (only supported behaviour for now)
- * @param {Number} [options.segments=12] - number of segments of the extrusion
- * @param {geom2} geometry - the geometry to extrude
- * @returns {geom3} the extruded geometry
+ * @param {number} [options.segments=12] - number of segments of the extrusion
+ * @param {Geom2} geometry - the geometry to extrude
+ * @returns {Geom3} the extruded geometry
  * @alias module:modeling/extrusions.extrudeRotate
  *
  * @example
  * const myshape = extrudeRotate({segments: 8, angle: TAU / 2}, circle({size: 3, center: [4, 0]}))
  */
-const extrudeRotate = (
-	options: {
-		segments?: number;
-		startAngle?: number;
-		angle?: number;
-		overflow?: string;
-	},
-	geometry: Geom2,
-): Geom3 => {
+export const extrudeRotate = (options: ExtrudeRotateOptions, geometry: Geom2) => {
 	const defaults = {
 		segments: 12,
 		startAngle: 0,
@@ -41,7 +43,7 @@ const extrudeRotate = (
 	// eslint-disable-next-line prefer-const
 	let { segments, startAngle, angle, overflow } = Object.assign({}, defaults, options);
 
-	if (segments < 3) error("segments must be greater then 3");
+	if (segments < 3) throw "segments must be greater then 3";
 
 	startAngle = math.abs(startAngle) > TAU ? startAngle % TAU : startAngle;
 	angle = math.abs(angle) > TAU ? angle % TAU : angle;
@@ -64,21 +66,17 @@ const extrudeRotate = (
 		if (math.abs(totalRotation) > segments * anglePerSegment) segments++;
 	}
 
-	// console.log('startAngle: '+startAngle)
-	// console.log('endAngle: '+endAngle)
-	// console.log(totalRotation)
-	// console.log(segments)
-
 	// convert geometry to an array of sides, easier to deal with
 	let shapeSides = geom2.toSides(geometry);
-	if (shapeSides.size() === 0) error("the given geometry cannot be empty");
+	if (shapeSides.size() === 0) return geom3.create();
+	let sliceGeometry = geometry;
 
-	// determine if the rotate extrude can be computed in the first place
+	// determine if the extrusion can be computed in the first place
 	// ie all the points have to be either x > 0 or x < 0
 
 	// generic solution to always have a valid solid, even if points go beyond x/ -x
-	// 1. split points up between all those on the 'left' side of the axis (x<0) & those on the 'righ' (x>0)
-	// 2. for each set of points do the extrusion operation IN OPOSITE DIRECTIONS
+	// 1. split points up between all those on the 'left' side of the axis (x<0) & those on the 'right' (x>0)
+	// 2. for each set of points do the extrusion operation IN OPPOSITE DIRECTIONS
 	// 3. union the two resulting solids
 
 	// 1. alt : OR : just cap of points at the axis ?
@@ -100,8 +98,8 @@ const extrudeRotate = (
 				return [point0, point1];
 			});
 			// recreate the geometry from the (-) capped points
-			geometry = geom2.create(shapeSides);
-			geometry = mirrorX(geometry) as Geom2;
+			sliceGeometry = geom2.fromSides(shapeSides);
+			sliceGeometry = mirrorX(sliceGeometry) as Geom2;
 		} else if (pointsWithPositiveX.size() >= pointsWithNegativeX.size()) {
 			shapeSides = shapeSides.map((side) => {
 				let point0 = side[0];
@@ -111,14 +109,14 @@ const extrudeRotate = (
 				return [point0, point1];
 			});
 			// recreate the geometry from the (+) capped points
-			geometry = geom2.create(shapeSides);
+			sliceGeometry = geom2.fromSides(shapeSides);
 		}
 	}
 
 	const rotationPerSlice = totalRotation / segments;
 	const isCapped = math.abs(totalRotation) < TAU;
-	const baseSlice = slice.fromSides(geom2.toSides(geometry));
-	slice.reverse(baseSlice, baseSlice);
+	let baseSlice = slice.fromGeom2(sliceGeometry);
+	baseSlice = slice.reverse(baseSlice);
 
 	const matrix = mat4.create();
 	const createSlice = (progress: number, index: number, base: Slice) => {
@@ -132,7 +130,7 @@ const extrudeRotate = (
 		return slice.transform(matrix, base);
 	};
 
-	return extrudeFromSlices(
+	const output = extrudeFromSlices(
 		{
 			numberOfSlices: segments + 1,
 			capStart: isCapped,
@@ -142,6 +140,6 @@ const extrudeRotate = (
 		},
 		baseSlice,
 	);
+	if (geometry.color) output.color = geometry.color;
+	return output;
 };
-
-export default extrudeRotate;

@@ -1,9 +1,10 @@
+import type { Geom3 } from "../../geometries/types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import { comparePolygonsAsPoints } from "../../../test/helpers";
-import { geom3 } from "../../geometries";
+import { comparePolygonsAsPoints } from "../../../test/helpers/index";
+import { geom3 } from "../../geometries/index";
 import { TAU } from "../../maths/constants";
-import { cuboid } from "../../primitives";
+import { cuboid } from "../../primitives/index";
 import { generalize } from "./index";
 
 test("generalize: generalize of a geom3 produces an expected geom3", () => {
@@ -12,7 +13,7 @@ test("generalize: generalize of a geom3 produces an expected geom3", () => {
 	// apply no modifications
 	let result = generalize({}, geometry1) as Geom3;
 	let pts = geom3.toPoints(result);
-	let exp: Vec3[][] = [
+	let exp = [
 		[
 			[-1.5707963267948966, -0.7853981633974483, -3.141592653589793],
 			[-1.5707963267948966, -0.7853981633974483, 3.141592653589793],
@@ -292,7 +293,7 @@ test("generalize: generalize of a geom3 with T junctions produces an expected ge
 
 	const result = generalize({ snap: true, triangulate: true }, geometry1) as Geom3;
 	const pts = geom3.toPoints(result);
-	const exp: Vec3[][] = [
+	const exp = [
 		[
 			[-1, 0, 0.2],
 			[-1, -1, -1],

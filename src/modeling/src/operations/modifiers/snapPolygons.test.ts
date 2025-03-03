@@ -1,7 +1,7 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import { poly3 } from "../../geometries";
-import snapPolygons from "./snapPolygons";
+import { poly3 } from "../../geometries/index";
+import { snapPolygons } from "./snapPolygons";
 
 test("snapPolygons: snap of polygons produces expected results", () => {
 	const polygons = [

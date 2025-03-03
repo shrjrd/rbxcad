@@ -1,32 +1,26 @@
+import type { Vec2 } from "../../maths/types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import applyTransforms from "./applyTransforms";
-import { fromPoints } from "./index";
+import { applyTransforms } from "./applyTransforms";
+import { create } from "./index";
 
-test("applyTransforms: Updates a populated geom2 with transformed sides", () => {
+test("applyTransforms: Updates a populated geom2 with transforms", () => {
 	const points: Vec2[] = [
 		[0, 0],
 		[1, 0],
 		[0, 1],
 	];
 	const expected = {
-		sides: [
-			[
-				[0, 1],
-				[0, 0],
-			],
+		outlines: [
 			[
 				[0, 0],
-				[1, 0],
-			],
-			[
 				[1, 0],
 				[0, 1],
 			],
 		],
 		transforms: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
 	};
-	const geometry = fromPoints(points);
+	const geometry = create([points]);
 	const updated = applyTransforms(geometry);
 	expect(geometry).toBe(updated);
 	expect(updated).toEqual(expected);

@@ -1,17 +1,23 @@
+import type { Geom2 } from "../types";
 /**
  * Produces a compact binary representation from the given geometry.
- * @param {geom2} geometry - the geometry
+ * @param {Geom2} geometry - the geometry
  * @returns {TypedArray} compact binary representation
  * @alias module:modeling/geometries/geom2.toCompactBinary
  */
-const toCompactBinary = (geometry: Geom2): number[] => {
-	const sides = geometry.sides;
+export const toCompactBinary = (geometry: Geom2) => {
 	const transforms = geometry.transforms;
 	let color = [-1, -1, -1, -1];
 	if (geometry.color) color = geometry.color;
 
+	// Compute array size
+	let size = 21;
+	geometry.outlines.forEach((outline) => {
+		size += 2 * outline.size() + 1;
+	});
+
 	// FIXME why Float32Array?
-	const compacted: number[] = table.create(1 + 16 + 4 + sides.size() * 4); // type + transforms + color + sides data
+	const compacted = new Array(size); // type + transforms + color + points
 
 	compacted[0] = 0; // type code: 0 => geom2, 1 => geom3 , 2 => path2
 
@@ -37,17 +43,15 @@ const toCompactBinary = (geometry: Geom2): number[] => {
 	compacted[19] = color[2];
 	compacted[20] = color[3];
 
-	for (let i = 0; i < sides.size(); i++) {
-		const ci = i * 4 + 21;
-		const point0 = sides[i][0];
-		const point1 = sides[i][1];
-		compacted[ci + 0] = point0[0];
-		compacted[ci + 1] = point0[1];
-		compacted[ci + 2] = point1[0];
-		compacted[ci + 3] = point1[1];
-	}
+	let index = 21;
+	geometry.outlines.forEach((outline) => {
+		compacted[index++] = outline.size();
+		outline.forEach((point) => {
+			compacted[index++] = point[0];
+			compacted[index++] = point[1];
+		});
+	});
+
 	// TODO: how about custom properties or fields ?
 	return compacted;
 };
-
-export default toCompactBinary;

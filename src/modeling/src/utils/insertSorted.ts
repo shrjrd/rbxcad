@@ -1,23 +1,21 @@
-import { Array } from "@rbxts/luau-polyfill";
+import { Array as JsArray } from "@rbxts/luau-polyfill";
 /**
  * Insert the given element into the given array using the compareFunction.
  * @alias module:modeling/utils.insertSorted
  */
-const insertSorted = <T>(array: Array<T>, element: T, comparefunc: (a: T, b: T) => number) => {
-	let leftbound = 0;
-	let rightbound = array.size();
-	while (rightbound > leftbound) {
-		const testindex = math.floor((leftbound + rightbound) / 2);
-		const testelement = array[testindex];
-		const compareresult = comparefunc(element, testelement);
-		if (compareresult > 0) {
-			// element > testelement
-			leftbound = testindex + 1;
+export const insertSorted = <T>(array: Array<T>, element: T, compareFunc: (a: T, b: T) => number) => {
+	let leftBound = 0;
+	let rightBound = array.size();
+	while (rightBound > leftBound) {
+		const testIndex = math.floor((leftBound + rightBound) / 2);
+		const testElement = array[testIndex];
+		const compareResult = compareFunc(element, testElement);
+		if (compareResult > 0) {
+			// element > testElement
+			leftBound = testIndex + 1;
 		} else {
-			rightbound = testindex;
+			rightBound = testIndex;
 		}
 	}
-	Array.splice(array, leftbound + 1, 0, element); //array.splice(leftbound, 0, element);
+	JsArray.splice(array, leftBound + 1, 0, element); //array.splice(leftBound, 0, element);
 };
-
-export default insertSorted;

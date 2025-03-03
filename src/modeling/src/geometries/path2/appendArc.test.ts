@@ -1,7 +1,8 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import { comparePoints } from "../../../test/helpers/";
+import { comparePoints } from "../../../test/helpers/index";
 import { TAU } from "../../maths/constants";
+import * as vec2 from "../../maths/vec2/index";
 import { appendArc, fromPoints, toPoints } from "./index";
 
 test("appendArc: appending to an empty path produces an error", () => {
@@ -37,7 +38,7 @@ test("appendArc: appending to a path produces a new path", () => {
 	// test clockwise
 	obs = appendArc({ endpoint: [12, -22], radius: [15, -20], clockwise: true }, p2);
 	pts = toPoints(obs);
-	let exp: Vec2[] = [
+	let exp = [
 		[27, -22],
 		[27, -3],
 		[26.086451657912605, -8.941047736250177],
@@ -54,8 +55,8 @@ test("appendArc: appending to a path produces a new path", () => {
 	pts = toPoints(obs);
 	expect(pts.size()).toBe(16);
 
-	// test xaxisrotation
-	obs = appendArc({ endpoint: [12, -22], radius: [15, -20], xaxisrotation: TAU / 4 }, p2);
+	// test xaxisRotation
+	obs = appendArc({ endpoint: [12, -22], radius: [15, -20], xaxisRotation: TAU / 4 }, p2);
 	pts = toPoints(obs);
 	exp = [
 		[27, -22],
@@ -81,7 +82,7 @@ test("appendArc: appending to a path produces exact endpoint", () => {
 		[18, 1.8],
 		[1, 3],
 	]);
-	const endpoint: Vec2 = [1, -3];
+	const endpoint = vec2.fromValues(1, -3);
 
 	p1 = appendArc(
 		{

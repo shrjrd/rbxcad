@@ -1,22 +1,19 @@
-import flatten from "../../utils/flatten";
-import retessellate from "../modifiers/retessellate";
-import subtractSub from "./subtractGeom3Sub";
+import type { Geom3 } from "../../geometries/types";
+import { retessellate } from "../modifiers/retessellate";
+import { subtractGeom3Sub } from "./subtractGeom3Sub";
 
 /**
  * Return a new 3D geometry representing space in this geometry but not in the given geometries.
  * Neither this geometry nor the given geometries are modified.
- * @param {...geom3} geometries - list of geometries
- * @returns {geom3} new 3D geometry
+ * @param {Geom3[]} geometries - a flat list of 3D geometries
+ * @returns {Geom3} new 3D geometry
  */
-const subtract = (...geometries: Geom3[]) => {
-	geometries = flatten(geometries);
-
-	let newgeometry = geometries.shift()!;
+export const subtractGeom3 = (geometries: Geom3[]) => {
+	let newGeometry = geometries.shift()!;
 	geometries.forEach((geometry) => {
-		newgeometry = subtractSub(newgeometry, geometry);
+		newGeometry = subtractGeom3Sub(newGeometry, geometry);
 	});
-	newgeometry = retessellate(newgeometry);
-	return newgeometry;
-};
 
-export default subtract;
+	newGeometry = retessellate(newGeometry);
+	return newGeometry;
+};

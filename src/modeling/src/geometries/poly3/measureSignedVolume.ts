@@ -1,15 +1,16 @@
-import vec3 from "../../maths/vec3";
+import type { Poly3 } from "./type";
+import * as vec3 from "../../maths/vec3/index";
 
 /**
  * Measure the signed volume of the given polygon, which must be convex.
  * The volume is that formed by the tetrahedron connected to the axis [0,0,0],
  * and will be positive or negative based on the rotation of the vertices.
  * @see http://chenlab.ece.cornell.edu/Publication/Cha/icip01_Cha.pdf
- * @param {poly3} polygon - the polygon to measure
- * @return {Number} volume of the polygon
+ * @param {Poly3} polygon - the polygon to measure
+ * @return {number} volume of the polygon
  * @alias module:modeling/geometries/poly3.measureSignedVolume
  */
-const measureSignedVolume = (polygon: Poly3) => {
+export const measureSignedVolume = (polygon: Poly3) => {
 	let signedVolume = 0;
 	const vertices = polygon.vertices;
 	// calculate based on triangular polygons
@@ -21,5 +22,3 @@ const measureSignedVolume = (polygon: Poly3) => {
 	signedVolume /= 6;
 	return signedVolume;
 };
-
-export default measureSignedVolume;

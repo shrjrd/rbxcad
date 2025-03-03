@@ -1,32 +1,35 @@
-import { Array as JsArray, Error, Object } from "@rbxts/luau-polyfill";
+import type { Vec3 } from "../maths/types";
 
-import geom3 from "../geometries/geom3";
-import poly3 from "../geometries/poly3";
-import { TAU } from "../maths/constants";
-import { cos, sin } from "../maths/utils/trigonometry";
-import vec3 from "../maths/vec3";
-import { isGTE, isNumberArray } from "./commonChecks";
-
-type EllipsoidOptions = {
+export interface EllipsoidOptions {
 	center?: Vec3;
 	radius?: Vec3;
 	segments?: number;
 	axes?: Vec3[];
-};
+}
+
+import { Array as JsArray, Object } from "@rbxts/luau-polyfill";
+
+import * as geom3 from "../geometries/geom3/index";
+import * as poly3 from "../geometries/poly3/index";
+import { TAU } from "../maths/constants";
+import { cos, sin } from "../maths/utils/trigonometry";
+import * as vec3 from "../maths/vec3/index";
+import { isGTE, isNumberArray } from "./commonChecks";
+
 /**
  * Construct an axis-aligned ellipsoid in three dimensional space.
- * @param {Object} [options] - options for construction
+ * @param {object} [options] - options for construction
  * @param {Array} [options.center=[0,0,0]] - center of ellipsoid
  * @param {Array} [options.radius=[1,1,1]] - radius of ellipsoid, along X, Y and Z
- * @param {Number} [options.segments=32] - number of segments to create per full rotation
+ * @param {number} [options.segments=32] - number of segments to create per full rotation
  * @param {Array} [options.axes] -  an array with three vectors for the x, y and z base vectors
- * @returns {geom3} new 3D geometry
+ * @returns {Geom3} new 3D geometry
  * @alias module:modeling/primitives.ellipsoid
  *
  * @example
  * let myshape = ellipsoid({radius: [5, 10, 20]})
  */
-const ellipsoid = (options?: EllipsoidOptions) => {
+export const ellipsoid = (options?: EllipsoidOptions) => {
 	const defaults = {
 		center: [0, 0, 0],
 		radius: [1, 1, 1],
@@ -39,106 +42,104 @@ const ellipsoid = (options?: EllipsoidOptions) => {
 	};
 	const { center, radius, segments, axes } = Object.assign({}, defaults, options);
 
-	if (!isNumberArray(center, 3)) throw new Error("center must be an array of X, Y and Z values");
-	if (!isNumberArray(radius, 3)) throw new Error("radius must be an array of X, Y and Z values");
-	if (!radius.every((n) => n >= 0)) throw new Error("radius values must be positive");
-	if (!isGTE(segments, 4)) throw new Error("segments must be four or more");
+	if (!isNumberArray(center, 3)) throw "center must be an array of X, Y and Z values";
+	if (!isNumberArray(radius, 3)) throw "radius must be an array of X, Y and Z values";
+	if (!radius.every((n) => n >= 0)) throw "radius values must be positive";
+	if (!isGTE(segments, 4)) throw "segments must be four or more";
 
 	// if any radius is zero return empty geometry
 	if (radius[0] === 0 || radius[1] === 0 || radius[2] === 0) return geom3.create();
 
-	const xvector = vec3.scale(vec3.create(), vec3.normalize(vec3.create(), axes[0]), radius[0]);
-	const yvector = vec3.scale(vec3.create(), vec3.normalize(vec3.create(), axes[1]), radius[1]);
-	const zvector = vec3.scale(vec3.create(), vec3.normalize(vec3.create(), axes[2]), radius[2]);
+	const xVector = vec3.scale(vec3.create(), vec3.normalize(vec3.create(), axes[0]), radius[0]);
+	const yVector = vec3.scale(vec3.create(), vec3.normalize(vec3.create(), axes[1]), radius[1]);
+	const zVector = vec3.scale(vec3.create(), vec3.normalize(vec3.create(), axes[2]), radius[2]);
 
-	const qsegments = math.round(segments / 4);
-	let prevcylinderpoint;
+	const qSegments = math.round(segments / 4);
+	let prevCylinderVertex: Vec3 = undefined!;
 	const polygons = [];
 	const p1 = vec3.create();
 	const p2 = vec3.create();
 	for (let slice1 = 0; slice1 <= segments; slice1++) {
 		const angle = (TAU * slice1) / segments;
-		const cylinderpoint = vec3.add(
+		const cylinderVertex = vec3.add(
 			vec3.create(),
-			vec3.scale(p1, xvector, cos(angle)),
-			vec3.scale(p2, yvector, sin(angle)),
+			vec3.scale(p1, xVector, cos(angle)),
+			vec3.scale(p2, yVector, sin(angle)),
 		);
 		if (slice1 > 0) {
-			let prevcospitch, prevsinpitch;
-			for (let slice2 = 0; slice2 <= qsegments; slice2++) {
-				const pitch = ((TAU / 4) * slice2) / qsegments;
-				const cospitch = cos(pitch);
-				const sinpitch = sin(pitch);
+			let [prevCosPitch, prevSinPitch]: [number, number] = [undefined!, undefined!];
+			for (let slice2 = 0; slice2 <= qSegments; slice2++) {
+				const pitch = ((TAU / 4) * slice2) / qSegments;
+				const cosPitch = cos(pitch);
+				const sinPitch = sin(pitch);
 				if (slice2 > 0) {
-					let points = [];
-					let point;
-					point = vec3.subtract(
+					let vertices = [];
+					let vertex;
+					vertex = vec3.subtract(
 						vec3.create(),
-						vec3.scale(p1, prevcylinderpoint!, prevcospitch!),
-						vec3.scale(p2, zvector, prevsinpitch!),
+						vec3.scale(p1, prevCylinderVertex, prevCosPitch),
+						vec3.scale(p2, zVector, prevSinPitch),
 					);
-					points.push(vec3.add(point, point, center));
-					point = vec3.subtract(
+					vertices.push(vec3.add(vertex, vertex, center));
+					vertex = vec3.subtract(
 						vec3.create(),
-						vec3.scale(p1, cylinderpoint, prevcospitch!),
-						vec3.scale(p2, zvector, prevsinpitch!),
+						vec3.scale(p1, cylinderVertex, prevCosPitch),
+						vec3.scale(p2, zVector, prevSinPitch),
 					);
-					points.push(vec3.add(point, point, center));
-					if (slice2 < qsegments) {
-						point = vec3.subtract(
+					vertices.push(vec3.add(vertex, vertex, center));
+					if (slice2 < qSegments) {
+						vertex = vec3.subtract(
 							vec3.create(),
-							vec3.scale(p1, cylinderpoint, cospitch),
-							vec3.scale(p2, zvector, sinpitch),
+							vec3.scale(p1, cylinderVertex, cosPitch),
+							vec3.scale(p2, zVector, sinPitch),
 						);
-						points.push(vec3.add(point, point, center));
+						vertices.push(vec3.add(vertex, vertex, center));
 					}
-					point = vec3.subtract(
+					vertex = vec3.subtract(
 						vec3.create(),
-						vec3.scale(p1, prevcylinderpoint!, cospitch),
-						vec3.scale(p2, zvector, sinpitch),
+						vec3.scale(p1, prevCylinderVertex, cosPitch),
+						vec3.scale(p2, zVector, sinPitch),
 					);
-					points.push(vec3.add(point, point, center));
+					vertices.push(vec3.add(vertex, vertex, center));
 
-					polygons.push(poly3.create(points));
+					polygons.push(poly3.create(vertices));
 
-					points = [];
-					point = vec3.add(
+					vertices = [];
+					vertex = vec3.add(
 						vec3.create(),
-						vec3.scale(p1, prevcylinderpoint!, prevcospitch!),
-						vec3.scale(p2, zvector, prevsinpitch!),
+						vec3.scale(p1, prevCylinderVertex, prevCosPitch),
+						vec3.scale(p2, zVector, prevSinPitch),
 					);
-					points.push(vec3.add(vec3.create(), center, point));
-					point = vec3.add(
-						point,
-						vec3.scale(p1, cylinderpoint, prevcospitch!),
-						vec3.scale(p2, zvector, prevsinpitch!),
+					vertices.push(vec3.add(vec3.create(), center, vertex));
+					vertex = vec3.add(
+						vertex,
+						vec3.scale(p1, cylinderVertex, prevCosPitch),
+						vec3.scale(p2, zVector, prevSinPitch),
 					);
-					points.push(vec3.add(vec3.create(), center, point));
-					if (slice2 < qsegments) {
-						point = vec3.add(
-							point,
-							vec3.scale(p1, cylinderpoint, cospitch),
-							vec3.scale(p2, zvector, sinpitch),
+					vertices.push(vec3.add(vec3.create(), center, vertex));
+					if (slice2 < qSegments) {
+						vertex = vec3.add(
+							vertex,
+							vec3.scale(p1, cylinderVertex, cosPitch),
+							vec3.scale(p2, zVector, sinPitch),
 						);
-						points.push(vec3.add(vec3.create(), center, point));
+						vertices.push(vec3.add(vec3.create(), center, vertex));
 					}
-					point = vec3.add(
-						point,
-						vec3.scale(p1, prevcylinderpoint!, cospitch),
-						vec3.scale(p2, zvector, sinpitch),
+					vertex = vec3.add(
+						vertex,
+						vec3.scale(p1, prevCylinderVertex, cosPitch),
+						vec3.scale(p2, zVector, sinPitch),
 					);
-					points.push(vec3.add(vec3.create(), center, point));
-					JsArray.reverse(points); //points.reverse();
+					vertices.push(vec3.add(vec3.create(), center, vertex));
+					JsArray.reverse(vertices); //vertices.reverse();
 
-					polygons.push(poly3.create(points));
+					polygons.push(poly3.create(vertices));
 				}
-				prevcospitch = cospitch;
-				prevsinpitch = sinpitch;
+				prevCosPitch = cosPitch;
+				prevSinPitch = sinPitch;
 			}
 		}
-		prevcylinderpoint = cylinderpoint;
+		prevCylinderVertex = cylinderVertex;
 	}
 	return geom3.create(polygons);
 };
-
-export default ellipsoid;

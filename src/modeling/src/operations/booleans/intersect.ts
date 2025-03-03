@@ -1,9 +1,11 @@
-import geom2 from "../../geometries/geom2";
-import geom3 from "../../geometries/geom3";
-import areAllShapesTheSameType from "../../utils/areAllShapesTheSameType";
-import flatten from "../../utils/flatten";
-import intersectGeom2 from "./intersectGeom2";
-import intersectGeom3 from "./intersectGeom3";
+import type { RecursiveArray } from "../../utils/recursiveArray";
+import type { Geometry, Geom2, Geom3 } from "../../geometries/types";
+import * as geom2 from "../../geometries/geom2/index";
+import * as geom3 from "../../geometries/geom3/index";
+import { areAllShapesTheSameType } from "../../utils/areAllShapesTheSameType";
+import { coalesce } from "../../utils/coalesce";
+import { intersectGeom2 } from "./intersectGeom2";
+import { intersectGeom3 } from "./intersectGeom3";
 
 /**
  * Return a new geometry representing space in both the first geometry and
@@ -11,11 +13,11 @@ import intersectGeom3 from "./intersectGeom3";
  * The given geometries should be of the same type, either geom2 or geom3.
  *
  * @param {...Object} geometries - list of geometries
- * @returns {geom2|geom3} a new geometry
+ * @returns {Geom2|Geom3} a new geometry
  * @alias module:modeling/booleans.intersect
  *
  * @example
- * let myshape = intersect(cube({size: [5,5,5]}), cube({size: [5,5,5], center: [5,5,5]}))
+ * let myshape = intersect(cube({size: 5}), cube({size: 5, center: [3,3,3]}))
  *
  * @example
  * +-------+
@@ -27,19 +29,17 @@ import intersectGeom3 from "./intersectGeom3";
  *      |       |
  *      +-------+
  */
-const intersect = (...geometries: (Geom2 | Geom3)[]) => {
-	geometries = flatten(geometries);
-	if (geometries.size() === 0) error("wrong number of arguments");
+export const intersect = <T extends Geometry>(...geometries: RecursiveArray<T>) => {
+	geometries = coalesce(geometries);
 
-	if (!areAllShapesTheSameType(geometries)) {
-		error("only intersect of the types are supported");
+	if (geometries.size() === 0) return undefined;
+	if (!areAllShapesTheSameType(geometries as Geometry[])) {
+		throw "intersect arguments must be the same geometry type";
 	}
 
 	const geometry = geometries[0];
-	// if (path.isA(geometry)) return pathintersect(matrix, geometries)
-	if (geom2.isA(geometry)) return intersectGeom2(...(geometries as Geom2[]));
-	if (geom3.isA(geometry)) return intersectGeom3(...(geometries as Geom3[]));
-	return geometry;
+	// if (path.isA(geometry)) return intersectPath(matrix, geometries)
+	if (geom2.isA(geometry)) return intersectGeom2(geometries as unknown as Geom2[]);
+	if (geom3.isA(geometry)) return intersectGeom3(geometries as unknown as Geom3[]);
+	throw "intersect unsupported geometry type";
 };
-
-export default intersect;

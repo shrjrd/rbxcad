@@ -1,20 +1,21 @@
-import vec3 from "../vec3";
-import fromRotation from "./fromRotation";
+import type { Mat4, Vec3 } from "../types";
+import * as vec3 from "../vec3/index";
+import { fromRotation } from "./fromRotation";
 
 /**
  * Create a matrix that rotates the given source to the given target vector.
  *
  * Each vector must be a directional vector with a length greater than zero.
  * @see https://gist.github.com/kevinmoran/b45980723e53edeb8a5a43c49f134724
- * @param {mat4} out - receiving matrix
- * @param {vec3} source - source vector
- * @param {vec3} target - target vector
- * @returns {mat4} a new matrix
+ * @param {Mat4} out - receiving matrix
+ * @param {Vec3} source - source vector
+ * @param {Vec3} target - target vector
+ * @returns {Mat4} a new matrix
  * @alias module:modeling/maths/mat4.fromVectorRotation
  * @example
- * let matrix = fromVectorRotation(mat4.create(), [1, 2, 2], [-3, 3, 12])
+ * let matrix = fromVectorRotation(create(), [1, 2, 2], [-3, 3, 12])
  */
-const fromVectorRotation = (out: Mat4, source: Vec3, target: Vec3) => {
+export const fromVectorRotation = (out: Mat4, source: Vec3, target: Vec3) => {
 	const sourceNormal = vec3.normalize(vec3.create(), source);
 	const targetNormal = vec3.normalize(vec3.create(), target);
 
@@ -44,5 +45,3 @@ const fromVectorRotation = (out: Mat4, source: Vec3, target: Vec3) => {
 	out[15] = 1;
 	return out;
 };
-
-export default fromVectorRotation;

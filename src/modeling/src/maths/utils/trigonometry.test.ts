@@ -10,8 +10,8 @@ test("utils: sin() should return rounded values", () => {
 	expect(sin(0.5 * TAU)).toBe(0);
 	expect(sin(0.75 * TAU)).toBe(-1);
 	expect(sin(TAU)).toBe(0);
-	expect(sin(0 / 0)).toBe(0 / 0); //expect(sin(NaN)).toBe(NaN);
-	expect(sin(math.huge)).toBe(0 / 0); //expect(sin(Infinity)).toBe(NaN);
+	expect(sin(0 / 0)).toBe(0 / 0);
+	expect(sin(math.huge)).toBe(0 / 0);
 });
 
 test("utils: cos() should return rounded values", () => {
@@ -21,6 +21,6 @@ test("utils: cos() should return rounded values", () => {
 	expect(cos(0.5 * TAU)).toBe(-1);
 	expect(cos(0.75 * TAU)).toBe(0);
 	expect(cos(TAU)).toBe(1);
-	expect(cos(0 / 0)).toBe(0 / 0); //expect(cos(NaN)).toBe(NaN);
-	expect(cos(math.huge)).toBe(0 / 0); //expect(cos(Infinity)).toBe(NaN);
+	expect(cos(0 / 0)).toBe(0 / 0);
+	expect(cos(math.huge)).toBe(0 / 0);
 });

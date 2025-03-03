@@ -1,7 +1,8 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import comparePolygonsAsPoints from "../../test/helpers/comparePolygonsAsPoints";
-import geom3 from "../geometries/geom3";
+import { comparePolygonsAsPoints } from "../../test/helpers/index";
+import { geom3 } from "../geometries/index";
+import { measureArea, measureVolume } from "../measurements/index";
 import { roundedCuboid } from "./index";
 
 test("roundedCuboid (defaults)", () => {
@@ -9,13 +10,17 @@ test("roundedCuboid (defaults)", () => {
 	const pts = geom3.toPoints(obs);
 
 	expect(() => geom3.validate(obs)).never.toThrow();
-	expect(pts.size()).toEqual(614);
+	expect(measureArea(obs)).toBe(21.87859958298585);
+	expect(measureVolume(obs)).toBe(7.800061070935406);
+	expect(pts.size()).toBe(614);
 });
 
 test("roundedCuboid (zero size)", () => {
 	const obs = roundedCuboid({ size: [1, 1, 0] });
 	const pts = geom3.toPoints(obs);
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(0);
+	expect(measureVolume(obs)).toBe(0);
 	expect(pts.size()).toBe(0);
 });
 
@@ -23,16 +28,20 @@ test("roundedCuboid (zero radius)", () => {
 	const obs = roundedCuboid({ roundRadius: 0 });
 	const pts = geom3.toPoints(obs);
 	expect(() => geom3.validate(obs)).never.toThrow();
-	expect(pts.size()).toEqual(6);
+	expect(measureArea(obs)).toBe(24);
+	expect(measureVolume(obs)).toBe(7.999999999999999);
+	expect(pts.size()).toBe(6);
 });
 
 test("roundedCuboid (options)", () => {
 	// test segments
 	let obs = roundedCuboid({ segments: 8 });
 	let pts = geom3.toPoints(obs);
-	let exp: Vec3[][] = [];
+	let exp = [];
 
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(21.65472758198208);
+	expect(measureVolume(obs)).toBe(7.734600480283937);
 	expect(pts.size()).toBe(62);
 
 	// test center
@@ -41,6 +50,8 @@ test("roundedCuboid (options)", () => {
 	exp = [];
 
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(21.65472758198207);
+	expect(measureVolume(obs)).toBe(7.73460048028392);
 	expect(pts.size()).toBe(62);
 
 	// test size
@@ -389,7 +400,9 @@ test("roundedCuboid (options)", () => {
 		],
 	];
 	expect(() => geom3.validate(obs)).never.toThrow();
-	expect(pts.size()).toEqual(62);
+	expect(measureArea(obs)).toBe(580.6448151876211);
+	expect(measureVolume(obs)).toBe(958.6098905200406);
+	expect(pts.size()).toBe(62);
 	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 
 	// test roundRadius
@@ -738,6 +751,8 @@ test("roundedCuboid (options)", () => {
 		],
 	];
 	expect(() => geom3.validate(obs)).never.toThrow();
-	expect(pts.size()).toEqual(62);
+	expect(measureArea(obs)).toBe(470.09666312772333);
+	expect(measureVolume(obs)).toBe(835.1892253143822);
+	expect(pts.size()).toBe(62);
 	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 });

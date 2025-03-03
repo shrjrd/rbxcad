@@ -1,19 +1,20 @@
+import type { Vec3, Plane } from "../types";
 import { EPS } from "../constants";
-import vec3 from "../vec3";
+import * as vec3 from "../vec3/index";
 
 /**
  * Create a new plane from the given points like fromPoints,
  * but allow the vectors to be on one point or one line.
  * In such a case, a random plane through the given points is constructed.
  *
- * @param {plane} out - receiving plane
- * @param {vec3} a - 3D point
- * @param {vec3} b - 3D point
- * @param {vec3} c - 3D point
- * @returns {plane} out
+ * @param {Plane} out - receiving plane
+ * @param {Vec3} a - 3D point
+ * @param {Vec3} b - 3D point
+ * @param {Vec3} c - 3D point
+ * @returns {Plane} out
  * @alias module:modeling/maths/plane.fromPointsRandom
  */
-const fromPointsRandom = (out: _Plane, a: Vec3, b: Vec3, c: Vec3) => {
+export const fromPointsRandom = (out: Plane, a: Vec3, b: Vec3, c: Vec3) => {
 	let ba = vec3.subtract(vec3.create(), b, a);
 	let ca = vec3.subtract(vec3.create(), c, a);
 	if (vec3.length(ba) < EPS) {
@@ -37,5 +38,3 @@ const fromPointsRandom = (out: _Plane, a: Vec3, b: Vec3, c: Vec3) => {
 	out[3] = w;
 	return out;
 };
-
-export default fromPointsRandom;

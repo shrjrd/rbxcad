@@ -1,22 +1,29 @@
-import mat4 from "../../maths/mat4";
+import type { Path2 } from "../types";
+import type { Mat4, Vec2 } from "../../maths/types";
+import * as mat4 from "../../maths/mat4/index";
 
 /**
  * Represents a 2D geometry consisting of a list of ordered points.
- * @typedef {Object} path2
  * @property {Array} points - list of ordered points
- * @property {Boolean} isClosed - true if the path is closed where start and end points are the same
- * @property {mat4} transforms - transforms to apply to the points, see transform()
+ * @property {boolean} isClosed - true if the path is closed where start and end points are the same
+ * @property {Mat4} transforms - transforms to apply to the points, see transform()
+ * @example
+ * {
+ *   "points": [[0,0], [4,0], [4,3]],
+ *   "isClosed": true,
+ *   "transforms": [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+ * }
  */
 
 /**
  * Create an empty, open path.
- * @returns {path2} a new path
+ * @returns {Path2} a new path
  * @alias module:modeling/geometries/path2.create
  *
  * @example
- * let newpath = create()
+ * let newPath = create()
  */
-const create = (points?: Vec2[]): Path2 => {
+export const create = (points?: Vec2[]) => {
 	if (points === undefined) {
 		points = [];
 	}
@@ -24,7 +31,5 @@ const create = (points?: Vec2[]): Path2 => {
 		points: points,
 		isClosed: false,
 		transforms: mat4.create(),
-	};
+	} as Path2;
 };
-
-export default create;

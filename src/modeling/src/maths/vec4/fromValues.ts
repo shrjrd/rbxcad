@@ -1,16 +1,16 @@
-import create from "./create";
+import { create } from "./create";
 
 /**
  * Creates a new vector with the given values.
  *
- * @param {Number} x - X component
- * @param {Number} y - Y component
- * @param {Number} z - Z component
- * @param {Number} w - W component
- * @returns {vec4} a new vector
+ * @param {number} x - X component
+ * @param {number} y - Y component
+ * @param {number} z - Z component
+ * @param {number} w - W component
+ * @returns {Vec4} a new vector
  * @alias module:modeling/maths/vec4.fromValues
  */
-const fromValues = (x: number, y: number, z: number, w: number): Vec4 | _Plane => {
+export const fromValues = (x: number, y: number, z: number, w: number) => {
 	const out = create();
 	out[0] = x;
 	out[1] = y;
@@ -18,5 +18,3 @@ const fromValues = (x: number, y: number, z: number, w: number): Vec4 | _Plane =
 	out[3] = w;
 	return out;
 };
-
-export default fromValues;

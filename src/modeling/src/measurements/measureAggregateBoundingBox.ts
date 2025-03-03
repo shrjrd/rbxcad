@@ -1,9 +1,10 @@
+import type { RecursiveArray } from "../utils/recursiveArray";
+import type { BoundingBox } from "./types";
+import type { Geometry } from "../geometries/types";
 const Number_MAX_VALUE = 1.7976931348623157e308;
-
-import vec3max from "../maths/vec3/max";
-import vec3min from "../maths/vec3/min";
-import flatten from "../utils/flatten";
-import measureBoundingBox from "./measureBoundingBox";
+import * as vec3 from "../maths/vec3/index";
+import { flatten } from "../utils/flatten";
+import { measureBoundingBox } from "./measureBoundingBox";
 
 /**
  * Measure the aggregated minimum and maximum bounds for the given geometries.
@@ -14,9 +15,8 @@ import measureBoundingBox from "./measureBoundingBox";
  * @example
  * let bounds = measureAggregateBoundingBox(sphere(),cube())
  */
-const measureAggregateBoundingBox = (...geometries: object[]) => {
+export const measureAggregateBoundingBox = (...geometries: RecursiveArray<Geometry>) => {
 	geometries = flatten(geometries);
-	if (geometries.size() === 0) throw error("measureAggregateBoundingBox: no geometries supplied");
 	const bounds = measureBoundingBox(geometries) as BoundingBox[];
 	if (geometries.size() === 1) {
 		return bounds;
@@ -26,9 +26,7 @@ const measureAggregateBoundingBox = (...geometries: object[]) => {
 		[-Number_MAX_VALUE, -Number_MAX_VALUE, -Number_MAX_VALUE],
 	];
 	return bounds.reduce((result, item) => {
-		result = [vec3min(result[0], result[0], item[0]), vec3max(result[1], result[1], item[1])];
+		result = [vec3.min(result[0], result[0], item[0]), vec3.max(result[1], result[1], item[1])];
 		return result;
 	}, result);
 };
-
-export default measureAggregateBoundingBox;

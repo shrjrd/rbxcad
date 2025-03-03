@@ -1,27 +1,39 @@
-import { Array, Error } from "@rbxts/luau-polyfill";
+import type { Geom2 } from "../types";
+import type { Mat4 } from "../../maths/types";
+import { Array as JsArray } from "@rbxts/luau-polyfill";
 
-import mat4 from "../../maths/mat4";
-import vec2 from "../../maths/vec2";
-import create from "./create";
+import * as mat4 from "../../maths/mat4/index";
+import * as vec2 from "../../maths/vec2/index";
+import { create } from "./create";
 
 /**
  * Create a new 2D geometry from the given compact binary data.
  * @param {Array} data - compact binary data
- * @returns {geom2} a new geometry
+ * @returns {Geom2} a new geometry
  * @alias module:modeling/geometries/geom2.fromCompactBinary
  */
-const fromCompactBinary = (data: number[]): Geom2 => {
-	if (data[0] !== 0) throw new Error("invalid compact binary data");
+export const fromCompactBinary = (data: number[]) => {
+	if (data[0] !== 0) throw "invalid compact binary data";
 
 	const created = create();
 
-	created.transforms = mat4.clone(Array.slice(data, 2, 18) as Mat4); //mat4.clone(data.slice(1, 17));
+	created.transforms = mat4.clone(JsArray.slice(data, 2, 18) as Mat4); //mat4.clone(data.slice(1, 17));
 
-	for (let i = 21; i < data.size(); i += 4) {
-		const point0 = vec2.fromValues(data[i + 0], data[i + 1]);
-		const point1 = vec2.fromValues(data[i + 2], data[i + 3]);
-		created.sides.push([point0, point1]);
+	for (let i = 21; i < data.size(); ) {
+		const length = data[i++]; // number of points for this polygon
+		if (length < 0 || i + length * 2 > data.size()) {
+			throw "invalid compact binary data";
+		}
+		const outline = [];
+		for (let j = 0; j < length; j++) {
+			const x = data[i + j * 2];
+			const y = data[i + j * 2 + 1];
+			outline.push(vec2.fromValues(x, y));
+		}
+		created.outlines.push(outline);
+		i += length * 2;
 	}
+
 	// transfer known properties, i.e. color
 	if (data[17] >= 0) {
 		created.color = [data[17], data[18], data[19], data[20]];
@@ -29,5 +41,3 @@ const fromCompactBinary = (data: number[]): Geom2 => {
 	// TODO: how about custom properties or fields ?
 	return created;
 };
-
-export default fromCompactBinary;

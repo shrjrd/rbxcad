@@ -1,24 +1,29 @@
+import type { Mat4, Vec3 } from "../maths/types";
 import { Object } from "@rbxts/luau-polyfill";
 
-import mat4 from "../maths/mat4";
-import OrthoNormalBasis from "../maths/OrthoNormalBasis";
-import plane from "../maths/plane";
-import vec2 from "../maths/vec2";
-import vec3 from "../maths/vec3";
-import transform from "./transform";
+import * as mat4 from "../maths/mat4/index";
+import * as plane from "../maths/plane/index";
+import { OrthonormalFormula } from "../maths/utils/OrthonormalFormula";
+import * as vec2 from "../maths/vec2/index";
+import * as vec3 from "../maths/vec3/index";
+import { transform } from "./transform";
 
 /**
  * Get the transformation matrix that connects the given connectors.
- * @param {Object} options
- * @param {Boolean} [options.mirror=false] - the 'axis' vectors should point in the same direction
+ * @param {object} options
+ * @param {boolean} [options.mirror=false] - the 'axis' vectors should point in the same direction
  *  true: the 'axis' vectors should point in opposite direction
- * @param {Number} [options.normalRotation=0] - the angle (RADIANS) of rotation between the 'normal' vectors
- * @param {connector} from - connector from which to connect
- * @param {connector} to - connector to which to connected
- * @returns {mat4} - the matrix that transforms (connects) one connector to another
+ * @param {number} [options.normalRotation=0] - the angle (RADIANS) of rotation between the 'normal' vectors
+ * @param {Connector} from - connector from which to connect
+ * @param {Connector} to - connector to connect to
+ * @returns {Mat4} - the matrix that transforms (connects) one connector to another
  * @alias module:modeling/connectors.transformationBetween
  */
-const transformationBetween = (options: object, from: Connector, to: Connector): Mat4 => {
+export const transformationBetween = (
+	options: { mirror?: boolean; normalRotation?: number },
+	from: { point: Vec3; axis: Vec3; normal: Vec3 },
+	to: { point: Vec3; axis: Vec3; normal: Vec3 },
+) => {
 	const defaults = {
 		mirror: false,
 		normalRotation: 0,
@@ -30,39 +35,37 @@ const transformationBetween = (options: object, from: Connector, to: Connector):
 	const matrix = mat4.fromTranslation(mat4.create(), vec3.negate(vec3.create(), from.point));
 
 	// align the axis
-	const axesplane = plane.fromPointsRandom(plane.create(), vec3.create(), from.axis, to.axis);
-	const axesbasis = new OrthoNormalBasis(axesplane);
+	const axesPlane = plane.fromPointsRandom(plane.create(), vec3.create(), from.axis, to.axis);
+	const axesBasis = new OrthonormalFormula(axesPlane);
 
-	let angle1 = vec2.angleRadians(axesbasis.to2D(from.axis));
-	let angle2 = vec2.angleRadians(axesbasis.to2D(to.axis));
+	let angle1 = vec2.angleRadians(axesBasis.to2D(from.axis));
+	let angle2 = vec2.angleRadians(axesBasis.to2D(to.axis));
 
 	let rotation = angle2 - angle1;
 	if (mirror) rotation += math.pi; // 180 degrees
 
 	// TODO: understand and explain this
-	mat4.multiply(matrix, matrix, axesbasis.getProjectionMatrix());
+	mat4.multiply(matrix, matrix, axesBasis.getProjectionMatrix());
 	mat4.multiply(matrix, matrix, mat4.fromZRotation(mat4.create(), rotation));
-	mat4.multiply(matrix, matrix, axesbasis.getInverseProjectionMatrix());
+	mat4.multiply(matrix, matrix, axesBasis.getInverseProjectionMatrix());
 	const usAxesAligned = transform(matrix, from);
 	// Now we have done the transformation for aligning the axes.
 
 	// align the normals
-	const normalsplane = plane.fromNormalAndPoint(plane.create(), to.axis, vec3.create());
-	const normalsbasis = new OrthoNormalBasis(normalsplane);
+	const normalsPlane = plane.fromNormalAndPoint(plane.create(), to.axis, vec3.create());
+	const normalsBasis = new OrthonormalFormula(normalsPlane);
 
-	angle1 = vec2.angleRadians(normalsbasis.to2D(usAxesAligned.normal));
-	angle2 = vec2.angleRadians(normalsbasis.to2D(to.normal));
+	angle1 = vec2.angleRadians(normalsBasis.to2D(usAxesAligned.normal));
+	angle2 = vec2.angleRadians(normalsBasis.to2D(to.normal));
 
 	rotation = angle2 - angle1 + normalRotation;
 
-	mat4.multiply(matrix, matrix, normalsbasis.getProjectionMatrix());
+	mat4.multiply(matrix, matrix, normalsBasis.getProjectionMatrix());
 	mat4.multiply(matrix, matrix, mat4.fromZRotation(mat4.create(), rotation));
-	mat4.multiply(matrix, matrix, normalsbasis.getInverseProjectionMatrix());
+	mat4.multiply(matrix, matrix, normalsBasis.getInverseProjectionMatrix());
 
 	// translate to the destination point
 	mat4.multiply(matrix, matrix, mat4.fromTranslation(mat4.create(), to.point));
 
 	return matrix;
 };
-
-export default transformationBetween;

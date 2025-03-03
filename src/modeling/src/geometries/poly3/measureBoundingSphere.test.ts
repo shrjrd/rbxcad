@@ -1,7 +1,8 @@
+import type { Vec3 } from "../../maths/types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import mat4 from "../../maths/mat4";
-import { create, fromPoints, measureBoundingSphere, transform } from "./index";
+import { mat4 } from "../../maths/index";
+import { create, measureBoundingSphere, transform } from "./index";
 
 test("poly3: measureBoundingSphere() should return correct values", () => {
 	let ply1 = create();
@@ -10,7 +11,7 @@ test("poly3: measureBoundingSphere() should return correct values", () => {
 	expect(ret1).toEqual(exp1);
 
 	// simple triangle
-	let ply2 = fromPoints([
+	let ply2 = create([
 		[0, 0, 0],
 		[0, 10, 0],
 		[0, 10, 10],
@@ -20,7 +21,7 @@ test("poly3: measureBoundingSphere() should return correct values", () => {
 	expect(ret2).toEqual(exp2);
 
 	// simple square
-	let ply3 = fromPoints([
+	let ply3 = create([
 		[0, 0, 0],
 		[0, 10, 0],
 		[0, 10, 10],
@@ -31,7 +32,7 @@ test("poly3: measureBoundingSphere() should return correct values", () => {
 	expect(ret3).toEqual(exp3);
 
 	// V-shape
-	const points = [
+	const vertices: Vec3[] = [
 		[0, 3, 0],
 		[0, 5, 0],
 		[0, 8, 2],
@@ -43,7 +44,7 @@ test("poly3: measureBoundingSphere() should return correct values", () => {
 		[0, 1, 3],
 		[0, 3, 3],
 	];
-	let ply4 = fromPoints(points);
+	let ply4 = create(vertices);
 	let exp4 = [0, 4.5, 3, 4.6097722286464435];
 	let ret4 = measureBoundingSphere(ply4);
 	expect(ret4).toEqual(exp4);
@@ -60,11 +61,11 @@ test("poly3: measureBoundingSphere() should return correct values", () => {
 	ret4 = measureBoundingSphere(ply4);
 	exp1 = [0, 0, 0, 0];
 	expect(ret1).toEqual(exp1);
-	// DEVIATION: differentfloating point precision
-	exp2 = [-3.5355339059327378, 3.5355339059327378, 5, 7.0710678118654755]; //-3.5355339059327373
+	// DEVIATION: floating point differs?
+	exp2 = [-3.5355339059327378, 3.5355339059327378, 5, 7.0710678118654755];
 	expect(ret2).toEqual(exp2);
 	exp3 = [-3.5355339059327378, 3.5355339059327378, 5, 7.0710678118654755];
 	expect(ret3).toEqual(exp3);
-	exp4 = [-3.1819805153394642, 3.1819805153394642, 3, 4.6097722286464435]; //-3.181980515339464
+	exp4 = [-3.1819805153394642, 3.1819805153394642, 3, 4.6097722286464435];
 	expect(ret4).toEqual(exp4);
 });

@@ -1,6 +1,5 @@
-import { Error } from "@rbxts/luau-polyfill";
-
-import flatten from "../utils/flatten";
+import type { HSV, RGB, RGBA } from "./types";
+import { flatten } from "../utils/flatten";
 
 /**
  * Converts HSV color values to RGB color values.
@@ -11,11 +10,11 @@ import flatten from "../utils/flatten";
  * @alias module:modeling/colors.hsvToRgb
  *
  * @example
- * let mysphere = colorize(hsvToRgb([0.9166666666666666, 1, 1]), sphere())
+ * let mySphere = colorize(hsvToRgb([0.9166666666666666, 1, 1]), sphere())
  */
-const hsvToRgb = (...values: number[] | [number[]]) => {
+export const hsvToRgb = (...values: HSV[] | number[]) => {
 	values = flatten(values);
-	if (values.size() < 3) throw new Error("values must contain H, S and V values");
+	if (values.size() < 3) throw "values must contain H, S and V values";
 
 	const h = values[0];
 	const s = values[1];
@@ -71,5 +70,3 @@ const hsvToRgb = (...values: number[] | [number[]]) => {
 	}
 	return [r, g, b] as RGB;
 };
-
-export default hsvToRgb;

@@ -1,8 +1,8 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import comparePoints from "../../test/helpers/comparePoints";
-import geom2 from "../geometries/geom2";
-import measureArea from "../measurements/measureArea";
+import { comparePoints } from "../../test/helpers/index";
+import { geom2 } from "../geometries/index";
+import { measureArea } from "../measurements/index";
 import { polygon } from "./index";
 
 test("polygon: providing only object.points creates expected geometry", () => {
@@ -16,7 +16,7 @@ test("polygon: providing only object.points creates expected geometry", () => {
 	});
 
 	let obs = geom2.toPoints(geometry);
-	let exp: Vec2[] = [
+	let exp = [
 		[0, 0],
 		[100, 0],
 		[130, 50],
@@ -24,6 +24,7 @@ test("polygon: providing only object.points creates expected geometry", () => {
 	];
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
+	expect(measureArea(geometry)).toBe(5000);
 	expect(comparePoints(obs, exp)).toBe(true);
 
 	geometry = polygon({
@@ -45,13 +46,14 @@ test("polygon: providing only object.points creates expected geometry", () => {
 	exp = [
 		[0, 0],
 		[100, 0],
-		[10, 80],
+		[0, 100],
 		[10, 10],
 		[80, 10],
-		[0, 100],
+		[10, 80],
 	];
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
+	expect(measureArea(geometry)).toBe(7450);
 	expect(comparePoints(obs, exp)).toBe(true);
 });
 
@@ -67,7 +69,7 @@ test("polygon: providing object.points (array) and object.path (array) creates e
 	});
 
 	let obs = geom2.toPoints(geometry);
-	let exp: Vec2[] = [
+	let exp = [
 		[30, 50],
 		[130, 50],
 		[100, 0],
@@ -75,6 +77,7 @@ test("polygon: providing object.points (array) and object.path (array) creates e
 	];
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
+	expect(measureArea(geometry)).toBe(-5000);
 	expect(comparePoints(obs, exp)).toBe(true);
 
 	// multiple paths
@@ -97,13 +100,14 @@ test("polygon: providing object.points (array) and object.path (array) creates e
 	exp = [
 		[0, 0],
 		[100, 0],
-		[10, 80],
+		[0, 100],
 		[10, 10],
 		[80, 10],
-		[0, 100],
+		[10, 80],
 	];
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
+	expect(measureArea(geometry)).toBe(7450);
 	expect(comparePoints(obs, exp)).toBe(true);
 
 	// multiple points and paths
@@ -130,13 +134,14 @@ test("polygon: providing object.points (array) and object.path (array) creates e
 	exp = [
 		[0, 0],
 		[100, 0],
-		[10, 80],
+		[0, 100],
 		[10, 10],
 		[80, 10],
-		[0, 100],
+		[10, 80],
 	];
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
+	expect(measureArea(geometry)).toBe(7450);
 	expect(comparePoints(obs, exp)).toBe(true);
 });
 
@@ -149,6 +154,5 @@ test("polygon: clockwise points", () => {
 		],
 		orientation: "clockwise",
 	});
-	expect(poly.sides.size()).toBe(3);
 	expect(measureArea(poly)).toBe(25);
 });

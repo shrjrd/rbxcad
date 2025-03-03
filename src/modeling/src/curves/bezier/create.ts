@@ -1,8 +1,8 @@
-import { Array, Error, Number } from "@rbxts/luau-polyfill";
+import { Array as JsArray, Number } from "@rbxts/luau-polyfill";
 /**
- * Represents a bezier easing function.
+ * Represents a Bézier easing function.
  * @typedef {Object} bezier
- * @property {Array} points - The control points for the bezier curve. The first and last point will also be the start and end of the curve
+ * @property {Array} points - The control points for the Bézier curve. The first and last point will also be the start and end of the curve
  * @property {string} pointType - A reference to the type and dimensionality of the points that the curve was created from
  * @property {number} dimensions - The dimensionality of the bezier
  * @property {Array} permutations - A pre-calculation of the bezier algorithm's co-efficients
@@ -26,41 +26,41 @@ import { Array, Error, Number } from "@rbxts/luau-polyfill";
  * @returns {bezier} a new bezier data object
  * @alias module:modeling/curves/bezier.create
  */
-const create = (points: number[] | number[][]): Bezier => {
-	if (!Array.isArray(points)) throw new Error("Bezier points must be a valid array/");
-	if (points.size() < 2) throw new Error("Bezier points must contain at least 2 values.");
+export const create = (points: number[] | number[][]) => {
+	if (!JsArray.isArray(points)) throw "Bezier points must be a valid array/";
+	if (points.size() < 2) throw "Bezier points must contain at least 2 values.";
 	const pointType = getPointType(points);
 
 	return {
 		points: points,
 		pointType: pointType,
-		dimensions: pointType === "float_single" ? 0 : (points[0] as number[]).size(), //points[0].size(),
+		dimensions: pointType === "float_single" ? 0 : (points[0] as number[]).size(),
 		permutations: getPermutations(points.size() - 1),
 		tangentPermutations: getPermutations(points.size() - 2),
 	};
 };
 
 const getPointType = function (points: number[] | number[][]) {
-	let firstPointType: unknown | string = undefined;
+	let firstPointType: string = undefined!;
 	points.forEach((point) => {
 		let pType = "";
 		if (Number.isFinite(point)) {
 			pType = "float_single";
-		} else if (Array.isArray(point)) {
+		} else if (JsArray.isArray(point)) {
 			point.forEach((val) => {
-				if (!Number.isFinite(val)) throw new Error("Bezier point values must all be numbers.");
+				if (!Number.isFinite(val)) throw "Bezier point values must all be numbers.";
 			});
 			pType = "float_" + point.size();
-		} else throw new Error("Bezier points must all be numbers or arrays of number.");
+		} else throw "Bezier points must all be numbers or arrays of number.";
 		if (firstPointType === undefined) {
 			firstPointType = pType;
 		} else {
 			if (firstPointType !== pType) {
-				throw new Error("Bezier points must be either all numbers or all arrays of numbers of the same size.");
+				throw "Bezier points must be either all numbers or all arrays of numbers of the same size.";
 			}
 		}
 	});
-	return firstPointType as string;
+	return firstPointType;
 };
 
 const getPermutations = function (c: number) {
@@ -78,5 +78,3 @@ const factorial = function (b: number) {
 	}
 	return out;
 };
-
-export default create;

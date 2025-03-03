@@ -1,7 +1,7 @@
 import { expect, test } from "@rbxts/jest-globals";
 
 import { TAU } from "../maths/constants";
-import { radToDeg } from "./radToDeg";
+import { radToDeg } from "./index";
 
 test("utils: radToDeg() should return correct values", () => {
 	const obs1 = radToDeg(0);

@@ -1,70 +1,35 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import { mat4 } from "../../maths";
-import extrudeWalls from "./extrudeWalls";
-import slice from "./slice";
+import * as slice from "../../geometries/slice/index";
+import { mat4 } from "../../maths/index";
+import { extrudeWalls } from "./extrudeWalls";
 
 test("extrudeWalls (same shapes)", () => {
 	const matrix = mat4.fromTranslation(mat4.create(), [0, 0, 10]);
 
-	const shape0: [Vec2, Vec2][] = [];
-	const shape1: [Vec2, Vec2][] = [
+	const slice0 = slice.create([]);
+	const slice1 = slice.create([
 		[
-			[-10.0, 10.0],
-			[-10.0, -10.0],
+			[-10, 10, 0],
+			[-10, -10, 0],
+			[10, -10, 0],
+			[10, 10, 0],
+		],
+	]);
+	const slice2 = slice.create([
+		[
+			[-10, 10, 0],
+			[-10, -10, 0],
+			[10, -10, 0],
+			[10, 10, 0],
 		],
 		[
-			[-10.0, -10.0],
-			[10.0, -10.0],
-		],
-		[
-			[10.0, -10.0],
-			[10.0, 10.0],
-		],
-		[
-			[10.0, 10.0],
-			[-10.0, 10.0],
-		],
-	];
-	const shape2: [Vec2, Vec2][] = [
-		// hole
-		[
-			[-10.0, 10.0],
-			[-10.0, -10.0],
-		],
-		[
-			[-10.0, -10.0],
-			[10.0, -10.0],
-		],
-		[
-			[10.0, -10.0],
-			[10.0, 10.0],
-		],
-		[
-			[10.0, 10.0],
-			[-10.0, 10.0],
-		],
-		[
-			[-5.0, -5.0],
-			[-5.0, 5.0],
-		],
-		[
-			[5.0, -5.0],
-			[-5.0, -5.0],
-		],
-		[
-			[5.0, 5.0],
-			[5.0, -5.0],
-		],
-		[
-			[-5.0, 5.0],
-			[5.0, 5.0],
-		],
-	];
-
-	const slice0 = slice.fromSides(shape0);
-	const slice1 = slice.fromSides(shape1);
-	const slice2 = slice.fromSides(shape2);
+			[-5, -5, 0],
+			[5, -5, 0],
+			[5, 5, 0],
+			[-5, 5, 0],
+		], // hole
+	]);
 
 	// empty slices
 	let walls = extrudeWalls(slice0, slice0);
@@ -82,68 +47,31 @@ test("extrudeWalls (same shapes)", () => {
 test("extrudeWalls (different shapes)", () => {
 	const matrix = mat4.fromTranslation(mat4.create(), [0, 0, 10]);
 
-	const shape1: [Vec2, Vec2][] = [
+	const slice1 = slice.create([
 		[
-			[-10.0, 10.0],
-			[-10.0, -10.0],
+			[-10, 10, 0],
+			[-10, -10, 0],
+			[10, -10, 0],
 		],
+	]);
+	const slice2 = slice.create([
 		[
-			[-10.0, -10.0],
-			[10.0, -10.0],
+			[-10, 10, 0],
+			[-10, -10, 0],
+			[10, -10, 0],
+			[10, 10, 0],
 		],
+	]);
+	const slice3 = slice.create([
 		[
-			[10.0, -10.0],
-			[10.0, 10.0],
+			[2.5, -4.33013, 0],
+			[5, 0, 0],
+			[2.5, 4.33013, 0],
+			[-2.5, 4.33013, 0],
+			[-5, 0, 0],
+			[-2.5, -4.33013, 0],
 		],
-	];
-	const shape2: [Vec2, Vec2][] = [
-		[
-			[-10.0, 10.0],
-			[-10.0, -10.0],
-		],
-		[
-			[-10.0, -10.0],
-			[10.0, -10.0],
-		],
-		[
-			[10.0, -10.0],
-			[10.0, 10.0],
-		],
-		[
-			[10.0, 10.0],
-			[-10.0, 10.0],
-		],
-	];
-	const shape3: [Vec2, Vec2][] = [
-		[
-			[2.5, -4.33013],
-			[5.0, 0.0],
-		],
-		[
-			[5.0, 0.0],
-			[2.5, 4.33013],
-		],
-		[
-			[2.5, 4.33013],
-			[-2.5, 4.33013],
-		],
-		[
-			[-2.5, 4.33013],
-			[-5.0, 0.0],
-		],
-		[
-			[-5.0, 0.0],
-			[-2.5, -4.33013],
-		],
-		[
-			[-2.5, -4.33013],
-			[2.5, -4.33013],
-		],
-	];
-
-	const slice1 = slice.fromSides(shape1);
-	const slice2 = slice.fromSides(shape2);
-	const slice3 = slice.fromSides(shape3);
+	]);
 
 	let walls = extrudeWalls(slice1, slice.transform(matrix, slice2));
 	expect(walls.size()).toBe(24);

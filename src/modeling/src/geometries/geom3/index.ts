@@ -4,65 +4,28 @@
  * @module modeling/geometries/geom3
  *
  * @example
- * colorize([0,0.5,1,0.6], cube()) // transparent ice cube
- *
- * @example
- * {
- *   "polygons": [
- *     {"vertices": [[-1,-1,-1], [-1,-1,1], [-1,1,1], [-1,1,-1]]},
- *     {"vertices": [[1,-1,-1], [1,1,-1], [1,1,1], [1,-1,1]]},
- *     {"vertices": [[-1,-1,-1], [1,-1,-1], [1,-1,1], [-1,-1,1]]},
- *     {"vertices": [[-1,1,-1], [-1,1,1], [1,1,1], [1,1,-1]]},
- *     {"vertices": [[-1,-1,-1], [-1,1,-1], [1,1,-1], [1,-1,-1]]},
- *     {"vertices": [[-1,-1,1], [1,-1,1], [1,1,1], [-1,1,1]]}
- *   ],
- *   "transforms": [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
- *   "color": [0,0.5,1,0.6]
- * }
+ * import { geometries } from '@jscad/modeling'
+ * const myShape = geometries.geom3.fromPoints([
+ *   [[-1,-1,-1], [-1,-1,1], [-1,1,1], [-1,1,-1]],
+ *   [[1,-1,-1], [1,1,-1], [1,1,1], [1,-1,1]],
+ *   [[-1,-1,-1], [1,-1,-1], [1,-1,1], [-1,-1,1]]
+ *   [[-1,1,-1], [-1,1,1], [1,1,1], [1,1,-1]],
+ *   [[-1,-1,-1], [-1,1,-1], [1,1,-1], [1,-1,-1]],
+ *   [[-1,-1,1], [1,-1,1], [1,1,1], [-1,1,1]]
+ * ])
  */
+export { clone } from "./clone";
+export { create } from "./create";
+export { fromCompactBinary } from "./fromCompactBinary";
+export { fromPoints } from "./fromPoints";
+export { fromPointsConvex } from "./fromPointsConvex";
+export { invert } from "./invert";
+export { isA } from "./isA";
+export { toCompactBinary } from "./toCompactBinary";
+export { toPoints } from "./toPoints";
+export { toPolygons } from "./toPolygons";
+export { toString } from "./toString";
+export { transform } from "./transform";
+export { validate } from "./validate";
 
-import clone from "./clone";
-import create from "./create";
-import fromCompactBinary from "./fromCompactBinary";
-import fromPoints from "./fromPoints";
-import fromPointsConvex from "./fromPointsConvex";
-import invert from "./invert";
-import isA from "./isA";
-import toCompactBinary from "./toCompactBinary";
-import toPoints from "./toPoints";
-import toPolygons from "./toPolygons";
-import toString from "./toString";
-import transform from "./transform";
-import validate from "./validate";
-
-export {
-	clone,
-	create,
-	fromCompactBinary,
-	fromPoints,
-	fromPointsConvex,
-	invert,
-	isA,
-	toCompactBinary,
-	toPoints,
-	toPolygons,
-	toString,
-	transform,
-	validate,
-};
-
-export default {
-	clone,
-	create,
-	fromPointsConvex,
-	fromPoints,
-	fromCompactBinary,
-	invert,
-	isA,
-	toPoints,
-	toPolygons,
-	toString,
-	toCompactBinary,
-	transform,
-	validate,
-};
+export type { Geom3 } from "./type";

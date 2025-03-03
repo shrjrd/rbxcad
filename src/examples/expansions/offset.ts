@@ -1,3 +1,9 @@
+import type { Geom2, Path2 } from "../../modeling/src/geometries/types";
+
+import { colorize, colorNameToRgb, RGB } from "../../modeling/src/colors";
+import { offset } from "../../modeling/src/operations/offsets";
+import { arc, rectangle } from "../../modeling/src/primitives";
+
 /**
  * Offsetting 2D Shapes
  * @category Manipulating Shapes
@@ -7,12 +13,6 @@
  * @authors Moissette Mark, Simon Clark
  * @licence MIT License
  */
-
-import rbxcad from "../../modeling/src";
-const { arc, rectangle } = rbxcad.primitives;
-const { offset } = rbxcad.expansions;
-const { colorize, colorNameToRgb } = rbxcad.colors;
-
 const main = () => {
 	// 2d paths can be offset
 	const path2Example = colorize(

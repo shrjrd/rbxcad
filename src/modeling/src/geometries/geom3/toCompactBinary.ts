@@ -1,12 +1,13 @@
-import poly3 from "../poly3";
+import type { Geom3 } from "../types";
+import * as poly3 from "../poly3/index";
 
 /**
  * Return the given geometry in compact binary representation.
- * @param {geom3} geometry - the geometry
+ * @param {Geom3} geometry - the geometry
  * @return {TypedArray} compact binary representation
  * @alias module:modeling/geometries/geom3.toCompactBinary
  */
-const toCompactBinary = (geometry: Geom3) => {
+export const toCompactBinary = (geometry: Geom3) => {
 	const polygons = geometry.polygons;
 	const transforms = geometry.transforms;
 
@@ -16,7 +17,7 @@ const toCompactBinary = (geometry: Geom3) => {
 	if (geometry.color) color = geometry.color;
 
 	// FIXME why Float32Array?
-	const compacted = table.create(1 + 16 + 4 + 1 + numberOfPolygons + numberOfVertices * 3);
+	const compacted = new Array(1 + 16 + 4 + 1 + numberOfPolygons + numberOfVertices * 3);
 	// type + transforms + color + numberOfPolygons + numberOfVerticesPerPolygon[] + vertices data[]
 
 	compacted[0] = 1; // type code: 0 => geom2, 1 => geom3 , 2 => path2
@@ -48,21 +49,19 @@ const toCompactBinary = (geometry: Geom3) => {
 	let ci = 22;
 	let vi = ci + numberOfPolygons;
 	polygons.forEach((polygon) => {
-		const points = poly3.toPoints(polygon);
+		const vertices = poly3.toVertices(polygon);
 		// record the number of vertices per polygon
-		compacted[ci] = points.size();
+		compacted[ci] = vertices.size();
 		ci++;
 		// convert the vertices
-		for (let i = 0; i < points.size(); i++) {
-			const point = points[i];
-			compacted[vi + 0] = point[0];
-			compacted[vi + 1] = point[1];
-			compacted[vi + 2] = point[2];
+		for (let i = 0; i < vertices.size(); i++) {
+			const vertex = vertices[i];
+			compacted[vi + 0] = vertex[0];
+			compacted[vi + 1] = vertex[1];
+			compacted[vi + 2] = vertex[2];
 			vi += 3;
 		}
 	});
 	// TODO: how about custom properties or fields ?
 	return compacted;
 };
-
-export default toCompactBinary;

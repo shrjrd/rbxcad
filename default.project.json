@@ -1,7 +1,10 @@
 {
-	"name": "roblox-ts-game",
-	"globIgnorePaths": ["**/package.json", "**/tsconfig.json"],
+    "name": "rbxcad-dev",
 	"emitLegacyScripts": false,
+    "globIgnorePaths": [
+        "**/package.json",
+        "**/tsconfig.json"
+    ],
 	"tree": {
 		"$className": "DataModel",
 		"Workspace": {
@@ -18,13 +21,13 @@
 					}
 				}
 			},
-			"Project": {
+			"rbxcad": {
 				"$path": "out"
 			}
 		},
 		"ServerScriptService": {
 			"$className": "ServerScriptService",
-			"run-tests": {
+			"dev": {
 				"$path": "dev"
 			}
 		},

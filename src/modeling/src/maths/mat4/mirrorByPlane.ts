@@ -1,12 +1,13 @@
+import type { Mat4, Vec4 } from "../types";
 /**
  * Create a matrix for mirroring about the given plane.
  *
- * @param {mat4} out - receiving matrix
- * @param {vec4} plane - plane of which to mirror the matrix
- * @returns {mat4} out
+ * @param {Mat4} out - receiving matrix
+ * @param {Vec4} plane - plane of which to mirror the matrix
+ * @returns {Mat4} out
  * @alias module:modeling/maths/mat4.mirrorByPlane
  */
-const mirrorByPlane = (out: Mat4, plane: Vec4) => {
+export const mirrorByPlane = (out: Mat4, plane: Vec4) => {
 	const [nx, ny, nz, w] = plane;
 
 	out[0] = 1.0 - 2.0 * nx * nx;
@@ -28,5 +29,3 @@ const mirrorByPlane = (out: Mat4, plane: Vec4) => {
 
 	return out;
 };
-
-export default mirrorByPlane;

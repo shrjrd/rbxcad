@@ -1,9 +1,11 @@
+import type { Poly3, Slice } from "../../geometries/types";
+import type { Vec3 } from "../../maths/types";
 import { Number } from "@rbxts/luau-polyfill";
 
-import poly3 from "../../geometries/poly3";
+import * as poly3 from "../../geometries/poly3/index";
+import * as slice from "../../geometries/slice/index";
 import { EPS } from "../../maths/constants";
-import vec3 from "../../maths/vec3";
-import slice from "./slice";
+import * as vec3 from "../../maths/vec3/index";
 
 // https://en.wikipedia.org/wiki/Greatest_common_divisor#Using_Euclid's_algorithm
 const gcd = (a: number, b: number) => {
@@ -25,19 +27,20 @@ const gcd = (a: number, b: number) => {
 const lcm = (a: number, b: number) => (a * b) / gcd(a, b);
 
 // Return a set of edges that encloses the same area by splitting
-// the given edges to have newlength total edges.
-const repartitionEdges = (newlength: number, edges: [Vec3, Vec3][]) => {
+// the given edges to have newLength total edges.
+const repartitionEdges = (newLength: number, edges: Vec3[][]) => {
 	// NOTE: This implementation splits each edge evenly.
-	const multiple = newlength / edges.size();
+	const multiple = newLength / edges.size();
 	if (multiple === 1) {
 		return edges;
 	}
 
 	const divisor = vec3.fromValues(multiple, multiple, multiple);
+	const increment = vec3.create();
 
-	const newEdges: [Vec3, Vec3][] = [];
+	const newEdges: Vec3[][] = [];
 	edges.forEach((edge) => {
-		const increment = vec3.subtract(vec3.create(), edge[1], edge[0]);
+		vec3.subtract(increment, edge[1], edge[0]);
 		vec3.divide(increment, increment, divisor);
 
 		// repartition the edge
@@ -57,15 +60,16 @@ const EPSAREA = ((EPS * EPS) / 2) * math.sin(math.pi / 3);
  * Extrude (build) walls between the given slices.
  * Each wall consists of two triangles, which may be invalid if slices are overlapping.
  */
-const extrudeWalls = (slice0: Slice, slice1: Slice) => {
+// FIXME this function should take an eps parameter
+export const extrudeWalls = (slice0: Slice, slice1: Slice) => {
 	let edges0 = slice.toEdges(slice0);
 	let edges1 = slice.toEdges(slice1);
 
 	if (edges0.size() !== edges1.size()) {
 		// different shapes, so adjust one or both to the same number of edges
-		const newlength = lcm(edges0.size(), edges1.size());
-		if (newlength !== edges0.size()) edges0 = repartitionEdges(newlength, edges0);
-		if (newlength !== edges1.size()) edges1 = repartitionEdges(newlength, edges1);
+		const newLength = lcm(edges0.size(), edges1.size());
+		if (newLength !== edges0.size()) edges0 = repartitionEdges(newLength, edges0);
+		if (newLength !== edges1.size()) edges1 = repartitionEdges(newLength, edges1);
 	}
 
 	const walls: Poly3[] = [];
@@ -82,5 +86,3 @@ const extrudeWalls = (slice0: Slice, slice1: Slice) => {
 	});
 	return walls;
 };
-
-export default extrudeWalls;

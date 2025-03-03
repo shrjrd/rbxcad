@@ -1,18 +1,19 @@
+import type { Mat4, Vec3 } from "../types";
 import { EPS } from "../constants";
 import { cos, sin } from "../utils/trigonometry";
-import copy from "./copy";
+import { copy } from "./copy";
 
 /**
  * Rotates a matrix by the given angle about the given axis.
  *
- * @param {mat4} out - receiving matrix
- * @param {mat4} matrix - matrix to rotate
- * @param {Number} radians - angle to rotate the matrix by
- * @param {vec3} axis - axis to rotate around
- * @returns {mat4} out
+ * @param {Mat4} out - receiving matrix
+ * @param {Mat4} matrix - matrix to rotate
+ * @param {number} radians - angle to rotate the matrix by
+ * @param {Vec3} axis - axis to rotate around
+ * @returns {Mat4} out
  * @alias module:modeling/maths/mat4.rotate
  */
-const rotate = (out: Mat4, matrix: Mat4, radians: number, axis: Vec3) => {
+export const rotate = (out: Mat4, matrix: Mat4, radians: number, axis: Vec3) => {
 	let [x, y, z] = axis;
 	const lengthSquared = x * x + y * y + z * z;
 
@@ -77,5 +78,3 @@ const rotate = (out: Mat4, matrix: Mat4, radians: number, axis: Vec3) => {
 	}
 	return out;
 };
-
-export default rotate;

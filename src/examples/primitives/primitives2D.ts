@@ -1,3 +1,16 @@
+import { translate } from "../../modeling/src/operations/transforms";
+import {
+	arc,
+	circle,
+	ellipse,
+	line,
+	polygon,
+	rectangle,
+	roundedRectangle,
+	square,
+	star,
+} from "../../modeling/src/primitives";
+
 /**
  * 2D Primitives Demonstration
  * @category Creating Shapes
@@ -7,11 +20,6 @@
  * @authors Simon Clark
  * @licence MIT License
  */
-
-import rbxcad from "../../modeling/src";
-const { arc, circle, ellipse, line, polygon, rectangle, roundedRectangle, square, star } = rbxcad.primitives;
-const { translate } = rbxcad.transforms;
-
 const main = () => {
 	const allPrimitives = [
 		arc({ center: [-1, -1], radius: 2, startAngle: 0, endAngle: math.pi / 2, makeTangent: false, segments: 32 }),

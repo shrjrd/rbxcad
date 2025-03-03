@@ -1,3 +1,4 @@
+import type { Mat4 } from "../types";
 import { expect, test } from "@rbxts/jest-globals";
 
 import { compareVectors } from "../../../test/helpers/index";

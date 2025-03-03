@@ -1,3 +1,7 @@
+import { translate } from "../../modeling/src/operations/transforms";
+import { torus } from "../../modeling/src/primitives";
+import { degToRad } from "../../modeling/src/utils";
+
 /**
  * Torus Variety
  * @category Creating Shapes
@@ -7,12 +11,6 @@
  * @authors Rene K. Mueller, Simon Clark
  * @licence MIT License
  */
-
-import rbxcad from "../../modeling/src";
-const { torus } = rbxcad.primitives;
-const { translate } = rbxcad.transforms;
-const { degToRad } = rbxcad.utils;
-
 const main = () => [
 	// Top Row - Simple Torii
 	translate(

@@ -3,10 +3,10 @@
  * @param  {Number} p
  * @param  {Number} q
  * @param  {Number} t
- * @return {Number} color component
+ * @return {number} color component
  * @alias module:modeling/colors.hueToColorComponent
  */
-const hueToColorComponent = (p: number, q: number, t: number) => {
+export const hueToColorComponent = (p: number, q: number, t: number) => {
 	if (t < 0) t += 1;
 	if (t > 1) t -= 1;
 	if (t < 1 / 6) return p + (q - p) * 6 * t;
@@ -14,5 +14,3 @@ const hueToColorComponent = (p: number, q: number, t: number) => {
 	if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
 	return p;
 };
-
-export default hueToColorComponent;

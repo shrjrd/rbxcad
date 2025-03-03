@@ -1,3 +1,4 @@
+import type { Mat4, Vec3 } from "../types";
 /**
  * Creates a matrix from a vector translation.
  * This is equivalent to (but much faster than):
@@ -5,14 +6,14 @@
  *     mat4.identity(dest)
  *     mat4.translate(dest, dest, vec)
  *
- * @param {mat4} out - receiving matrix
- * @param {vec3} vector - offset (vector) of translation
- * @returns {mat4} out
+ * @param {Mat4} out - receiving matrix
+ * @param {Vec3} vector - offset (vector) of translation
+ * @returns {Mat4} out
  * @alias module:modeling/maths/mat4.fromTranslation
  * @example
  * let matrix = fromTranslation(create(), [1, 2, 3])
  */
-const fromTranslation = (out: Mat4, vector: Vec3) => {
+export const fromTranslation = (out: Mat4, vector: Vec3) => {
 	out[0] = 1;
 	out[1] = 0;
 	out[2] = 0;
@@ -31,5 +32,3 @@ const fromTranslation = (out: Mat4, vector: Vec3) => {
 	out[15] = 1;
 	return out;
 };
-
-export default fromTranslation;

@@ -1,35 +1,33 @@
-import { Array, Error, Object } from "@rbxts/luau-polyfill";
+import type { Path2 } from "../types";
+import type { Vec2 } from "../../maths/types";
+import { Array as JsArray, Object } from "@rbxts/luau-polyfill";
 
 import { TAU } from "../../maths/constants";
-import vec2 from "../../maths/vec2";
-import vec3 from "../../maths/vec2";
-import appendPoints from "./appendPoints";
-import toPoints from "./toPoints";
+import * as vec2 from "../../maths/vec2/index";
+import * as vec3 from "../../maths/vec3/index"; // FIXME why vec3?
+import { appendPoints } from "./appendPoints";
+import { toPoints } from "./toPoints";
 
-type AppendBezierOptions = {
-	controlPoints: Array<Vec2 | undefined>;
-	segments?: number;
-};
 /**
- * Append a series of points to the given geometry that represent a Bezier curve.
+ * Append a series of points to the given geometry that represent a Bézier curve.
  * The Bézier curve starts at the last point in the given geometry, and ends at the last control point.
  * The other control points are intermediate control points to transition the curve from start to end points.
  * The first control point may be null to ensure a smooth transition occurs. In this case,
- * the second to last point of the given geometry is mirrored into the control points of the Bezier curve.
+ * the second to last point of the given geometry is mirrored into the control points of the Bézier curve.
  * In other words, the trailing gradient of the geometry matches the new gradient of the curve.
- * @param {Object} options - options for construction
- * @param {Array} options.controlPoints - list of control points (2D) for the bezier curve
- * @param {Number} [options.segment=16] - number of segments per 360 rotation
- * @param {path2} geometry - the path of which to appended points
- * @returns {path2} a new path with the appended points
+ * @param {object} options - options for construction
+ * @param {Array} options.controlPoints - list of control points (2D) for the Bézier curve
+ * @param {number} [options.segment=16] - number of segments per 360 rotation
+ * @param {Path2} geometry - the path of which to append points
+ * @returns {Path2} a new path with the appended points
  * @alias module:modeling/geometries/path2.appendBezier
  *
  * @example
- * let p5 = path2.create({}, [[10,-20]])
- * p5 = path2.appendBezier({controlPoints: [[10,-10],[25,-10],[25,-20]]}, p5);
- * p5 = path2.appendBezier({controlPoints: [null, [25,-30],[40,-30],[40,-20]]}, p5)
+ * let myShape = fromPoints({}, [[10,-20]])
+ * myShape = appendBezier({controlPoints: [[10,-10],[25,-10],[25,-20]]}, myShape);
+ * myShape = appendBezier({controlPoints: [null, [25,-30],[40,-30],[40,-20]]}, myShape)
  */
-const appendBezier = (options: AppendBezierOptions, geometry: Path2) => {
+export const appendBezier = (options: { controlPoints: Vec2[]; segments?: number }, geometry: Path2) => {
 	const defaults = {
 		segments: 16,
 	};
@@ -37,58 +35,49 @@ const appendBezier = (options: AppendBezierOptions, geometry: Path2) => {
 	let { controlPoints, segments } = Object.assign({}, defaults, options);
 
 	// validate the given options
+	if (!JsArray.isArray(controlPoints)) throw "controlPoints must be an array of one or more points";
+	if (controlPoints.size() < 1) throw "controlPoints must be an array of one or more points";
 
-	//if (!Array.isArray(controlPoints)) throw new Error("controlPoints must be an array of one or more points");
-	//if (controlPoints.size() < 1) throw new Error("controlPoints must be an array of one or more points");
-
-	let size = 0;
-	// eslint-disable-next-line roblox-ts/no-array-pairs
-	for (const ref of pairs(controlPoints)) {
-		if (ref[1] !== undefined) {
-			size++;
-		}
-	}
-
-	if (size < 1) throw new Error("controlPoints must be an array of one or more points");
-
-	if (segments < 4) throw new Error("segments must be four or more");
+	if (segments < 4) throw "segments must be four or more";
 
 	// validate the given geometry
 	if (geometry.isClosed) {
-		throw new Error("the given geometry cannot be closed");
+		throw "the given geometry cannot be closed";
 	}
 
 	const points = toPoints(geometry);
 	if (points.size() < 1) {
-		throw new Error("the given path must contain one or more points (as the starting point for the bezier curve)");
+		throw "the given path must contain one or more points (as the starting point for the bezier curve)";
 	}
 
 	// make a copy of the control points
-	controlPoints = Array.slice(controlPoints); //controlPoints.slice();
+	controlPoints = JsArray.slice(controlPoints); //controlPoints.slice();
 
 	// special handling of null control point (only first is allowed)
 	const firstControlPoint = controlPoints[0];
-	if (firstControlPoint === undefined) {
+	// DEVIATION: differentiate between undefined and empty values in arrays for roblox-ts, in this case use an empty table instead of undefined
+	//if (firstControlPoint === undefined) {
+	if (firstControlPoint.size() === 0) {
 		if (controlPoints.size() < 2) {
-			throw new Error("a null control point must be passed with one more control points");
+			throw "a null control point must be passed with one more control points";
 		}
 		// special handling of a previous bezier curve
 		let lastBezierControlPoint = points[points.size() - 2];
 		if ("lastBezierControlPoint" in geometry) {
-			lastBezierControlPoint = geometry.lastBezierControlPoint as Vec2;
+			lastBezierControlPoint = geometry.lastBezierControlPoint!;
 		}
-		if (!Array.isArray(lastBezierControlPoint)) {
-			throw new Error("the given path must contain TWO or more points if given a null control point");
+		if (!JsArray.isArray(lastBezierControlPoint)) {
+			throw "the given path must contain TWO or more points if given a null control point";
 		}
 		// replace the first control point with the mirror of the last bezier control point
-		const controlpoint = vec2.scale(vec2.create(), points[points.size() - 1], 2);
-		vec2.subtract(controlpoint, controlpoint, lastBezierControlPoint);
+		const controlPoint = vec2.scale(vec2.create(), points[points.size() - 1], 2);
+		vec2.subtract(controlPoint, controlPoint, lastBezierControlPoint);
 
-		controlPoints[0] = controlpoint;
+		controlPoints[0] = controlPoint;
 	}
 
 	// add a control point for the previous end point
-	(controlPoints as Vec2[]).unshift(points[points.size() - 1]);
+	controlPoints.unshift(points[points.size() - 1]);
 
 	const bezierOrder = controlPoints.size() - 1;
 	const factorials = [];
@@ -115,7 +104,7 @@ const appendBezier = (options: AppendBezierOptions, geometry: Path2) => {
 		for (let k = 0; k <= bezierOrder; ++k) {
 			if (k === bezierOrder) oneMinusTNMinusK = 1;
 			const bernsteinCoefficient = binomials[k] * tk * oneMinusTNMinusK;
-			const derivativePoint = vec2.scale(v0, controlPoints[k] as Vec2, bernsteinCoefficient);
+			const derivativePoint = vec2.scale(v0, controlPoints[k], bernsteinCoefficient);
 			vec2.add(point, point, derivativePoint);
 			tk *= t;
 			oneMinusTNMinusK *= invOneMinusT;
@@ -123,38 +112,38 @@ const appendBezier = (options: AppendBezierOptions, geometry: Path2) => {
 		return point;
 	};
 
-	const newpoints = [];
-	const newpointsT = [];
-	const numsteps = bezierOrder + 1;
-	for (let i = 0; i < numsteps; ++i) {
-		const t = i / (numsteps - 1);
+	const newPoints = [];
+	const newPointsT = [];
+	const numSteps = bezierOrder + 1;
+	for (let i = 0; i < numSteps; ++i) {
+		const t = i / (numSteps - 1);
 		const point = getPointForT(t);
-		newpoints.push(point);
-		newpointsT.push(t);
+		newPoints.push(point);
+		newPointsT.push(t);
 	}
 
-	// subdivide each segment until the angle at each vertex becomes small enough:
+	// subdivide each segment until the angle becomes small enough:
 	let subdivideBase = 1;
-	const maxangle = TAU / segments;
-	const maxsinangle = math.sin(maxangle);
-	while (subdivideBase < newpoints.size() - 1) {
-		const dir1 = vec2.subtract(v0, newpoints[subdivideBase], newpoints[subdivideBase - 1]);
+	const maxAngle = TAU / segments;
+	const maxSinAngle = math.sin(maxAngle);
+	while (subdivideBase < newPoints.size() - 1) {
+		const dir1 = vec2.subtract(v0, newPoints[subdivideBase], newPoints[subdivideBase - 1]);
 		vec2.normalize(dir1, dir1);
-		const dir2 = vec2.subtract(v1, newpoints[subdivideBase + 1], newpoints[subdivideBase]);
+		const dir2 = vec2.subtract(v1, newPoints[subdivideBase + 1], newPoints[subdivideBase]);
 		vec2.normalize(dir2, dir2);
-		const sinangle = vec2.cross(v3, dir1, dir2); // the sine of the angle
-		if (math.abs(sinangle[2]) > maxsinangle) {
+		const sinAngle = vec2.cross(v3, dir1, dir2); // the sine of the angle
+		if (math.abs(sinAngle[2]) > maxSinAngle) {
 			// angle is too big, we need to subdivide
-			const t0 = newpointsT[subdivideBase - 1];
-			const t1 = newpointsT[subdivideBase + 1];
+			const t0 = newPointsT[subdivideBase - 1];
+			const t1 = newPointsT[subdivideBase + 1];
 			const newt0 = t0 + ((t1 - t0) * 1) / 3;
 			const newt1 = t0 + ((t1 - t0) * 2) / 3;
 			const point0 = getPointForT(newt0);
 			const point1 = getPointForT(newt1);
 			// remove the point at subdivideBase and replace with 2 new points:
-			Array.splice(newpoints, subdivideBase + 1, 1, point0, point1); //newpoints.splice(subdivideBase, 1, point0, point1);
-			Array.splice(newpointsT, subdivideBase + 1, 1, newt0, newt1); //newpointsT.splice(subdivideBase, 1, newt0, newt1);
-			// re - evaluate the angles, starting at the previous junction since it has changed:
+			JsArray.splice(newPoints, subdivideBase + 1, 1, point0, point1); //newPoints.splice(subdivideBase, 1, point0, point1);
+			JsArray.splice(newPointsT, subdivideBase + 1, 1, newt0, newt1); //newPointsT.splice(subdivideBase, 1, newt0, newt1);
+			// reevaluate the angles, starting at the previous junction since it has changed:
 			subdivideBase--;
 			if (subdivideBase < 1) subdivideBase = 1;
 		} else {
@@ -164,14 +153,8 @@ const appendBezier = (options: AppendBezierOptions, geometry: Path2) => {
 
 	// append to the new points to the given path
 	// but skip the first new point because it is identical to the last point in the given path
-	newpoints.shift();
-	/*
-	const result = (appendPoints(newpoints, geometry)(result).lastBezierControlPoint =
-		controlPoints[controlPoints.size() - 2]);
-	*/
-	const result = appendPoints(newpoints, geometry);
+	newPoints.shift();
+	const result = appendPoints(newPoints, geometry);
 	result.lastBezierControlPoint = controlPoints[controlPoints.size() - 2];
 	return result;
 };
-
-export default appendBezier;

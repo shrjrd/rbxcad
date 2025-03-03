@@ -1,3 +1,5 @@
+import type { Geom3 } from "../../modeling/src/geometries/types";
+
 /**
  * Center function demonstration
  * @category Manipulating Shapes
@@ -8,10 +10,9 @@
  * @licence MIT License
  */
 
-import rbxcad from "../../modeling/src";
-const { polygon } = rbxcad.primitives;
-const { extrudeLinear } = rbxcad.extrusions;
-const { center } = rbxcad.transforms;
+import { extrudeLinear } from "../../modeling/src/operations/extrusions";
+import { center } from "../../modeling/src/operations/transforms";
+import { polygon } from "../../modeling/src/primitives";
 
 const getParameterDefinitions = () => [
 	{ name: "centerx", type: "checkbox", checked: false, caption: "Center on X:" },

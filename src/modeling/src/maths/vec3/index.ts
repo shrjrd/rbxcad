@@ -3,106 +3,37 @@
  * @see {@link vec3} for data structure information.
  * @module modeling/maths/vec3
  */
+export { abs } from "./abs";
+export { add } from "./add";
+export { angle } from "./angle";
+export { clone } from "./clone";
+export { copy } from "./copy";
+export { create } from "./create";
+export { cross } from "./cross";
+export { distance } from "./distance";
+export { divide } from "./divide";
+export { dot } from "./dot";
+export { equals } from "./equals";
+export { fromScalar } from "./fromScalar";
+export { fromValues } from "./fromValues";
+export { fromVec2 } from "./fromVec2";
+export { length } from "./length";
+export { lerp } from "./lerp";
+export { max } from "./max";
+export { min } from "./min";
+export { multiply } from "./multiply";
+export { negate } from "./negate";
+export { normalize } from "./normalize";
+export { orthogonal } from "./orthogonal";
+export { rotateX } from "./rotateX";
+export { rotateY } from "./rotateY";
+export { rotateZ } from "./rotateZ";
+export { scale } from "./scale";
+export { snap } from "./snap";
+export { squaredDistance } from "./squaredDistance";
+export { squaredLength } from "./squaredLength";
+export { subtract } from "./subtract";
+export { toString } from "./toString";
+export { transform } from "./transform";
 
-import abs from "./abs";
-import add from "./add";
-import angle from "./angle";
-import clone from "./clone";
-import copy from "./copy";
-import create from "./create";
-import cross from "./cross";
-import distance from "./distance";
-import divide from "./divide";
-import dot from "./dot";
-import equals from "./equals";
-import fromScalar from "./fromScalar";
-import fromValues from "./fromValues";
-import fromVec2 from "./fromVec2";
-import length from "./length";
-import lerp from "./lerp";
-import max from "./max";
-import min from "./min";
-import multiply from "./multiply";
-import negate from "./negate";
-import normalize from "./normalize";
-import orthogonal from "./orthogonal";
-import rotateX from "./rotateX";
-import rotateY from "./rotateY";
-import rotateZ from "./rotateZ";
-import scale from "./scale";
-import snap from "./snap";
-import squaredDistance from "./squaredDistance";
-import squaredLength from "./squaredLength";
-import subtract from "./subtract";
-import toString from "./toString";
-import transform from "./transform";
-
-export {
-	abs,
-	add,
-	angle,
-	clone,
-	copy,
-	create,
-	cross,
-	distance,
-	divide,
-	dot,
-	equals,
-	fromScalar,
-	fromValues,
-	fromVec2,
-	length,
-	lerp,
-	max,
-	min,
-	multiply,
-	negate,
-	normalize,
-	orthogonal,
-	rotateX,
-	rotateY,
-	rotateZ,
-	scale,
-	snap,
-	squaredDistance,
-	squaredLength,
-	subtract,
-	toString,
-	transform,
-};
-
-export default {
-	abs,
-	add,
-	angle,
-	clone,
-	copy,
-	create,
-	cross,
-	distance,
-	divide,
-	dot,
-	equals,
-	fromScalar,
-	fromValues,
-	fromVec2,
-	length,
-	lerp,
-	max,
-	min,
-	multiply,
-	negate,
-	normalize,
-	orthogonal,
-	rotateX,
-	rotateY,
-	rotateZ,
-	scale,
-	snap,
-	squaredDistance,
-	squaredLength,
-	subtract,
-	toString,
-	transform,
-};
+export type { Vec3 } from "./type";

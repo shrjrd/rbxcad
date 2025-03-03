@@ -1,15 +1,16 @@
+import type { Mat4 } from "../types";
 import { cos, sin } from "../utils/trigonometry";
 
 /**
  * Rotates a matrix by the given angle around the X axis.
  *
- * @param {mat4} out - receiving matrix
- * @param {mat4} matrix - matrix to rotate
- * @param {Number} radians - angle to rotate the matrix by
- * @returns {mat4} out
+ * @param {Mat4} out - receiving matrix
+ * @param {Mat4} matrix - matrix to rotate
+ * @param {number} radians - angle to rotate the matrix by
+ * @returns {Mat4} out
  * @alias module:modeling/maths/mat4.rotateX
  */
-const rotateX = (out: Mat4, matrix: Mat4, radians: number) => {
+export const rotateX = (out: Mat4, matrix: Mat4, radians: number) => {
 	const s = sin(radians);
 	const c = cos(radians);
 	const a10 = matrix[4];
@@ -44,5 +45,3 @@ const rotateX = (out: Mat4, matrix: Mat4, radians: number) => {
 	out[11] = a23 * c - a13 * s;
 	return out;
 };
-
-export default rotateX;

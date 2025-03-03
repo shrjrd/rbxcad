@@ -1,23 +1,26 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import comparePoints from "../../test/helpers/comparePoints";
-import geom2 from "../geometries/geom2";
+import { comparePoints } from "../../test/helpers/index";
+import { geom2 } from "../geometries/index";
 import { TAU } from "../maths/constants";
-import ellipse from "./ellipse";
+import { measureArea } from "../measurements/index";
+import { ellipse } from "./index";
 
 test("ellipse (defaults)", () => {
 	const geometry = ellipse();
 	const obs = geom2.toPoints(geometry);
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(obs.size()).toEqual(32);
+	// DEVIATION: floating point differs?
+	expect(measureArea(geometry)).toBe(3.121445152258053);
+	expect(obs.size()).toBe(32);
 });
 
 test("ellipse (options)", () => {
 	// test center
 	let geometry = ellipse({ center: [3, 5] });
 	let obs = geom2.toPoints(geometry);
-	let exp: Vec2[] = [
+	let exp = [
 		[4, 5],
 		[3.9807852804032304, 5.195090322016128],
 		[3.923879532511287, 5.38268343236509],
@@ -53,7 +56,8 @@ test("ellipse (options)", () => {
 	];
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(obs.size()).toEqual(32);
+	expect(measureArea(geometry)).toBe(3.121445152258051);
+	expect(obs.size()).toBe(32);
 	expect(comparePoints(obs, exp)).toBe(true);
 
 	// test radius
@@ -79,7 +83,8 @@ test("ellipse (options)", () => {
 	];
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(obs.size()).toEqual(16);
+	expect(measureArea(geometry)).toBe(45.92201188381077);
+	expect(obs.size()).toBe(16);
 	expect(comparePoints(obs, exp)).toBe(true);
 
 	// test startAngle
@@ -103,7 +108,8 @@ test("ellipse (options)", () => {
 	];
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(obs.size()).toEqual(14);
+	expect(measureArea(geometry)).toBe(34.44150891285808);
+	expect(obs.size()).toBe(14);
 	expect(comparePoints(obs, exp)).toBe(true);
 
 	// test endAngle
@@ -119,7 +125,8 @@ test("ellipse (options)", () => {
 	];
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(obs.size()).toEqual(6);
+	expect(measureArea(geometry)).toBe(11.480502970952696);
+	expect(obs.size()).toBe(6);
 	expect(comparePoints(obs, exp)).toBe(true);
 
 	// test full rotation with non-zero startAngle
@@ -127,18 +134,21 @@ test("ellipse (options)", () => {
 	obs = geom2.toPoints(geometry);
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(obs.size()).toEqual(32);
+	expect(measureArea(geometry)).toBe(3.1214451522580537);
+	expect(obs.size()).toBe(32);
 
 	// test segments
 	geometry = ellipse({ segments: 72 });
 	obs = geom2.toPoints(geometry);
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(obs.size()).toEqual(72);
+	expect(measureArea(geometry)).toBe(3.1376067389156956);
+	expect(obs.size()).toBe(72);
 });
 
 test("ellipse (zero radius)", () => {
 	const geometry = ellipse({ radius: [1, 0] });
 	const obs = geom2.toPoints(geometry);
 	expect(() => geom2.validate(geometry)).never.toThrow();
+	expect(measureArea(geometry)).toBe(0);
 	expect(obs.size()).toBe(0);
 });

@@ -1,22 +1,24 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import comparePoints from "../../test/helpers/comparePoints";
-import geom2 from "../geometries/geom2";
+import { comparePoints } from "../../test/helpers/index";
+import { geom2 } from "../geometries/index";
 import { TAU } from "../maths/constants";
-import degToRad from "../utils/degToRad";
+import { measureArea } from "../measurements/index";
+import { degToRad } from "../utils/index";
 import { triangle } from "./index";
 
 test("triangle (defaults)", () => {
 	const geometry = triangle();
 	const obs = geom2.toPoints(geometry);
-	const exp: Vec2[] = [
+	const exp = [
 		[0, 0],
 		[1, 0],
 		[0.5000000000000002, 0.8660254037844387],
 	];
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(obs.size()).toEqual(3);
+	expect(measureArea(geometry)).toBe(0.43301270189221935);
+	expect(obs.size()).toBe(3);
 	expect(comparePoints(obs, exp)).toBe(true);
 });
 
@@ -24,14 +26,15 @@ test("triangle (options)", () => {
 	// test SSS
 	let geometry = triangle({ _type: "SSS", values: [7, 8, 6] });
 	let obs = geom2.toPoints(geometry);
-	let exp: Vec2[] = [
+	let exp = [
 		[0, 0],
 		[7, 0],
 		[1.5, 5.809475019311125],
 	];
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(obs.size()).toEqual(3);
+	expect(measureArea(geometry)).toBe(20.33316256758894);
+	expect(obs.size()).toBe(3);
 	expect(comparePoints(obs, exp)).toBe(true);
 
 	// test AAA
@@ -44,7 +47,7 @@ test("triangle (options)", () => {
 	];
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(obs.size()).toEqual(3);
+	expect(obs.size()).toBe(3);
 	expect(comparePoints(obs, exp)).toBe(true);
 
 	// test AAS
@@ -57,7 +60,8 @@ test("triangle (options)", () => {
 	];
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(obs.size()).toEqual(3);
+	expect(measureArea(geometry)).toBe(15.796947276180953);
+	expect(obs.size()).toBe(3);
 	expect(comparePoints(obs, exp)).toBe(true);
 
 	// test ASA
@@ -70,7 +74,8 @@ test("triangle (options)", () => {
 	];
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(obs.size()).toEqual(3);
+	expect(measureArea(geometry)).toBe(23.384870895211314);
+	expect(obs.size()).toBe(3);
 	expect(comparePoints(obs, exp)).toBe(true);
 
 	// test SAS
@@ -83,7 +88,8 @@ test("triangle (options)", () => {
 	];
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(obs.size()).toEqual(3);
+	expect(measureArea(geometry)).toBe(13.207417653898512);
+	expect(obs.size()).toBe(3);
 	expect(comparePoints(obs, exp)).toBe(true);
 
 	// test SSA
@@ -96,6 +102,7 @@ test("triangle (options)", () => {
 	];
 
 	expect(() => geom2.validate(geometry)).never.toThrow();
-	expect(obs.size()).toEqual(3);
+	expect(measureArea(geometry)).toBe(51.962298292283386);
+	expect(obs.size()).toBe(3);
 	expect(comparePoints(obs, exp)).toBe(true);
 });

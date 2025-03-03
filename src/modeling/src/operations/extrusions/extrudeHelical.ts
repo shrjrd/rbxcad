@@ -1,48 +1,42 @@
-import { Object } from "@rbxts/luau-polyfill";
+import type { Geom2, Slice } from "../../geometries/types";
+import type { BoundingBox } from "../../measurements/types";
 
-import geom2 from "../../geometries/geom2";
+export interface ExtrudeHelicalOptions {
+	angle?: number;
+	startAngle?: number;
+	pitch?: number;
+	height?: number;
+	endOffset?: number;
+	segmentsPerRotation?: number;
+}
+
+import { Error, Object } from "@rbxts/luau-polyfill";
+
+import * as slice from "../../geometries/slice/index";
 import { TAU } from "../../maths/constants";
-import mat4 from "../../maths/mat4";
-import extrudeFromSlices from "./extrudeFromSlices";
-import slice from "./slice";
+import * as mat4 from "../../maths/mat4/index";
+import { measureBoundingBox } from "../../measurements/measureBoundingBox";
+import { extrudeFromSlices } from "./extrudeFromSlices";
 
 /**
  * Perform a helical extrude of the geometry, using the given options.
  *
- * @param {Object} options - options for extrusion
- * @param {Number} [options.angle=TAU] - angle of the extrusion (RADIANS) positive for right-hand rotation, negative for left-hand
- * @param {Number} [options.startAngle=0] - start angle of the extrusion (RADIANS)
- * @param {Number} [options.pitch=10] - elevation gain for each turn
- * @param {Number} [options.height] - total height of the helix path. Ignored if pitch is set.
- * @param {Number} [options.endOffset=0] - offset the final radius of the extrusion, allowing for tapered helix, and or spiral
- * @param {Number} [options.segmentsPerRotation=32] - number of segments per full rotation of the extrusion
- * @param {geom2} geometry - the geometry to extrude
- * @returns {geom3} the extruded geometry
+ * @param {object} options - options for extrusion
+ * @param {number} [options.angle=TAU] - angle of the extrusion (RADIANS) positive for right-hand rotation, negative for left-hand
+ * @param {number} [options.startAngle=0] - start angle of the extrusion (RADIANS)
+ * @param {number} [options.pitch=10] - elevation gain for each turn
+ * @param {number} [options.height] - total height of the helix path. Ignored if pitch is set.
+ * @param {number} [options.endOffset=0] - offset the final radius of the extrusion, allowing for tapered helix, and or spiral
+ * @param {number} [options.segmentsPerRotation=32] - number of segments per full rotation of the extrusion
+ * @param {Geom2} geometry - the geometry to extrude
+ * @returns {Geom3} the extruded geometry
  * @alias module:modeling/extrusions.extrudeHelical
  *
  * @example
- * const myshape = extrudeHelical(
- *  {
- *      angle: math.PI * 4,
- *      pitch: 10,
- *      segmentsPerRotation: 64
- *  },
- *  circle({size: 3, center: [10, 0]})
- * )
+ * const myshape = circle({size: 3, center: [10, 0]}) // position for extrusion about Z
+ * const mycoil = extrudeHelical({angle: TAU*2, pitch: 10, segmentsPerRotation: 64}, myshape))
  */
-const extrudeHelical = (
-	options: {
-		angle?: number;
-		startAngle?: number;
-		pitch?: number;
-		height?: number;
-		endOffset?: number;
-		segmentsPerRotation?: number;
-		endRadiusOffset?: number;
-		segments?: number;
-	},
-	geometry: Geom2,
-): Geom3 => {
+export const extrudeHelical = (options: ExtrudeHelicalOptions, geometry: Geom2) => {
 	const defaults = {
 		angle: TAU,
 		startAngle: 0,
@@ -54,28 +48,26 @@ const extrudeHelical = (
 
 	let pitch: number;
 	// ignore height if pitch is set
-	if (!options.pitch && options.height) {
+	// DEVIATION: 0, NaN, and "" are falsy in TS.
+	//if (!options.pitch && options.height) {
+	if ((options.pitch === undefined || options.pitch === 0) && options.height) {
 		pitch = options.height / (angle / TAU);
 	} else {
-		pitch = options.pitch ? options.pitch : defaults.pitch;
+		//pitch = options.pitch ? options.pitch : defaults.pitch;
+		pitch = options.pitch !== undefined && options.pitch !== 0 ? options.pitch : defaults.pitch;
 	}
 
 	// needs at least 3 segments for each revolution
 	const minNumberOfSegments = 3;
 
 	if (segmentsPerRotation < minNumberOfSegments) {
-		error("The number of segments per rotation needs to be at least 3.");
+		throw new Error("The number of segments per rotation needs to be at least 3.");
 	}
 
-	const shapeSides = geom2.toSides(geometry);
-	if (shapeSides.size() === 0) error("the given geometry cannot be empty");
+	let baseSlice = slice.fromGeom2(geometry);
 
-	// const pointsWithNegativeX = shapeSides.filter((s) => (s[0][0] < 0))
-	const pointsWithPositiveX = shapeSides.filter((s) => s[0][0] >= 0);
-
-	let baseSlice = slice.fromSides(shapeSides);
-
-	if (pointsWithPositiveX.size() === 0) {
+	const bounds = measureBoundingBox(geometry) as BoundingBox;
+	if (bounds[1][0] <= 0) {
 		// only points in negative x plane, reverse
 		baseSlice = slice.reverse(baseSlice);
 	}
@@ -113,7 +105,7 @@ const extrudeHelical = (
 			mat4.fromZRotation(mat4.create(), zRotation),
 			step1,
 		);
-		return slice.transform(matrix, base);
+		return slice.transform(matrix, baseSlice);
 	};
 
 	return extrudeFromSlices(
@@ -125,5 +117,3 @@ const extrudeHelical = (
 		baseSlice,
 	);
 };
-
-export default extrudeHelical;

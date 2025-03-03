@@ -1,6 +1,6 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import vec2 from "../../maths/vec2";
+import { vec2 } from "../../maths/index";
 import { fromPoints, toPoints, toString } from "./index";
 
 test("fromPoints: creating a path from no points produces an open, empty non-canonical path", () => {

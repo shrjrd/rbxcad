@@ -1,33 +1,36 @@
-import { Error, Object } from "@rbxts/luau-polyfill";
+import type { Vec2 } from "../maths/types";
 
-import path2 from "../geometries/path2";
-import { EPS, TAU } from "../maths/constants";
-import vec2 from "../maths/vec2";
-import { isGT, isGTE, isNumberArray } from "./commonChecks";
-
-type ArcOptions = {
+export interface ArcOptions {
 	center?: Vec2;
 	radius?: number;
 	startAngle?: number;
 	endAngle?: number;
-	makeTangent?: boolean;
 	segments?: number;
-};
+	makeTangent?: boolean;
+}
+
+import { Object } from "@rbxts/luau-polyfill";
+
+import * as path2 from "../geometries/path2/index";
+import { EPS, TAU } from "../maths/constants";
+import * as vec2 from "../maths/vec2/index";
+import { isGT, isGTE, isNumberArray } from "./commonChecks";
+
 /**
  * Construct an arc in two dimensional space where all points are at the same distance from the center.
- * @param {Object} [options] - options for construction
+ * @param {object} [options] - options for construction
  * @param {Array} [options.center=[0,0]] - center of arc
- * @param {Number} [options.radius=1] - radius of arc
- * @param {Number} [options.startAngle=0] - starting angle of the arc, in radians
- * @param {Number} [options.endAngle=TAU] - ending angle of the arc, in radians
- * @param {Number} [options.segments=32] - number of segments to create per full rotation
- * @param {Boolean} [options.makeTangent=false] - adds line segments at both ends of the arc to ensure that the gradients at the edges are tangent
- * @returns {path2} new 2D path
+ * @param {number} [options.radius=1] - radius of arc
+ * @param {number} [options.startAngle=0] - starting angle of the arc, in radians
+ * @param {number} [options.endAngle=TAU] - ending angle of the arc, in radians
+ * @param {number} [options.segments=32] - number of segments to create per full rotation
+ * @param {boolean} [options.makeTangent=false] - adds line segments at both ends of the arc to ensure that the gradients at the edges are tangent
+ * @returns {Path2} new 2D path
  * @alias module:modeling/primitives.arc
  * @example
  * let myshape = arc({ center: [-1, -1], radius: 2, endAngle: (TAU / 4)})
  */
-const arc = (options?: ArcOptions) => {
+export const arc = (options?: ArcOptions) => {
 	const defaults = {
 		center: [0, 0],
 		radius: 1,
@@ -39,11 +42,11 @@ const arc = (options?: ArcOptions) => {
 	// eslint-disable-next-line prefer-const
 	let { center, radius, startAngle, endAngle, makeTangent, segments } = Object.assign({}, defaults, options);
 
-	if (!isNumberArray(center, 2)) throw new Error("center must be an array of X and Y values");
-	if (!isGT(radius, 0)) throw new Error("radius must be greater than zero");
-	if (!isGTE(startAngle, 0)) throw new Error("startAngle must be positive");
-	if (!isGTE(endAngle, 0)) throw new Error("endAngle must be positive");
-	if (!isGTE(segments, 4)) throw new Error("segments must be four or more");
+	if (!isNumberArray(center, 2)) throw "center must be an array of X and Y values";
+	if (!isGT(radius, 0)) throw "radius must be greater than zero";
+	if (!isGTE(startAngle, 0)) throw "startAngle must be positive";
+	if (!isGTE(endAngle, 0)) throw "endAngle must be positive";
+	if (!isGTE(segments, 4)) throw "segments must be four or more";
 
 	startAngle = startAngle % TAU;
 	endAngle = endAngle % TAU;
@@ -56,40 +59,37 @@ const arc = (options?: ArcOptions) => {
 		rotation = endAngle + (TAU - startAngle);
 	}
 
-	const minangle = math.acos((radius * radius + radius * radius - EPS * EPS) / (2 * radius * radius));
+	const minAngle = math.acos((radius * radius + radius * radius - EPS * EPS) / (2 * radius * radius));
 
-	const centerv = vec2.clone(center);
+	const centerV = vec2.clone(center);
 	let point;
 	const pointArray = [];
-	if (rotation < minangle) {
+	if (rotation < minAngle) {
 		// there is no rotation, just a single point
 		point = vec2.fromAngleRadians(vec2.create(), startAngle);
 		vec2.scale(point, point, radius);
-		vec2.add(point, point, centerv);
+		vec2.add(point, point, centerV);
 		pointArray.push(point);
 	} else {
-		// note: add one additional step to acheive full rotation
-		const numsteps = math.max(1, math.floor(segments * (rotation / TAU))) + 1;
-		let edgestepsize = (numsteps * 0.5) / rotation; // step size for half a degree
-		if (edgestepsize > 0.25) edgestepsize = 0.25;
+		// note: add one additional step to achieve full rotation
+		const numSteps = math.max(1, math.floor(segments * (rotation / TAU))) + 1;
+		let edgeStepSize = (numSteps * 0.5) / rotation; // step size for half a degree
+		if (edgeStepSize > 0.25) edgeStepSize = 0.25;
 
-		const totalsteps = makeTangent ? numsteps + 2 : numsteps;
-		for (let i = 0; i <= totalsteps; i++) {
+		const totalSteps = makeTangent ? numSteps + 2 : numSteps;
+		for (let i = 0; i <= totalSteps; i++) {
 			let step = i;
 			if (makeTangent) {
-				step = ((i - 1) * (numsteps - 2 * edgestepsize)) / numsteps + edgestepsize;
+				step = ((i - 1) * (numSteps - 2 * edgeStepSize)) / numSteps + edgeStepSize;
 				if (step < 0) step = 0;
-				if (step > numsteps) step = numsteps;
+				if (step > numSteps) step = numSteps;
 			}
-			const angle = startAngle + step * (rotation / numsteps);
+			const angle = startAngle + step * (rotation / numSteps);
 			point = vec2.fromAngleRadians(vec2.create(), angle);
 			vec2.scale(point, point, radius);
-			vec2.add(point, point, centerv);
+			vec2.add(point, point, centerV);
 			pointArray.push(point);
 		}
 	}
 	return path2.fromPoints({ closed: false }, pointArray);
 };
-
-export default arc;
-export { arc };

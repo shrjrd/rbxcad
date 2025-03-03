@@ -1,7 +1,6 @@
-import distance from "../../../maths/vec3/distance";
-import squaredDistance from "../../../maths/vec3/squaredDistance";
+import { distance, squaredDistance } from "../../../maths/vec3/index";
 import { Face } from "./Face";
-import Vertex from "./Vertex";
+import { Vertex } from "./Vertex";
 
 /*
  * Original source from quickhull3d (https://github.com/mauriciopoppe/quickhull3d)
@@ -10,7 +9,7 @@ import Vertex from "./Vertex";
  * Adapted to JSCAD by Jeff Gay
  */
 
-class HalfEdge {
+export class HalfEdge {
 	face: Face;
 	next: HalfEdge;
 	opposite: HalfEdge;
@@ -51,5 +50,3 @@ class HalfEdge {
 		edge.opposite = this;
 	}
 }
-
-export default HalfEdge;

@@ -1,27 +1,26 @@
-import vec3 from "../maths/vec3";
-import fromPointAxisNormal from "./fromPointAxisNormal";
+import type { Mat4, Vec3 } from "../maths/types";
+import * as vec3 from "../maths/vec3/index";
+import { fromPointAxisNormal } from "./fromPointAxisNormal";
 
 /**
  * Transform the give connector using the given matrix.
- * @param {mat4} matrix - a transform matrix
+ * @param {Mat4} matrix - a transform matrix
  * @param {connector} connector - the connector to transform
  * @returns {connector} a new connector
  * @alias module:modeling/connectors.transform
  */
-const transform = (matrix: Mat4, connector: Connector): Connector => {
+export const transform = (matrix: Mat4, connector: { point: Vec3; axis: Vec3; normal: Vec3 }) => {
 	// OPTIMIZE
-	const newpoint = vec3.transform(vec3.create(), connector.point, matrix);
-	const newaxis = vec3.subtract(
+	const newPoint = vec3.transform(vec3.create(), connector.point, matrix);
+	const newAxis = vec3.subtract(
 		vec3.create(),
 		vec3.transform(vec3.create(), vec3.add(vec3.create(), connector.point, connector.axis), matrix),
-		newpoint,
+		newPoint,
 	);
-	const newnormal = vec3.subtract(
+	const newNormal = vec3.subtract(
 		vec3.create(),
 		vec3.transform(vec3.create(), vec3.add(vec3.create(), connector.point, connector.normal), matrix),
-		newpoint,
+		newPoint,
 	);
-	return fromPointAxisNormal(newpoint, newaxis, newnormal);
+	return fromPointAxisNormal(newPoint, newAxis, newNormal);
 };
-
-export default transform;

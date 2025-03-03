@@ -1,11 +1,13 @@
+import type { Geom3 } from "../types";
+import type { Vec3 } from "../../maths/types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import { comparePolygons, compareVectors } from "../../../test/helpers/";
-import mat4 from "../../maths/mat4";
+import { comparePolygons, compareVectors } from "../../../test/helpers/index";
+import { mat4 } from "../../maths/index";
 import { fromPoints, toPolygons, transform } from "./index";
 
 test("transform: Adjusts the transforms of a populated geom3", () => {
-	const points: Vec3[][] = [
+	const vertices: Vec3[][] = [
 		[
 			[0, 0, 0],
 			[1, 0, 0],
@@ -30,7 +32,7 @@ test("transform: Adjusts the transforms of a populated geom3", () => {
 		],
 		transforms: [0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
 	};
-	const geometry = fromPoints(points);
+	const geometry = fromPoints(vertices);
 	let another = transform(rotate90, geometry);
 	expect(geometry).never.toBe(another);
 	expect(comparePolygons(another.polygons[0], expected.polygons[0])).toBe(true);

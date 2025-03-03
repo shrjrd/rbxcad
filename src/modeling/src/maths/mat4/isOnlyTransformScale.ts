@@ -1,13 +1,14 @@
+import type { Mat4 } from "../types";
 const Number_EPSILON = 2.220446049250313e-16;
 /**
  * Determine whether the given matrix is only translate and/or scale.
  * This code returns true for TAU / 2 rotation as it can be interpreted as scale.
  *
- * @param {mat4} matrix - the matrix
- * @returns {Boolean} true if matrix is for translate and/or scale
+ * @param {Mat4} matrix - the matrix
+ * @returns {boolean} true if matrix is for translate and/or scale
  * @alias module:modeling/maths/mat4.isOnlyTransformScale
  */
-const isOnlyTransformScale = (
+export const isOnlyTransformScale = (
 	matrix: Mat4, // TODO check if it is worth the effort to add recognition of 90 deg rotations
 ) =>
 	isZero(matrix[1]) &&
@@ -21,6 +22,8 @@ const isOnlyTransformScale = (
 	isZero(matrix[11]) &&
 	matrix[15] === 1;
 
+/**
+ * @param {number} num
+ * @returns {boolean}
+ */
 const isZero = (num: number) => math.abs(num) < Number_EPSILON;
-
-export default isOnlyTransformScale;

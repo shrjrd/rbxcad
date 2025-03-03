@@ -1,6 +1,5 @@
-import { Error } from "@rbxts/luau-polyfill";
-
-import flatten from "../utils/flatten";
+import type { RGB, RGBA } from "./types";
+import { flatten } from "../utils/flatten";
 
 /**
  * Convert the given RGB color values to CSS color notation (string)
@@ -9,26 +8,21 @@ import flatten from "../utils/flatten";
  * @return {String} CSS color notation
  * @alias module:modeling/colors.rgbToHex
  */
-const rgbToHex = (...values: number[] | [number[]]) => {
+export const rgbToHex = (...values: RGB[] | RGBA[] | number[]) => {
 	values = flatten(values);
-	if (values.size() < 3) throw new Error("values must contain R, G and B values");
+	if (values.size() < 3) throw "values must contain R, G and B values";
 
 	const r = values[0] * 255;
 	const g = values[1] * 255;
 	const b = values[2] * 255;
 
-	// let s = `#${JsNumber(0x1000000 + r * 0x10000 + g * 0x100 + b).toString(16).substring(1, 7)}`;
-	// Convert to hex using bit operations and string formatting
-	const hexNum = math.floor(0x1000000 + r * 0x10000 + g * 0x100 + b);
-	let s = `#${string.format("%06x", hexNum).sub(2, 7)}`;
+	//let s = `#${Number(0x1000000 + r * 0x10000 + g * 0x100 + b).toString(16).substring(1, 7)}`;
+	let s = `#${string.format("%06x", math.floor(0x1000000 + r * 0x10000 + g * 0x100 + b)).sub(2, 7)}`;
 
 	if (values.size() > 3) {
 		// convert alpha to opacity
-		// s = s + JsNumber(values[3] * 255).toString(16);
-		const alpha = math.floor(values[3] * 255);
-		s = s + string.format("%02x", alpha);
+		//s = s + Number(values[3] * 255).toString(16);
+		s = s + string.format("%02x", math.floor(values[3] * 255));
 	}
 	return s;
 };
-
-export default rgbToHex;

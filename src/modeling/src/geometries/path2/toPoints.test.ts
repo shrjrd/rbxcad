@@ -1,6 +1,6 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import vec2 from "../../maths/vec2";
+import { vec2 } from "../../maths/index";
 import { fromPoints, toPoints } from "./index";
 
 test("toPoints: An empty path produces an empty point array", () => {

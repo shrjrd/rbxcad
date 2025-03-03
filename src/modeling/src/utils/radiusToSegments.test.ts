@@ -1,7 +1,7 @@
 import { expect, test } from "@rbxts/jest-globals";
 
 import { TAU } from "../maths/constants";
-import { radiusToSegments } from "./radiusToSegments";
+import { radiusToSegments } from "./index";
 
 test("utils: radiusToSegments() should return correct values", () => {
 	// test defaults

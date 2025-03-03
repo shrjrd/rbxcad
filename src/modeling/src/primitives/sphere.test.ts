@@ -1,7 +1,8 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import comparePolygonsAsPoints from "../../test/helpers/comparePolygonsAsPoints";
-import geom3 from "../geometries/geom3";
+import { comparePolygonsAsPoints } from "../../test/helpers/index";
+import { geom3 } from "../geometries/index";
+import { measureArea, measureVolume } from "../measurements/index";
 import { sphere } from "./index";
 
 test("sphere (defaults)", () => {
@@ -9,6 +10,8 @@ test("sphere (defaults)", () => {
 	const pts = geom3.toPoints(obs);
 
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(12.465694088650583);
+	expect(measureVolume(obs)).toBe(4.121941740785839);
 	expect(pts.size()).toBe(512);
 });
 
@@ -18,6 +21,8 @@ test("sphere (options)", () => {
 	let pts = geom3.toPoints(obs);
 	let exp = [];
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(296.5322084069296);
+	expect(measureVolume(obs)).toBe(466.5063509461097);
 	expect(pts.size()).toBe(72);
 	// t.true(comparePolygonsAsPoints(pts, exp))
 
@@ -203,8 +208,11 @@ test("sphere (options)", () => {
 		],
 	];
 	expect(() => geom3.validate(obs)).never.toThrow();
+	// DEVIATION: floating point differs?
+	expect(measureArea(obs)).toBe(11.013439076647458);
+	expect(measureVolume(obs)).toBe(3.2189514164974606);
 	expect(pts.size()).toBe(32);
-	expect(comparePolygonsAsPoints(pts, exp as Vec3[][])).toBe(true);
+	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 
 	// test center
 	obs = sphere({ center: [-3, 5, 7], segments: 8 });
@@ -388,13 +396,17 @@ test("sphere (options)", () => {
 		],
 	];
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(11.013439076647467);
+	expect(measureVolume(obs)).toBe(3.218951416497485);
 	expect(pts.size()).toBe(32);
-	expect(comparePolygonsAsPoints(pts, exp as Vec3[][])).toBe(true);
+	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 });
 
 test("sphere (zero radius)", () => {
 	const obs = sphere({ radius: 0 });
 	const pts = geom3.toPoints(obs);
 	expect(() => geom3.validate(obs)).never.toThrow();
+	expect(measureArea(obs)).toBe(0);
+	expect(measureVolume(obs)).toBe(0);
 	expect(pts.size()).toBe(0);
 });

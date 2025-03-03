@@ -1,3 +1,5 @@
+import { polyhedron } from "../../modeling/src/primitives";
+
 /**
  * Building a Polyhedron from scratch
  * @category Creating Shapes
@@ -7,10 +9,6 @@
  * @authors Rene K. Mueller
  * @licence MIT License
  */
-
-import rbxcad from "../../modeling/src";
-const { polyhedron } = rbxcad.primitives;
-
 const main = () =>
 	polyhedron({
 		points: [

@@ -1,3 +1,7 @@
+import type { Poly3, Geom3, Geom2, Path2 } from "./modeling/src/geometries/types";
+import type { Vec2, Vec3 } from "./modeling/src/maths/types";
+import type { RGBA, RGB } from "./modeling/src/colors/types";
+
 const BasePart = new Instance("Part");
 BasePart.CanCollide = false;
 BasePart.Anchored = true;
@@ -19,28 +23,18 @@ function drawPoint3D(point: Vector3, parent: Instance) {
 	PointPart.Parent = parent;
 }
 
-function drawLine3D(
-	a: Vector3,
-	b: Vector3,
-	color: RGB = [math.random() * 0.25 + 0.25, math.random() * 0.25 + 0.25, math.random() * 0.25 + 0.25],
-	//color: RGB = [0.5, 0.5, 0.5],
-	parent: Instance,
-) {
+function drawLine3D(a: Vector3, b: Vector3, color: RGB | RGBA = [0.5, 0.5, 0.5, 0], parent: Instance) {
 	const LinePart = BasePart.Clone();
-	LinePart.Size = new Vector3(0.1, 0.1, a.sub(b).Magnitude);
+	LinePart.Size = new Vector3(1, 1, a.sub(b).Magnitude);
+	const BlockMesh = new Instance("BlockMesh", LinePart);
+	BlockMesh.Scale = new Vector3(0.2, 0.2, 1);
 	LinePart.Color = new Color3(color[0], color[1], color[2]);
 	LinePart.CFrame = new CFrame(a.add(b).div(2), a);
+	LinePart.Transparency = color[3] ?? 0;
 	LinePart.Parent = parent;
 }
 
-function drawTriangle3D(
-	a: Vector3,
-	b: Vector3,
-	c: Vector3,
-	color: RGB | RGBA = [math.random() * 0.25 + 0.25, math.random() * 0.25 + 0.25, math.random() * 0.25 + 0.25],
-	//color: RGB = [0.5, 0.5, 0.5],
-	parent: Instance,
-) {
+function drawTriangle3D(a: Vector3, b: Vector3, c: Vector3, color: RGB | RGBA = [0.5, 0.5, 0.5, 0], parent: Instance) {
 	let ab = b.sub(a);
 	let ac = c.sub(a);
 	let bc = c.sub(b);
@@ -65,22 +59,40 @@ function drawTriangle3D(
 	w1.Size = new Vector3(0, height, math.abs(ab.Dot(back)));
 	w1.CFrame = CFrame.fromMatrix(a.add(b).div(2), right, up, back);
 	w1.Color = new Color3(color[0], color[1], color[2]);
+	w1.Transparency = color[3] ?? 0;
 	w1.Parent = TriangleModel;
 	const w2 = WedgePart.Clone();
 	w2.Size = new Vector3(0, height, math.abs(ac.Dot(back)));
 	w2.CFrame = CFrame.fromMatrix(a.add(c).div(2), right.mul(-1), up, back.mul(-1));
 	w2.Color = new Color3(color[0], color[1], color[2]);
+	w2.Transparency = color[3] ?? 0;
 	w2.Parent = TriangleModel;
 	TriangleModel.Parent = parent;
+	return TriangleModel;
 }
 
+function drawTriangleOutline3D(
+	a: Vector3,
+	b: Vector3,
+	c: Vector3,
+	color: RGB | RGBA = [0.5, 0.5, 0.5, 0],
+	parent: Instance,
+) {
+	const TriangleOutlineModel = new Instance("Model");
+	TriangleOutlineModel.Name = "TriangleOutline";
+	drawLine3D(a, b, color, TriangleOutlineModel);
+	drawLine3D(b, c, color, TriangleOutlineModel);
+	drawLine3D(c, a, color, TriangleOutlineModel);
+	TriangleOutlineModel.Parent = parent;
+}
 function drawNormal(a: Vector3, b: Vector3, c: Vector3, parent: Instance) {
 	const normal = c.sub(a).Cross(b.sub(a)).Unit;
 	const pos = a.add(b).add(c).div(3);
 	drawLine3D(pos, pos.add(normal.mul(1)), undefined, parent);
 }
 
-function drawConvexPolygon3D(polygon: Poly3, color: RGB | RGBA, parent: Instance) {
+// NOTE: polygons are assumed to be convex
+function drawPolygon3D(polygon: Poly3, color: RGB | RGBA, parent: Instance) {
 	const vertices = polygon.vertices;
 	for (let i = 2; i < vertices.size(); i++) {
 		const _a = vertices[i - 1];
@@ -92,15 +104,38 @@ function drawConvexPolygon3D(polygon: Poly3, color: RGB | RGBA, parent: Instance
 		const c = new Vector3(_c[0], _c[1], _c[2]);
 		drawTriangle3D(a, b, c, color, parent);
 		//drawNormal(a, b, c, parent);
+		//drawTriangleOutline3D(a, b, c, color, parent);
 	}
 }
 
-function drawConvexPolygons3D(polygons: Poly3[], color: RGB | RGBA, parent: Instance) {
+function drawPolygonOutline3D(polygon: Poly3, color: RGB | RGBA, parent: Instance) {
+	const vertices = polygon.vertices;
+	for (let i = 1; i < vertices.size(); i++) {
+		const a = vertices[i];
+		const b = vertices[(i + 1) % vertices.size()];
+		drawLine3D(new Vector3(a[0], a[1], a[2]), new Vector3(b[0], b[1], b[2]), color, parent);
+	}
+}
+
+function drawPolygonTriangleOutlines3D(polygon: Poly3, color: RGB | RGBA, parent: Instance) {
+	const vertices = polygon.vertices;
+	for (let i = 2; i < vertices.size(); i++) {
+		const _a = vertices[i - 1];
+		const _b = vertices[0];
+		const _c = vertices[i];
+		const a = new Vector3(_a[0], _a[1], _a[2]);
+		const b = new Vector3(_b[0], _b[1], _b[2]);
+		const c = new Vector3(_c[0], _c[1], _c[2]);
+		drawTriangleOutline3D(a, b, c, color, parent);
+	}
+}
+
+function drawPolygons3D(polygons: Poly3[], color: RGB | RGBA, parent: Instance) {
 	for (let i = 0; i < polygons.size(); i++) {
 		const polygon = polygons[i];
 		const PolygonModel = new Instance("Model");
 		PolygonModel.Name = `Polygon${i}`;
-		drawConvexPolygon3D(polygon, color, PolygonModel);
+		drawPolygon3D(polygon, color, PolygonModel);
 		PolygonModel.Parent = parent;
 	}
 }
@@ -108,37 +143,44 @@ function drawConvexPolygons3D(polygons: Poly3[], color: RGB | RGBA, parent: Inst
 function drawGeometry3D(geometry: Geom3, parent: Instance) {
 	const GeometryModel = new Instance("Model");
 	GeometryModel.Name = "Geometry";
-	drawConvexPolygons3D(geometry.polygons, geometry.color!, GeometryModel);
+	drawPolygons3D(geometry.polygons, geometry.color!, GeometryModel);
 	GeometryModel.Parent = parent;
+	return GeometryModel;
 }
 
-function drawEdges(edges: [Vec2, Vec2][], color: RGB | RGBA, parent: Instance, z: number = 0) {
+function drawGeometryOutlines2D(edges: Vec2[][], color: RGB | RGBA, parent: Instance, z: number = 0) {
 	for (let i = 0; i < edges.size(); i++) {
-		const edge = edges[i];
-		const [v1, v2] = [edge[0], edge[1]];
-		drawLine3D(new Vector3(v1[0], v1[1], z), new Vector3(v2[0], v2[1], z), color, parent);
+		for (let j = 0; j < edges[i].size(); j++) {
+			const [v1, v2] = [edges[i][j], edges[i][(j + 1) % edges[i].size()]];
+			drawLine3D(new Vector3(v1[0], v1[1], z), new Vector3(v2[0], v2[1], z), color, parent);
+		}
 	}
 }
 
 function drawGeometry2D(geometry: Geom2, parent: Instance, z: number = 0) {
 	const GeometryModel = new Instance("Model");
 	GeometryModel.Name = "Geometry";
-	drawEdges(geometry.sides, geometry.color!, GeometryModel, z);
+	drawGeometryOutlines2D(geometry.outlines, geometry.color!, GeometryModel, z);
 	GeometryModel.Parent = parent;
+	return GeometryModel;
 }
 
 function drawGeometries2D(geometries: Geom2[], parent: Instance, z: number = 0) {
+	const GeometryModels: Instance[] = [];
 	for (let i = 0; i < geometries.size(); i++) {
 		const geometry = geometries[i];
-		drawGeometry2D(geometry, parent, z);
+		GeometryModels.push(drawGeometry2D(geometry, parent, z));
 	}
+	return GeometryModels;
 }
 
 function drawGeometries3D(geometries: Geom3[], parent: Instance) {
+	const GeometryModels: Instance[] = [];
 	for (let i = 0; i < geometries.size(); i++) {
 		const geometry = geometries[i];
-		drawGeometry3D(geometry, parent);
+		GeometryModels.push(drawGeometry3D(geometry, parent));
 	}
+	return GeometryModels;
 }
 
 function drawPath2D(path: Path2, parent: Instance, z: number = 0) {
@@ -151,9 +193,9 @@ function drawPath2D(path: Path2, parent: Instance, z: number = 0) {
 	PathModel.Parent = parent;
 }
 
-import applyTransformsGeom2 from "./modeling/src/geometries/geom2/applyTransforms";
-import applyTransformsGeom3 from "./modeling/src/geometries/geom3/applyTransforms";
-import applyTransformsPath2 from "./modeling/src/geometries/path2/applyTransforms";
+import { applyTransforms as applyTransformsGeom2 } from "./modeling/src/geometries/geom2/applyTransforms";
+import { applyTransforms as applyTransformsGeom3 } from "./modeling/src/geometries/geom3/applyTransforms";
+import { applyTransforms as applyTransformsPath2 } from "./modeling/src/geometries/path2/applyTransforms";
 function draw(
 	parent: Instance,
 	options: { applyTransforms?: boolean; z?: number } = { applyTransforms: false, z: 0 },
@@ -162,7 +204,7 @@ function draw(
 	const transform = options.applyTransforms;
 	for (let i = 0; i < objects.size(); i++) {
 		const object = objects[i] as Geom2 | Geom3 | Path2;
-		if ("sides" in object) {
+		if ("outlines" in object) {
 			drawGeometry2D(transform ? applyTransformsGeom2(object) : object, parent, options.z);
 		} else if ("polygons" in object) {
 			drawGeometry3D(transform ? applyTransformsGeom3(object) : object, parent);
@@ -245,8 +287,6 @@ function getGeometryFromPart(part: Part) {
 
 export {
 	draw,
-	drawConvexPolygon3D,
-	drawConvexPolygons3D,
 	drawGeometries2D,
 	drawGeometries3D,
 	drawGeometry2D,
@@ -255,6 +295,10 @@ export {
 	drawNormal,
 	drawPath2D,
 	drawPoint3D,
+	drawPolygon3D,
+	drawPolygonOutline3D,
+	drawPolygons3D,
+	drawPolygonTriangleOutlines3D,
 	drawTriangle3D,
 	getGeometryFromPart,
 };

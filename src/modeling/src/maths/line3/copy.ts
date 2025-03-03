@@ -1,17 +1,16 @@
-import vec3 from "../vec3";
+import type { Line3 } from "./type";
+import * as vec3 from "../vec3/index";
 
 /**
  * Copy the given line into the receiving line.
  *
- * @param {line3} out - receiving line
- * @param {line3} line - line to copy
- * @returns {line3} out
+ * @param {Line3} out - receiving line
+ * @param {Line3} line - line to copy
+ * @returns {Line3} out
  * @alias module:modeling/maths/line3.copy
  */
-const copy = (out: Line3, line: Line3) => {
+export const copy = (out: Line3, line: Line3) => {
 	vec3.copy(out[0], line[0]);
 	vec3.copy(out[1], line[1]);
 	return out;
 };
-
-export default copy;

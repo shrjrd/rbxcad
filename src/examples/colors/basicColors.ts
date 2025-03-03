@@ -1,3 +1,7 @@
+import { colorize, colorNameToRgb, hexToRgb, hslToRgb, hsvToRgb, RGB } from "../../modeling/src/colors";
+import { translate } from "../../modeling/src/operations/transforms";
+import { cuboid, sphere } from "../../modeling/src/primitives";
+
 /**
  * Basic Colors
  * @category Colors
@@ -7,12 +11,6 @@
  * @authors Moissette Mark
  * @licence MIT License
  */
-
-import rbxcad from "../../modeling/src";
-const { colorize, hslToRgb, colorNameToRgb, hexToRgb, hsvToRgb } = rbxcad.colors;
-const { cuboid, sphere } = rbxcad.primitives;
-const { translate } = rbxcad.transforms;
-
 const main = () => {
 	// the color() function applies a color (rgb, or rgba) to the given object
 	const simple = colorize([0, 1, 0, 0.8], cuboid());

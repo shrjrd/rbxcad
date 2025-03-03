@@ -1,8 +1,10 @@
+import type { Geometry, Geom2, Geom3, Path2 } from "../../geometries/types";
+import type { Vec3 } from "../../maths/types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import { comparePoints, comparePolygonsAsPoints } from "../../../test/helpers";
-import { geom2, geom3, path2 } from "../../geometries";
-import mat4 from "../../maths/mat4";
+import { comparePoints, comparePolygonsAsPoints } from "../../../test/helpers/index";
+import { geom2, geom3, path2 } from "../../geometries/index";
+import { mat4 } from "../../maths/index";
 import { transform } from "./index";
 
 test("transform: transforming of a path2 produces expected changes to points", () => {
@@ -14,7 +16,7 @@ test("transform: transforming of a path2 produces expected changes to points", (
 
 	geometry = transform(matrix, geometry) as Path2;
 	const obs = path2.toPoints(geometry);
-	const exp: Vec2[] = [
+	const exp = [
 		[2, 2],
 		[3, 2],
 	];
@@ -24,15 +26,17 @@ test("transform: transforming of a path2 produces expected changes to points", (
 
 test("transform: transforming of a geom2 produces expected changes to sides", () => {
 	const matrix = mat4.fromScaling(mat4.create(), [5, 5, 5]);
-	let geometry = geom2.fromPoints([
-		[0, 0],
-		[1, 0],
-		[0, 1],
+	let geometry = geom2.create([
+		[
+			[0, 0],
+			[1, 0],
+			[0, 1],
+		],
 	]);
 
 	geometry = transform(matrix, geometry) as Geom2;
 	const obs = geom2.toPoints(geometry);
-	const exp: Vec2[] = [
+	const exp = [
 		[0, 0],
 		[5, 0],
 		[0, 5],
@@ -84,7 +88,7 @@ test("transform: transforming of a geom3 produces expected changes to polygons",
 	let geometry = geom3.fromPoints(points);
 	geometry = transform(matrix, geometry) as Geom3;
 	const obs = geom3.toPoints(geometry);
-	const exp: Vec3[][] = [
+	const exp = [
 		[
 			[-5, -10, -15],
 			[-5, -10, 15],
@@ -127,25 +131,27 @@ test("transform: transforming of a geom3 produces expected changes to polygons",
 });
 
 test("transform: transforming of multiple objects produces expected changes", () => {
-	const junk = "hello";
+	const junk = "hello" as unknown as Geometry;
 	const geometry1 = path2.fromPoints({}, [
 		[-5, 5],
 		[5, 5],
 		[-5, -5],
 		[10, -5],
 	]);
-	const geometry2 = geom2.fromPoints([
-		[-5, -5],
-		[0, 5],
-		[10, -5],
+	const geometry2 = geom2.create([
+		[
+			[-5, -5],
+			[0, 5],
+			[10, -5],
+		],
 	]);
 
 	const matrix = mat4.fromTranslation(mat4.create(), [2, 2, 0]);
-	const transformed = transform(matrix, junk as unknown as object, geometry1, geometry2) as object[];
+	const transformed = transform(matrix, junk, geometry1, geometry2) as Geometry[];
 	expect(transformed[0]).toBe(junk);
 
 	let obs = path2.toPoints(transformed[1] as Path2);
-	let exp: Vec2[] = [
+	let exp = [
 		[-3, 7],
 		[7, 7],
 		[-3, -3],

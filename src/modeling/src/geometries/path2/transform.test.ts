@@ -1,7 +1,8 @@
+import type { Vec2 } from "../../maths/types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import { comparePoints, compareVectors } from "../../../test/helpers/";
-import mat4 from "../../maths/mat4";
+import { comparePoints, compareVectors } from "../../../test/helpers/index";
+import { mat4 } from "../../maths/index";
 import { fromPoints, toPoints, transform } from "./index";
 
 test("transform: adjusts the transforms of path", () => {
@@ -16,7 +17,7 @@ test("transform: adjusts the transforms of path", () => {
 	// continue with typical user scenario, several iterations of transforms and access
 
 	// expect lazy transform, i.e. only the transforms change
-	const expected: Path2 = {
+	const expected = {
 		points: [
 			[0, 0],
 			[1, 0],
@@ -39,7 +40,7 @@ test("transform: adjusts the transforms of path", () => {
 	expect(another.isClosed).toBe(false);
 	expect(compareVectors(another.transforms, expected.transforms)).toBe(true);
 
-	// expect application of the transforms to the sides
+	// expect application of the transforms to the points
 	expected.points = [
 		[5, 10],
 		[5, 11],

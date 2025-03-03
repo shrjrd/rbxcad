@@ -3,9 +3,9 @@
  * @see CSS color table from http://www.w3.org/TR/css3-color/
  * @enum {Array}
  * @example
- * let newshape = colorize(cssColors.red, oldshape)
+ * let newShape = colorize(cssColors.red, oldShape)
  */
-const cssColors = {
+export const cssColors = {
 	// basic color keywords
 	black: [0 / 255, 0 / 255, 0 / 255],
 	silver: [192 / 255, 192 / 255, 192 / 255],
@@ -172,5 +172,3 @@ const cssColors = {
 	// 'yellow': [ 255 / 255, 255 / 255, 0 / 255 ],
 	yellowgreen: [154 / 255, 205 / 255, 50 / 255],
 };
-
-export default cssColors;

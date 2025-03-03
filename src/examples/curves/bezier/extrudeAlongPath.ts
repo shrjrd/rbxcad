@@ -1,3 +1,15 @@
+import type { Vec3 } from "../../../modeling/src/maths/types";
+
+import * as colors from "../../../modeling/src/colors";
+import { RGB } from "../../../modeling/src/colors";
+import * as bezier from "../../../modeling/src/curves/bezier";
+import * as geometries from "../../../modeling/src/geometries";
+import * as slice from "../../../modeling/src/geometries/slice";
+import * as maths from "../../../modeling/src/maths";
+import * as extrusions from "../../../modeling/src/operations/extrusions";
+import { translate } from "../../../modeling/src/operations/transforms";
+import { circle, cuboid } from "../../../modeling/src/primitives";
+
 /**
  * Extrude Along a Bezier Path
  * @category Creating Shapes
@@ -7,15 +19,6 @@
  * @authors Simon Clark
  * @licence MIT License
  */
-
-import rbxcad from "../../../modeling/src";
-const { colors, geometries, maths, extrusions } = rbxcad;
-
-const { cuboid, circle } = rbxcad.primitives;
-const { translate } = rbxcad.transforms;
-const { slice } = rbxcad.extrusions;
-const { bezier } = rbxcad.curves;
-
 const main = () => [
 	box4x4([-8, -4, 2], [1, 0, 0]),
 	box4x4([8, 4, 12], [0, 1, 0]),
@@ -39,7 +42,7 @@ const tube = (bezierControlPoints: Vec3[]) => {
 	const circ = circle({ radius: 1, segments: 32 });
 	const l = bezierControlPoints.size() - 1;
 	const circPoints = geometries.geom2.toPoints(circ);
-	let tubeSlice = slice.fromPoints(circPoints);
+	let tubeSlice = slice.fromVertices(circPoints);
 
 	// Rotate it close to the direction we are going in.  Rotation gets funky around 180˚
 	const bezierDelta = maths.vec3.clone([

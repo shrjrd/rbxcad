@@ -1,6 +1,7 @@
+import type { Vec2 } from "../../maths/types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import hullPoints2 from "./hullPoints2";
+import { hullPoints2 } from "./hullPoints2";
 
 test("hullPoints2 bug #114 2 circles with 18 segments", () => {
 	const points: Vec2[] = [

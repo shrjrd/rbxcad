@@ -1,10 +1,11 @@
+import type { Geom3 } from "../../geometries/types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import { geom3 } from "../../geometries";
+import { geom3 } from "../../geometries/index";
 import { EPS } from "../../maths/constants";
-import { cuboid } from "../../primitives";
-import { center } from "../transforms/center";
-import mayOverlap from "./mayOverlap";
+import { cuboid } from "../../primitives/index";
+import { center } from "../transforms/index";
+import { mayOverlap } from "./mayOverlap";
 
 test.only("mayOverlap: determination of overlap is reliable", () => {
 	const geometry1 = center({ relativeTo: [0, 0, 0] }, cuboid({ size: [4, 4, 4] })) as Geom3;

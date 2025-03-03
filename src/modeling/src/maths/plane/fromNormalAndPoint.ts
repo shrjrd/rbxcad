@@ -1,4 +1,5 @@
-import vec3 from "../vec3";
+import type { Vec3, Plane } from "../types";
+import * as vec3 from "../vec3/index";
 
 /**
  * Represents a plane in 3D coordinate space as determined by a normal (perpendicular to the plane)
@@ -6,19 +7,18 @@ import vec3 from "../vec3";
  *
  * The contents of the array are a normal [0,1,2] and a distance [3].
  * @see https://en.wikipedia.org/wiki/Hesse_normal_form
- * @typedef {Array} plane
  */
 
 /**
  * Create a new plane from the given normal and point values.
  *
- * @param {plane} out - receiving plane
- * @param {vec3} normal - directional vector
- * @param {vec3} point - origin of plane
- * @returns {plane} out
+ * @param {Plane} out - receiving plane
+ * @param {Vec3} normal - directional vector
+ * @param {Vec3} point - origin of plane
+ * @returns {Plane} out
  * @alias module:modeling/maths/plane.fromNormalAndPoint
  */
-const fromNormalAndPoint = (out: _Plane, normal: Vec3, point: Vec3): _Plane => {
+export const fromNormalAndPoint = (out: Plane, normal: Vec3, point: Vec3) => {
 	const u = vec3.normalize(vec3.create(), normal);
 	const w = vec3.dot(point, u);
 
@@ -28,5 +28,3 @@ const fromNormalAndPoint = (out: _Plane, normal: Vec3, point: Vec3): _Plane => {
 	out[3] = w;
 	return out;
 };
-
-export default fromNormalAndPoint;

@@ -1,23 +1,25 @@
-import { Array, Error } from "@rbxts/luau-polyfill";
+import type { Mat4 } from "../../maths/types";
+import { Array as JsArray } from "@rbxts/luau-polyfill";
 
-import mat4 from "../../maths/mat4";
-import vec2 from "../../maths/vec2";
-import create from "./create";
+import * as mat4 from "../../maths/mat4/index";
+import * as vec2 from "../../maths/vec2/index";
+import { create } from "./create";
 
 /**
  * Create a new path from the given compact binary data.
  * @param {TypedArray} data - compact binary data
- * @returns {path2} a new path
+ * @returns {Path2} a new path
  * @alias module:modeling/geometries/path2.fromCompactBinary
  */
-const fromCompactBinary = (data: number[]) => {
-	if (data[0] !== 2) throw new Error("invalid compact binary data");
+export const fromCompactBinary = (data: number[]) => {
+	if (data[0] !== 2) throw "invalid compact binary data";
 
 	const created = create();
 
-	created.transforms = mat4.clone(Array.slice(data, 2, 18) as Mat4); //mat4.clone(data.slice(1, 17));
-
-	created.isClosed = !!data[17];
+	created.transforms = mat4.clone(JsArray.slice(data, 2, 18) as Mat4); //mat4.clone(data.slice(1, 17));
+	// DEVIATION: 0, NaN, and "" are falsy in TS.
+	//created.isClosed = !!data[17];
+	created.isClosed = !!(data[17] !== 0 && data[17] !== undefined);
 
 	for (let i = 22; i < data.size(); i += 2) {
 		const point = vec2.fromValues(data[i], data[i + 1]);
@@ -30,5 +32,3 @@ const fromCompactBinary = (data: number[]) => {
 	// TODO: how about custom properties or fields ?
 	return created;
 };
-
-export default fromCompactBinary;

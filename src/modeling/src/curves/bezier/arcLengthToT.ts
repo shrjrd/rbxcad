@@ -1,6 +1,13 @@
+import type { Bezier } from "./type";
+
+export interface ArcLengthToTOptions {
+	distance?: number;
+	segments?: number;
+}
+
 import { Object } from "@rbxts/luau-polyfill";
 
-import lengths from "./lengths";
+import { lengths } from "./lengths";
 
 /**
  * Convert a given arc length along a bezier curve to a t value.
@@ -17,14 +24,14 @@ import lengths from "./lengths";
  * }
  * return points;
  *
- * @param {Object} [options] options for construction
- * @param {Number} [options.distance=0] the distance along the bezier curve for which we want to find the corresponding t value.
- * @param {Number} [options.segments=100] the number of segments to use when approximating the curve length.
- * @param {Object} bezier a bezier curve.
+ * @param {object} [options] options for construction
+ * @param {number} [options.distance=0] the distance along the bezier curve for which we want to find the corresponding t value.
+ * @param {number} [options.segments=100] the number of segments to use when approximating the curve length.
+ * @param {object} bezier a bezier curve.
  * @returns a number in the [0, 1] interval or NaN if the arcLength is negative or greater than the total length of the curve.
  * @alias module:modeling/curves/bezier.arcLengthToT
  */
-const arcLengthToT = (options: object, bezier: Bezier) => {
+export const arcLengthToT = (options: ArcLengthToTOptions, bezier: Bezier) => {
 	const defaults = {
 		distance: 0,
 		segments: 100,
@@ -61,5 +68,3 @@ const arcLengthToT = (options: object, bezier: Bezier) => {
 	// add that fractional amount and return
 	return (targetIndex + segmentFraction) / segments;
 };
-
-export default arcLengthToT;

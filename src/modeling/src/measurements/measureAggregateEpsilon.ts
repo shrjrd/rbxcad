@@ -1,22 +1,24 @@
-import { Error } from "@rbxts/luau-polyfill";
-
-import { geom2, geom3, path2 } from "../geometries";
-import flatten from "../utils/flatten";
-import calculateEpsilonFromBounds from "./calculateEpsilonFromBounds";
-import measureAggregateBoundingBox from "./measureAggregateBoundingBox";
+import type { Geometry } from "../geometries/types";
+import type { RecursiveArray } from "../utils/recursiveArray";
+import type { BoundingBox } from "./types";
+import * as geom2 from "../geometries/geom2/index";
+import * as geom3 from "../geometries/geom3/index";
+import * as path2 from "../geometries/path2/index";
+import { flatten } from "../utils/flatten";
+import { calculateEpsilonFromBounds } from "./calculateEpsilonFromBounds";
+import { measureAggregateBoundingBox } from "./measureAggregateBoundingBox";
 
 /**
  * Measure the aggregated Epsilon for the given geometries.
  * @param {...Object} geometries - the geometries to measure
- * @return {Number} the aggregated Epsilon for the whole group of geometries
+ * @return {number} the aggregated Epsilon for the whole group of geometries
  * @alias module:modeling/measurements.measureAggregateEpsilon
  *
  * @example
  * let groupEpsilon = measureAggregateEpsilon(sphere(),cube())
  */
-const measureAggregateEpsilon = (...geometries: object[]) => {
+export const measureAggregateEpsilon = (...geometries: RecursiveArray<Geometry>) => {
 	geometries = flatten(geometries);
-	if (geometries.size() === 0) throw new Error("measureAggregateEpsilon: no geometries supplied");
 	const bounds = measureAggregateBoundingBox(geometries) as BoundingBox;
 
 	let dimensions = 0;
@@ -27,5 +29,3 @@ const measureAggregateEpsilon = (...geometries: object[]) => {
 	}, dimensions);
 	return calculateEpsilonFromBounds(bounds, dimensions);
 };
-
-export default measureAggregateEpsilon;

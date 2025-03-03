@@ -1,8 +1,9 @@
+import type { Vec3 } from "../../maths/types";
 import { expect, test } from "@rbxts/jest-globals";
 
 import { compareVectors } from "../../../test/helpers/index";
-import mat4 from "../../maths/mat4";
-import { create, fromPoints, measureBoundingBox, transform } from "./index";
+import { mat4 } from "../../maths/index";
+import { create, measureBoundingBox, transform } from "./index";
 
 test("poly3: measureBoundingBox() should return correct values", () => {
 	let ply1 = create();
@@ -15,7 +16,7 @@ test("poly3: measureBoundingBox() should return correct values", () => {
 	expect(compareVectors(ret1[1], exp1[1])).toBe(true);
 
 	// simple triangle
-	let ply2 = fromPoints([
+	let ply2 = create([
 		[0, 0, 0],
 		[0, 10, 0],
 		[0, 10, 10],
@@ -29,7 +30,7 @@ test("poly3: measureBoundingBox() should return correct values", () => {
 	expect(compareVectors(ret2[1], exp2[1])).toBe(true);
 
 	// simple square
-	let ply3 = fromPoints([
+	let ply3 = create([
 		[0, 0, 0],
 		[0, 10, 0],
 		[0, 10, 10],
@@ -44,7 +45,7 @@ test("poly3: measureBoundingBox() should return correct values", () => {
 	expect(compareVectors(ret3[1], exp3[1])).toBe(true);
 
 	// V-shape
-	const points = [
+	const vertices: Vec3[] = [
 		[0, 3, 0],
 		[0, 5, 0],
 		[0, 8, 2],
@@ -56,7 +57,7 @@ test("poly3: measureBoundingBox() should return correct values", () => {
 		[0, 1, 3],
 		[0, 3, 3],
 	];
-	let ply4 = fromPoints(points);
+	let ply4 = create(vertices);
 	let exp4 = [
 		[0, 1, 0],
 		[0, 8, 6],

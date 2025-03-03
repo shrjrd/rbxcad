@@ -1,9 +1,10 @@
+import type { Vec3 } from "../../maths/types";
 import { expect, test } from "@rbxts/jest-globals";
-import { Array } from "@rbxts/luau-polyfill";
+import { Array as JsArray } from "@rbxts/luau-polyfill";
 
-import { comparePolygonsAsPoints } from "../../../test/helpers";
-import { geom3 } from "../../geometries";
-import retessellate from "./retessellate";
+import { comparePolygonsAsPoints } from "../../../test/helpers/index";
+import { geom3 } from "../../geometries/index";
+import { retessellate } from "./retessellate";
 
 test("geom3: retessellate() should create proper geometry from empty geometries", () => {
 	const obj1 = geom3.create();
@@ -318,7 +319,7 @@ test("geom3: retessellate() should create proper geometry from solid geometries"
 	];
 
 	const obj1 = geom3.fromPoints(box1);
-	const obj2 = geom3.fromPoints(Array.concat(box1, box2)); //geom3.fromPoints(box1.concat(box2)); // combined geometry
+	const obj2 = geom3.fromPoints(JsArray.concat(box1, box2)); //geom3.fromPoints(box1.concat(box2)); // combined geometry
 	const obj3 = geom3.fromPoints(box3);
 	const obj4 = geom3.fromPoints(box4);
 	const obj5 = geom3.fromPoints(box5);
@@ -326,7 +327,7 @@ test("geom3: retessellate() should create proper geometry from solid geometries"
 	// one solid geometry
 	const ret1 = retessellate(obj1);
 	const pts1 = geom3.toPoints(ret1);
-	const exp1: Vec3[][] = [
+	const exp1 = [
 		[
 			[-5, -5, -5],
 			[-5, -5, 5],
@@ -369,7 +370,7 @@ test("geom3: retessellate() should create proper geometry from solid geometries"
 	// two non-overlapping geometries
 	const ret2 = retessellate(obj2);
 	const pts2 = geom3.toPoints(ret2);
-	const exp2: Vec3[][] = [
+	const exp2 = [
 		[
 			[-5, -5, -5],
 			[-5, -5, 5],
@@ -448,7 +449,7 @@ test("geom3: retessellate() should create proper geometry from solid geometries"
 	// two touching geometries (faces)
 	const ret3 = retessellate(obj3);
 	const pts3 = geom3.toPoints(ret3);
-	const exp3: Vec3[][] = [
+	const exp3 = [
 		[
 			[-5, 5, 15],
 			[-5, 5, -5],
@@ -491,7 +492,7 @@ test("geom3: retessellate() should create proper geometry from solid geometries"
 	// two overlapping geometries
 	const ret4 = retessellate(obj4);
 	const pts4 = geom3.toPoints(ret4);
-	const exp4: Vec3[][] = [
+	const exp4 = [
 		[
 			[-5, -5, -5],
 			[-5, -5, 5],
@@ -606,7 +607,7 @@ test("geom3: retessellate() should create proper geometry from solid geometries"
 	// coplanar polygons
 	const ret5 = retessellate(obj5);
 	const pts5 = geom3.toPoints(ret5);
-	const exp5: Vec3[][] = [
+	const exp5 = [
 		[
 			[-5, -5, -5],
 			[-5, -5, 5],

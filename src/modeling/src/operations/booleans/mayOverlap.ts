@@ -1,14 +1,16 @@
+import type { Geom3 } from "../../geometries/types";
+import type { BoundingBox } from "../../measurements/types";
 import { EPS } from "../../maths/constants";
-import measureBoundingBox from "../../measurements/measureBoundingBox";
+import { measureBoundingBox } from "../../measurements/measureBoundingBox";
 
 /**
  * Determine if the given geometries overlap by comparing min and max bounds.
  * NOTE: This is used in union for performance gains.
- * @param {geom3} geometry1 - geometry for comparison
- * @param {geom3} geometry2 - geometry for comparison
+ * @param {Geom3} geometry1 - geometry for comparison
+ * @param {Geom3} geometry2 - geometry for comparison
  * @returns {boolean} true if the geometries overlap
  */
-const mayOverlap = (geometry1: Geom3, geometry2: Geom3) => {
+export const mayOverlap = (geometry1: Geom3, geometry2: Geom3) => {
 	// FIXME accessing the data structure of the geometry should not be allowed
 	if (geometry1.polygons.size() === 0 || geometry2.polygons.size() === 0) {
 		return false;
@@ -30,5 +32,3 @@ const mayOverlap = (geometry1: Geom3, geometry2: Geom3) => {
 	if (min1[2] - max2[2] > EPS) return false;
 	return true;
 };
-
-export default mayOverlap;

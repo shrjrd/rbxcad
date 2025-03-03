@@ -1,24 +1,26 @@
+import type { Vec2 } from "../../maths/types";
+import type { Poly2 } from "../types";
+
 /**
- * Represents a convex 2D polygon consisting of a list of ordered vertices.
- * @typedef {Object} poly2
- * @property {Array} vertices - list of ordered vertices (2D)
+ * Represents a 2D polygon consisting of a list of ordered points
+ * which is closed between start and end points.
+ * @see https://en.wikipedia.org/wiki/Polygon
+ * @property {Array} points - list of ordered points (2D)
  */
 
 /**
  * Creates a new polygon with initial values.
  *
- * @param {Array} [vertices] - list of vertices (2D)
- * @returns {poly2} a new polygon
+ * @param {Array} [points] - list of points (2D)
+ * @returns {Poly2} a new polygon
  * @alias module:modeling/geometries/poly2.create
  *
  * @example
- * let polygon = create()
+ * let polygon = create([[0,0], [4,0], [4,3]])
  */
-const create = (vertices?: Array<Vec2>): Poly2 => {
-	if (vertices === undefined || vertices.size() < 3) {
-		vertices = []; // empty contents
+export const create = (points?: Vec2[]): Poly2 => {
+	if (points === undefined || points.size() < 3) {
+		points = []; // empty contents
 	}
-	return { vertices: vertices };
+	return { points };
 };
-
-export default create;

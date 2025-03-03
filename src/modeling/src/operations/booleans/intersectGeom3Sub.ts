@@ -1,15 +1,16 @@
-import geom3 from "../../geometries/geom3";
-import mayOverlap from "./mayOverlap";
-import { Tree } from "./trees";
+import type { Geom3 } from "../../geometries/types";
+import * as geom3 from "../../geometries/geom3/index";
+import { mayOverlap } from "./mayOverlap";
+import { Tree } from "./trees/index";
 
-/*
+/**
  * Return a new 3D geometry representing the space in both the first geometry and
  * the second geometry. None of the given geometries are modified.
- * @param {geom3} geometry1 - a geometry
- * @param {geom3} geometry2 - a geometry
- * @returns {geom3} new 3D geometry
+ * @param {Geom3} geometry1 - a geometry
+ * @param {Geom3} geometry2 - a geometry
+ * @returns {Geom3} new 3D geometry
  */
-const intersectGeom3Sub = (geometry1: Geom3, geometry2: Geom3) => {
+export const intersectGeom3Sub = (geometry1: Geom3, geometry2: Geom3) => {
 	if (!mayOverlap(geometry1, geometry2)) {
 		return geom3.create(); // empty geometry
 	}
@@ -25,8 +26,6 @@ const intersectGeom3Sub = (geometry1: Geom3, geometry2: Geom3) => {
 	a.addPolygons(b.allPolygons());
 	a.invert();
 
-	const newpolygons = a.allPolygons();
-	return geom3.create(newpolygons);
+	const newPolygons = a.allPolygons();
+	return geom3.create(newPolygons);
 };
-
-export default intersectGeom3Sub;

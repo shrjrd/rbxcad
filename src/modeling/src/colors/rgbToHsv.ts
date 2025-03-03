@@ -1,6 +1,5 @@
-import { Error } from "@rbxts/luau-polyfill";
-
-import flatten from "../utils/flatten";
+import type { RGB, RGBA } from "./types";
+import { flatten } from "../utils/flatten";
 
 /**
  * Converts an RGB color value to HSV.
@@ -10,9 +9,9 @@ import flatten from "../utils/flatten";
  * @return {Array} HSV or HSVA color values
  * @alias module:modeling/colors.rgbToHsv
  */
-const rgbToHsv = (...values: number[] | [number[]]) => {
+export const rgbToHsv = (...values: RGB[] | RGBA[] | number[]) => {
 	values = flatten(values);
-	if (values.size() < 3) throw new Error("values must contain R, G and B values");
+	if (values.size() < 3) throw "values must contain R, G and B values";
 
 	const r = values[0];
 	const g = values[1];
@@ -20,7 +19,7 @@ const rgbToHsv = (...values: number[] | [number[]]) => {
 
 	const max = math.max(r, g, b);
 	const min = math.min(r, g, b);
-	let h;
+	let h: number = undefined!;
 	const v = max;
 
 	const d = max - min;
@@ -40,7 +39,7 @@ const rgbToHsv = (...values: number[] | [number[]]) => {
 				h = (r - g) / d + 4;
 				break;
 		}
-		h! /= 6;
+		h /= 6;
 	}
 
 	if (values.size() > 3) {
@@ -50,5 +49,3 @@ const rgbToHsv = (...values: number[] | [number[]]) => {
 	}
 	return [h, s, v];
 };
-
-export default rgbToHsv;

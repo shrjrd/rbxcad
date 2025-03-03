@@ -1,13 +1,14 @@
+import type { Mat4, Vec3 } from "../types";
 /**
  * Scales the matrix by the given dimensions.
  *
- * @param {mat4} out - receiving matrix
- * @param {mat4} matrix - matrix to scale
- * @param {vec3} dimensions - dimensions to scale the matrix by
- * @returns {mat4} out
+ * @param {Mat4} out - receiving matrix
+ * @param {Mat4} matrix - matrix to scale
+ * @param {Vec3} dimensions - dimensions to scale the matrix by
+ * @returns {Mat4} out
  * @alias module:modeling/maths/mat4.scale
  */
-const scale = (out: Mat4, matrix: Mat4, dimensions: Vec3) => {
+export const scale = (out: Mat4, matrix: Mat4, dimensions: Vec3) => {
 	const x = dimensions[0];
 	const y = dimensions[1];
 	const z = dimensions[2];
@@ -30,5 +31,3 @@ const scale = (out: Mat4, matrix: Mat4, dimensions: Vec3) => {
 	out[15] = matrix[15];
 	return out;
 };
-
-export default scale;

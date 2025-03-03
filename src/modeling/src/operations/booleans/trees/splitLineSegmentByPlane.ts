@@ -1,8 +1,9 @@
+import type { Vec3, Plane } from "../../../maths/types";
 import { Number } from "@rbxts/luau-polyfill";
 
-import vec3 from "../../../maths/vec3";
+import * as vec3 from "../../../maths/vec3/index";
 
-const splitLineSegmentByPlane = (plane: _Plane, p1: Vec3, p2: Vec3) => {
+export const splitLineSegmentByPlane = (plane: Plane, p1: Vec3, p2: Vec3) => {
 	const direction = vec3.subtract(vec3.create(), p2, p1);
 	let lambda = (plane[3] - vec3.dot(plane, p1)) / vec3.dot(plane, direction);
 	if (Number.isNaN(lambda)) lambda = 0;
@@ -13,5 +14,3 @@ const splitLineSegmentByPlane = (plane: _Plane, p1: Vec3, p2: Vec3) => {
 	vec3.add(direction, p1, direction);
 	return direction;
 };
-
-export default splitLineSegmentByPlane;

@@ -1,15 +1,13 @@
-import cssColors from "./cssColors";
+import type { RGB } from "./types";
+import { cssColors } from "./cssColors";
 
 /**
  * Converts a CSS color name to RGB color.
  *
- * @param {String} s - the CSS color name
+ * @param {string} s - the CSS color name
  * @return {Array} the RGB color, or undefined if not found
  * @alias module:modeling/colors.colorNameToRgb
  * @example
- * let mysphere = colorize(colorNameToRgb('lightblue'), sphere())
+ * let mySphere = colorize(colorNameToRgb('lightblue'), sphere())
  */
-
-const colorNameToRgb = (s: string) => cssColors[s as keyof typeof cssColors];
-
-export default colorNameToRgb;
+export const colorNameToRgb = (s: string) => cssColors[s.lower() as keyof typeof cssColors] as RGB;

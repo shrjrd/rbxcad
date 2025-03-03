@@ -1,7 +1,7 @@
 import { expect, test } from "@rbxts/jest-globals";
 
-import { cube, square } from "../primitives";
-import { areAllShapesTheSameType } from "./index";
+import { cube, square } from "../primitives/index";
+import { areAllShapesTheSameType } from "./areAllShapesTheSameType";
 
 test("utils: areAllShapesTheSameType() should return correct values", () => {
 	const geometry2 = square();

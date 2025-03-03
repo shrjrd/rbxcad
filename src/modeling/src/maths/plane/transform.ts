@@ -1,19 +1,20 @@
-import mat4 from "../mat4";
-import vec3 from "../vec3";
-import flip from "./flip";
-import fromPoints from "./fromPoints";
+import type { Mat4, Plane } from "../types";
+import * as mat4 from "../mat4/index";
+import * as vec3 from "../vec3/index";
+import { flip } from "./flip";
+import { fromPoints } from "./fromPoints";
 
 /**
  * Transform the given plane using the given matrix
  *
- * @param {plane} out - receiving plane
- * @param {plane} plane - plane to transform
- * @param {mat4} matrix - matrix to transform with
- * @return {plane} out
+ * @param {Plane} out - receiving plane
+ * @param {Plane} plane - plane to transform
+ * @param {Mat4} matrix - matrix to transform with
+ * @return {Plane} out
  * @alias module:modeling/maths/plane.transform
  */
-const transform = (out: _Plane, plane: _Plane, matrix: Mat4) => {
-	const ismirror = mat4.isMirroring(matrix);
+export const transform = (out: Plane, plane: Plane, matrix: Mat4) => {
+	const isMirror = mat4.isMirroring(matrix);
 	// get two vectors in the plane:
 	const r = vec3.orthogonal(vec3.create(), plane);
 	const u = vec3.cross(r, plane, r);
@@ -29,11 +30,9 @@ const transform = (out: _Plane, plane: _Plane, matrix: Mat4) => {
 	point3 = vec3.transform(point3, point3, matrix);
 	// and create a new plane from the transformed points:
 	fromPoints(out, point1, point2, point3);
-	if (ismirror) {
+	if (isMirror) {
 		// the transform is mirroring so flip the plane
 		flip(out, out);
 	}
 	return out;
 };
-
-export default transform;

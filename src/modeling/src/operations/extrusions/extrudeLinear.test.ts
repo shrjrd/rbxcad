@@ -1,21 +1,30 @@
+import type { Geom3 } from "../../geometries/types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import comparePolygonsAsPoints from "../../../test/helpers/comparePolygonsAsPoints";
-import { geom2, geom3, path2 } from "../../geometries";
+import { comparePolygonsAsPoints } from "../../../test/helpers/index";
+import { colorize } from "../../colors/index";
+import { geom2, geom3, path2 } from "../../geometries/index";
 import { TAU } from "../../maths/constants";
+import { measureArea, measureVolume } from "../../measurements/index";
+import { square } from "../../primitives/index";
 import { extrudeLinear } from "./index";
 
 test("extrudeLinear (defaults)", () => {
-	const geometry2 = geom2.fromPoints([
-		[5, 5],
-		[-5, 5],
-		[-5, -5],
-		[5, -5],
-	]);
+	const geometry2 = square({ size: 10 });
 
 	const geometry3 = extrudeLinear({}, geometry2) as Geom3;
 	const pts = geom3.toPoints(geometry3);
-	const exp: Vec3[][] = [
+	const exp = [
+		[
+			[-5, -5, 0],
+			[5, -5, 0],
+			[5, -5, 1],
+		],
+		[
+			[-5, -5, 0],
+			[5, -5, 1],
+			[-5, -5, 1],
+		],
 		[
 			[5, -5, 0],
 			[5, 5, 0],
@@ -47,52 +56,60 @@ test("extrudeLinear (defaults)", () => {
 			[-5, 5, 1],
 		],
 		[
-			[-5, -5, 0],
-			[5, -5, 0],
-			[5, -5, 1],
-		],
-		[
-			[-5, -5, 0],
-			[5, -5, 1],
-			[-5, -5, 1],
-		],
-		[
-			[-5, -5, 1],
-			[5, -5, 1],
-			[5, 5, 1],
-		],
-		[
 			[5, 5, 1],
 			[-5, 5, 1],
 			[-5, -5, 1],
 		],
 		[
-			[5, 5, 0],
-			[5, -5, 0],
-			[-5, -5, 0],
+			[-5, -5, 1],
+			[5, -5, 1],
+			[5, 5, 1],
 		],
 		[
 			[-5, -5, 0],
 			[-5, 5, 0],
 			[5, 5, 0],
+		],
+		[
+			[5, 5, 0],
+			[5, -5, 0],
+			[-5, -5, 0],
 		],
 	];
 	expect(() => geom3.validate(geometry3)).never.toThrow();
+	expect(measureArea(geometry3)).toBe(240);
+	expect(measureVolume(geometry3)).toBe(100.00000000000001);
 	expect(pts.size()).toBe(12);
 	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 });
 
+test("extrudeLinear: preserves color", () => {
+	const redSquare = colorize([1, 0, 0], square());
+	const extruded = extrudeLinear({}, redSquare) as Geom3;
+	expect(extruded.color).toEqual([1, 0, 0, 1]);
+
+	// one red, one blue
+	const out = extrudeLinear({}, [redSquare, square()]) as Geom3[];
+	expect(out[0].color).toEqual([1, 0, 0, 1]);
+	expect(out[1].color).toBe(undefined);
+});
+
 test("extrudeLinear (no twist)", () => {
-	const geometry2 = geom2.fromPoints([
-		[5, 5],
-		[-5, 5],
-		[-5, -5],
-		[5, -5],
-	]);
+	const geometry2 = square({ size: 10 });
 
 	let geometry3 = extrudeLinear({ height: 15 }, geometry2) as Geom3;
 	let pts = geom3.toPoints(geometry3);
-	let exp: Vec3[][] = [
+	let exp = [
+		[
+			[-5, -5, 0],
+			[5, -5, 0],
+			[5, -5, 15],
+		],
+		[
+			[-5, -5, 0],
+			[5, -5, 15],
+			[-5, -5, 15],
+		],
 		[
 			[5, -5, 0],
 			[5, 5, 0],
@@ -124,37 +141,29 @@ test("extrudeLinear (no twist)", () => {
 			[-5, 5, 15],
 		],
 		[
-			[-5, -5, 0],
-			[5, -5, 0],
-			[5, -5, 15],
-		],
-		[
-			[-5, -5, 0],
-			[5, -5, 15],
-			[-5, -5, 15],
-		],
-		[
-			[-5, -5, 15],
-			[5, -5, 15],
-			[5, 5, 15],
-		],
-		[
 			[5, 5, 15],
 			[-5, 5, 15],
 			[-5, -5, 15],
 		],
 		[
-			[5, 5, 0],
-			[5, -5, 0],
-			[-5, -5, 0],
+			[-5, -5, 15],
+			[5, -5, 15],
+			[5, 5, 15],
 		],
 		[
 			[-5, -5, 0],
 			[-5, 5, 0],
 			[5, 5, 0],
+		],
+		[
+			[5, 5, 0],
+			[5, -5, 0],
+			[-5, -5, 0],
 		],
 	];
 	expect(() => geom3.validate(geometry3)).never.toThrow();
+	expect(measureArea(geometry3)).toBe(800);
+	expect(measureVolume(geometry3)).toBe(1500);
 	expect(pts.size()).toBe(12);
 	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 
@@ -162,6 +171,16 @@ test("extrudeLinear (no twist)", () => {
 	pts = geom3.toPoints(geometry3);
 	exp = [
 		[
+			[-5, 5, 0],
+			[5, 5, 0],
+			[5, 5, -15],
+		],
+		[
+			[-5, 5, 0],
+			[5, 5, -15],
+			[-5, 5, -15],
+		],
+		[
 			[5, 5, 0],
 			[5, -5, 0],
 			[5, -5, -15],
@@ -170,26 +189,6 @@ test("extrudeLinear (no twist)", () => {
 			[5, 5, 0],
 			[5, -5, -15],
 			[5, 5, -15],
-		],
-		[
-			[-5, 5, 0],
-			[5, 5, 0],
-			[5, 5, -15],
-		],
-		[
-			[-5, 5, 0],
-			[5, 5, -15],
-			[-5, 5, -15],
-		],
-		[
-			[-5, -5, 0],
-			[-5, 5, 0],
-			[-5, 5, -15],
-		],
-		[
-			[-5, -5, 0],
-			[-5, 5, -15],
-			[-5, -5, -15],
 		],
 		[
 			[5, -5, 0],
@@ -202,9 +201,14 @@ test("extrudeLinear (no twist)", () => {
 			[5, -5, -15],
 		],
 		[
+			[-5, -5, 0],
+			[-5, 5, 0],
 			[-5, 5, -15],
-			[5, 5, -15],
-			[5, -5, -15],
+		],
+		[
+			[-5, -5, 0],
+			[-5, 5, -15],
+			[-5, -5, -15],
 		],
 		[
 			[5, -5, -15],
@@ -212,32 +216,44 @@ test("extrudeLinear (no twist)", () => {
 			[-5, 5, -15],
 		],
 		[
-			[5, -5, 0],
-			[5, 5, 0],
-			[-5, 5, 0],
+			[-5, 5, -15],
+			[5, 5, -15],
+			[5, -5, -15],
 		],
 		[
 			[-5, 5, 0],
 			[-5, -5, 0],
 			[5, -5, 0],
+		],
+		[
+			[5, -5, 0],
+			[5, 5, 0],
+			[-5, 5, 0],
 		],
 	];
 	expect(() => geom3.validate(geometry3)).never.toThrow();
+	expect(measureArea(geometry3)).toBe(800);
+	expect(measureVolume(geometry3)).toBe(1500);
 	expect(pts.size()).toBe(12);
 	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 });
 
 test("extrudeLinear (twist)", () => {
-	const geometry2 = geom2.fromPoints([
-		[5, 5],
-		[-5, 5],
-		[-5, -5],
-		[5, -5],
-	]);
+	const geometry2 = square({ size: 10 });
 
 	let geometry3 = extrudeLinear({ height: 15, twistAngle: -TAU / 8 }, geometry2) as Geom3;
 	let pts = geom3.toPoints(geometry3);
-	let exp: Vec3[][] = [
+	let exp = [
+		[
+			[-5, -5, 0],
+			[5, -5, 0],
+			[4.440892098500626e-16, -7.0710678118654755, 15],
+		],
+		[
+			[-5, -5, 0],
+			[4.440892098500626e-16, -7.0710678118654755, 15],
+			[-7.0710678118654755, -4.440892098500626e-16, 15],
+		],
 		[
 			[5, -5, 0],
 			[5, 5, 0],
@@ -269,37 +285,29 @@ test("extrudeLinear (twist)", () => {
 			[-4.440892098500626e-16, 7.0710678118654755, 15],
 		],
 		[
-			[-5, -5, 0],
-			[5, -5, 0],
-			[4.440892098500626e-16, -7.0710678118654755, 15],
-		],
-		[
-			[-5, -5, 0],
-			[4.440892098500626e-16, -7.0710678118654755, 15],
-			[-7.0710678118654755, -4.440892098500626e-16, 15],
-		],
-		[
-			[-7.0710678118654755, -4.440892098500626e-16, 15],
-			[4.440892098500626e-16, -7.0710678118654755, 15],
-			[7.0710678118654755, 4.440892098500626e-16, 15],
-		],
-		[
 			[7.0710678118654755, 4.440892098500626e-16, 15],
 			[-4.440892098500626e-16, 7.0710678118654755, 15],
 			[-7.0710678118654755, -4.440892098500626e-16, 15],
 		],
 		[
-			[5, 5, 0],
-			[5, -5, 0],
-			[-5, -5, 0],
+			[-7.0710678118654755, -4.440892098500626e-16, 15],
+			[4.440892098500626e-16, -7.0710678118654755, 15],
+			[7.0710678118654755, 4.440892098500626e-16, 15],
 		],
 		[
 			[-5, -5, 0],
 			[-5, 5, 0],
 			[5, 5, 0],
+		],
+		[
+			[5, 5, 0],
+			[5, -5, 0],
+			[-5, -5, 0],
 		],
 	];
 	expect(() => geom3.validate(geometry3)).never.toThrow();
+	expect(measureArea(geometry3)).toBe(805.6920958788816);
+	expect(measureVolume(geometry3)).toBe(1707.1067811865476);
 	expect(pts.size()).toBe(12);
 	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 
@@ -307,6 +315,16 @@ test("extrudeLinear (twist)", () => {
 	pts = geom3.toPoints(geometry3);
 	exp = [
 		[
+			[-5, -5, 0],
+			[5, -5, 0],
+			[6.830127018922193, -1.830127018922194, 5],
+		],
+		[
+			[-5, -5, 0],
+			[6.830127018922193, -1.830127018922194, 5],
+			[-1.830127018922194, -6.830127018922193, 5],
+		],
+		[
 			[5, -5, 0],
 			[5, 5, 0],
 			[1.830127018922194, 6.830127018922193, 5],
@@ -337,14 +355,14 @@ test("extrudeLinear (twist)", () => {
 			[-6.830127018922193, 1.830127018922194, 5],
 		],
 		[
-			[-5, -5, 0],
-			[5, -5, 0],
+			[-1.830127018922194, -6.830127018922193, 5],
 			[6.830127018922193, -1.830127018922194, 5],
+			[6.830127018922193, 1.8301270189221923, 10],
 		],
 		[
-			[-5, -5, 0],
-			[6.830127018922193, -1.830127018922194, 5],
 			[-1.830127018922194, -6.830127018922193, 5],
+			[6.830127018922193, 1.8301270189221923, 10],
+			[1.8301270189221923, -6.830127018922193, 10],
 		],
 		[
 			[6.830127018922193, -1.830127018922194, 5],
@@ -377,14 +395,14 @@ test("extrudeLinear (twist)", () => {
 			[-6.830127018922193, -1.8301270189221923, 10],
 		],
 		[
-			[-1.830127018922194, -6.830127018922193, 5],
-			[6.830127018922193, -1.830127018922194, 5],
+			[1.8301270189221923, -6.830127018922193, 10],
 			[6.830127018922193, 1.8301270189221923, 10],
+			[5, 5, 15],
 		],
 		[
-			[-1.830127018922194, -6.830127018922193, 5],
-			[6.830127018922193, 1.8301270189221923, 10],
 			[1.8301270189221923, -6.830127018922193, 10],
+			[5, 5, 15],
+			[5, -5, 15],
 		],
 		[
 			[6.830127018922193, 1.8301270189221923, 10],
@@ -417,34 +435,24 @@ test("extrudeLinear (twist)", () => {
 			[-5, -5, 15],
 		],
 		[
-			[1.8301270189221923, -6.830127018922193, 10],
-			[6.830127018922193, 1.8301270189221923, 10],
-			[5, 5, 15],
-		],
-		[
-			[1.8301270189221923, -6.830127018922193, 10],
-			[5, 5, 15],
-			[5, -5, 15],
-		],
-		[
-			[5, -5, 15],
-			[5, 5, 15],
-			[-5, 5, 15],
-		],
-		[
 			[-5, 5, 15],
 			[-5, -5, 15],
 			[5, -5, 15],
 		],
 		[
-			[5, 5, 0],
-			[5, -5, 0],
-			[-5, -5, 0],
+			[5, -5, 15],
+			[5, 5, 15],
+			[-5, 5, 15],
 		],
 		[
 			[-5, -5, 0],
 			[-5, 5, 0],
 			[5, 5, 0],
+		],
+		[
+			[5, 5, 0],
+			[5, -5, 0],
+			[-5, -5, 0],
 		],
 	];
 	expect(pts.size()).toBe(28);
@@ -453,6 +461,8 @@ test("extrudeLinear (twist)", () => {
 	geometry3 = extrudeLinear({ height: 15, twistAngle: TAU / 2, twistSteps: 30 }, geometry2) as Geom3;
 	pts = geom3.toPoints(geometry3);
 	expect(() => geom3.validate(geometry3)).never.toThrow();
+	expect(measureArea(geometry3)).toBe(1091.9932843446968);
+	expect(measureVolume(geometry3)).toBe(1444.9967160503095);
 	expect(pts.size()).toBe(244);
 });
 
@@ -461,39 +471,19 @@ test("extrudeLinear (holes)", () => {
 		[
 			[-5, 5],
 			[-5, -5],
-		],
-		[
-			[-5, -5],
-			[5, -5],
-		],
-		[
 			[5, -5],
 			[5, 5],
 		],
 		[
-			[5, 5],
-			[-5, 5],
-		],
-		[
 			[-2, -2],
 			[-2, 2],
-		],
-		[
-			[2, -2],
-			[-2, -2],
-		],
-		[
 			[2, 2],
 			[2, -2],
-		],
-		[
-			[-2, 2],
-			[2, 2],
 		],
 	]);
 	const geometry3 = extrudeLinear({ height: 15 }, geometry2) as Geom3;
 	const pts = geom3.toPoints(geometry3);
-	const exp: Vec3[][] = [
+	const exp = [
 		[
 			[-5, 5, 0],
 			[-5, -5, 0],
@@ -545,6 +535,26 @@ test("extrudeLinear (holes)", () => {
 			[-2, -2, 15],
 		],
 		[
+			[-2, 2, 0],
+			[2, 2, 0],
+			[2, 2, 15],
+		],
+		[
+			[-2, 2, 0],
+			[2, 2, 15],
+			[-2, 2, 15],
+		],
+		[
+			[2, 2, 0],
+			[2, -2, 0],
+			[2, -2, 15],
+		],
+		[
+			[2, 2, 0],
+			[2, -2, 15],
+			[2, 2, 15],
+		],
+		[
 			[2, -2, 0],
 			[-2, -2, 0],
 			[-2, -2, 15],
@@ -555,24 +565,9 @@ test("extrudeLinear (holes)", () => {
 			[2, -2, 15],
 		],
 		[
-			[2, 2, 0],
-			[2, -2, 0],
-			[2, -2, 15],
-		],
-		[
-			[2, 2, 0],
-			[2, -2, 15],
-			[2, 2, 15],
-		],
-		[
-			[-2, 2, 0],
-			[2, 2, 0],
-			[2, 2, 15],
-		],
-		[
-			[-2, 2, 0],
-			[2, 2, 15],
 			[-2, 2, 15],
+			[2, 2, 15],
+			[5, 5, 15],
 		],
 		[
 			[5, -5, 15],
@@ -581,8 +576,8 @@ test("extrudeLinear (holes)", () => {
 		],
 		[
 			[-2, 2, 15],
-			[2, 2, 15],
 			[5, 5, 15],
+			[-5, 5, 15],
 		],
 		[
 			[5, -5, 15],
@@ -590,8 +585,8 @@ test("extrudeLinear (holes)", () => {
 			[2, -2, 15],
 		],
 		[
+			[-2, -2, 15],
 			[-2, 2, 15],
-			[5, 5, 15],
 			[-5, 5, 15],
 		],
 		[
@@ -601,8 +596,8 @@ test("extrudeLinear (holes)", () => {
 		],
 		[
 			[-2, -2, 15],
-			[-2, 2, 15],
 			[-5, 5, 15],
+			[-5, -5, 15],
 		],
 		[
 			[-5, -5, 15],
@@ -610,23 +605,13 @@ test("extrudeLinear (holes)", () => {
 			[-2, -2, 15],
 		],
 		[
-			[-2, -2, 15],
-			[-5, 5, 15],
-			[-5, -5, 15],
-		],
-		[
-			[2, 2, 0],
-			[5, 5, 0],
-			[5, -5, 0],
-		],
-		[
 			[5, 5, 0],
 			[2, 2, 0],
 			[-2, 2, 0],
 		],
 		[
-			[2, -2, 0],
 			[2, 2, 0],
+			[5, 5, 0],
 			[5, -5, 0],
 		],
 		[
@@ -636,8 +621,8 @@ test("extrudeLinear (holes)", () => {
 		],
 		[
 			[2, -2, 0],
+			[2, 2, 0],
 			[5, -5, 0],
-			[-5, -5, 0],
 		],
 		[
 			[-5, 5, 0],
@@ -645,31 +630,38 @@ test("extrudeLinear (holes)", () => {
 			[-2, -2, 0],
 		],
 		[
-			[-2, -2, 0],
 			[2, -2, 0],
+			[5, -5, 0],
 			[-5, -5, 0],
 		],
 		[
 			[-5, -5, 0],
 			[-5, 5, 0],
 			[-2, -2, 0],
+		],
+		[
+			[-2, -2, 0],
+			[2, -2, 0],
+			[-5, -5, 0],
 		],
 	];
 	expect(() => geom3.validate(geometry3)).never.toThrow();
+	expect(measureArea(geometry3)).toBe(1008);
+	expect(measureVolume(geometry3)).toBe(1260);
 	expect(pts.size()).toBe(32);
 	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 });
 
 test("extrudeLinear (path2)", () => {
 	const geometry2 = path2.fromPoints({ closed: true }, [
+		[6, 10],
 		[0, 0],
 		[12, 0],
-		[6, 10],
 	]);
 	const geometry3 = extrudeLinear({ height: 15 }, geometry2) as Geom3;
 	expect(() => geom3.validate(geometry3)).never.toThrow();
 	const pts = geom3.toPoints(geometry3);
-	const exp: Vec3[][] = [
+	const exp = [
 		[
 			[6, 10, 0],
 			[0, 0, 0],
@@ -701,14 +693,14 @@ test("extrudeLinear (path2)", () => {
 			[12, 0, 15],
 		],
 		[
+			[0, 0, 15],
 			[12, 0, 15],
 			[6, 10, 15],
-			[0, 0, 15],
 		],
 		[
-			[0, 0, 0],
 			[6, 10, 0],
 			[12, 0, 0],
+			[0, 0, 0],
 		],
 	];
 

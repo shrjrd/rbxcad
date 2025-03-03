@@ -1,12 +1,14 @@
+import type { Vec2 } from "../types";
+
 /**
  * Normalize the given vector.
  *
- * @param {vec2} out - receiving vector
- * @param {vec2} vector - vector to normalize
- * @returns {vec2} out
+ * @param {Vec2} out - receiving vector
+ * @param {Vec2} vector - vector to normalize
+ * @returns {Vec2} out
  * @alias module:modeling/maths/vec2.normalize
  */
-const normalize = (out: Vec2, vector: Vec2): Vec2 => {
+export const normalize = (out: Vec2, vector: Vec2) => {
 	const x = vector[0];
 	const y = vector[1];
 	let len = x * x + y * y;
@@ -17,7 +19,3 @@ const normalize = (out: Vec2, vector: Vec2): Vec2 => {
 	out[1] = y * len;
 	return out;
 };
-
-// old this.dividedBy(this.length())
-
-export default normalize;

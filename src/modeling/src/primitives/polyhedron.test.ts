@@ -1,8 +1,11 @@
+import type { Vec3 } from "../maths/types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import comparePolygonsAsPoints from "../../test/helpers/comparePolygonsAsPoints";
-import geom3 from "../geometries/geom3";
+import { comparePolygonsAsPoints } from "../../test/helpers/index";
+import { geom3 } from "../geometries/index";
+import { measureArea, measureVolume } from "../measurements/index";
 import { polyhedron } from "./index";
+import { RGBA } from "../colors/types";
 
 test("polyhedron (points and faces)", () => {
 	// points and faces form a cube
@@ -16,7 +19,7 @@ test("polyhedron (points and faces)", () => {
 		[1, 1, -1],
 		[1, 1, 1],
 	];
-	let faces = [
+	let faces: number[][] = [
 		[0, 1, 2, 3],
 		[5, 6, 7, 4],
 		[0, 5, 4, 1],
@@ -24,7 +27,7 @@ test("polyhedron (points and faces)", () => {
 		[0, 3, 6, 5],
 		[1, 4, 7, 2],
 	];
-	const colors = [
+	const colors: RGBA[] = [
 		[0, 0, 0, 1],
 		[1, 0, 0, 1],
 		[0, 1, 0, 1],
@@ -34,7 +37,7 @@ test("polyhedron (points and faces)", () => {
 	];
 	let obs = polyhedron({ points, faces, colors });
 	let pts = geom3.toPoints(obs);
-	let exp: Vec3[][] = [
+	let exp = [
 		[
 			[-1, -1, -1],
 			[-1, -1, 1],
@@ -73,7 +76,9 @@ test("polyhedron (points and faces)", () => {
 		],
 	];
 	expect(() => geom3.validate(obs)).never.toThrow();
-	expect(pts.size()).toEqual(6);
+	expect(measureArea(obs)).toBe(24);
+	expect(measureVolume(obs)).toBe(7.999999999999999);
+	expect(pts.size()).toBe(6);
 	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 
 	// test orientation
@@ -127,6 +132,8 @@ test("polyhedron (points and faces)", () => {
 		],
 	];
 	expect(() => geom3.validate(obs)).never.toThrow();
-	expect(pts.size()).toEqual(6);
+	expect(measureArea(obs)).toBe(965.6854249492379);
+	expect(measureVolume(obs)).toBe(1333.3333333333333);
+	expect(pts.size()).toBe(6);
 	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 });

@@ -1,12 +1,13 @@
+import type { Mat4 } from "../types";
 /**
- * Returns whether or not the matrices have exactly the same elements in the same position.
+ * Returns whether the matrices have exactly the same elements in the same position.
  *
- * @param {mat4} a - first matrix
- * @param {mat4} b - second matrix
+ * @param {Mat4} a - first matrix
+ * @param {Mat4} b - second matrix
  * @returns {Boolean} true if the matrices are equal
  * @alias module:modeling/maths/mat4.equals
  */
-const equals = (a: Mat4, b: Mat4) =>
+export const equals = (a: Mat4, b: Mat4) =>
 	a[0] === b[0] &&
 	a[1] === b[1] &&
 	a[2] === b[2] &&
@@ -23,5 +24,3 @@ const equals = (a: Mat4, b: Mat4) =>
 	a[13] === b[13] &&
 	a[14] === b[14] &&
 	a[15] === b[15];
-
-export default equals;

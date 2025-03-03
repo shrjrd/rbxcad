@@ -1,14 +1,15 @@
+import type { Vec3 } from "./type";
 /**
  * Rotate the given vector around the given origin, Y axis only.
  *
- * @param {vec3} out - receiving vector
- * @param {vec3} vector - vector to rotate
- * @param {vec3} origin - origin of the rotation
- * @param {Number} radians - angle of rotation
- * @returns {vec3} out
+ * @param {Vec3} out - receiving vector
+ * @param {Vec3} vector - vector to rotate
+ * @param {Vec3} origin - origin of the rotation
+ * @param {number} radians - angle of rotation
+ * @returns {Vec3} out
  * @alias module:modeling/maths/vec3.rotateY
  */
-const rotateY = (out: Vec3, vector: Vec3, origin: Vec3, radians: number) => {
+export const rotateY = (out: Vec3, vector: Vec3, origin: Vec3, radians: number) => {
 	const p = [];
 	const r = [];
 
@@ -29,5 +30,3 @@ const rotateY = (out: Vec3, vector: Vec3, origin: Vec3, radians: number) => {
 
 	return out;
 };
-
-export default rotateY;

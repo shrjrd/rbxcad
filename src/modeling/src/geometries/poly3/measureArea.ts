@@ -1,13 +1,14 @@
-import plane from "./plane";
+import type { Poly3 } from "./type";
+import { plane } from "./plane";
 
 /**
  * Measure the area of the given polygon.
  * @see 2000 softSurfer http://geomalgorithms.com
- * @param {poly3} polygon - the polygon to measure
- * @return {Number} area of the polygon
+ * @param {Poly3} polygon - the polygon to measure
+ * @return {number} area of the polygon
  * @alias module:modeling/geometries/poly3.measureArea
  */
-const measureArea = (polygon: Poly3) => {
+export const measureArea = (polygon: Poly3) => {
 	const n = polygon.vertices.size();
 	if (n < 3) {
 		return 0; // degenerate polygon
@@ -78,5 +79,3 @@ const measureArea = (polygon: Poly3) => {
 	}
 	return area;
 };
-
-export default measureArea;

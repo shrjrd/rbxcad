@@ -1,18 +1,17 @@
-import vec3 from "../vec3";
-import fromPointAndDirection from "./fromPointAndDirection";
+import type { Line3 } from "./type";
+import * as vec3 from "../vec3/index";
+import { fromPointAndDirection } from "./fromPointAndDirection";
 
 /**
  * Create a line in the opposite direction as the given.
  *
- * @param {line3} out - receiving line
- * @param {line3} line - line to reverse
- * @returns {line3} out
+ * @param {Line3} out - receiving line
+ * @param {Line3} line - line to reverse
+ * @returns {Line3} out
  * @alias module:modeling/maths/line3.reverse
  */
-const reverse = (out: Line3, line: Line3): Line3 => {
+export const reverse = (out: Line3, line: Line3) => {
 	const point = vec3.clone(line[0]);
 	const direction = vec3.negate(vec3.create(), line[1]);
 	return fromPointAndDirection(out, point, direction);
 };
-
-export default reverse;

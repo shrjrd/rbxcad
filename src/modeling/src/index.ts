@@ -1,48 +1,15 @@
-import colors from "./colors";
-import curves from "./curves";
-import geometries from "./geometries";
-import maths from "./maths";
-import measurements from "./measurements";
-import booleans from "./operations/booleans";
-import expansions from "./operations/expansions";
-import extrusions from "./operations/extrusions";
-import hulls from "./operations/hulls";
-import modifiers from "./operations/modifiers";
-import transforms from "./operations/transforms";
-import primitives from "./primitives";
-import text from "./text";
-import utils from "./utils";
+export * as colors from "./colors";
+export * as curves from "./curves";
+export * as geometries from "./geometries";
+export * as maths from "./maths";
+export * as measurements from "./measurements";
+export * as primitives from "./primitives";
+export * as text from "./text";
+export { degToRad, flatten, radiusToSegments, radToDeg } from "./utils";
 
-export default {
-	colors,
-	curves,
-	geometries,
-	maths,
-	measurements,
-	primitives,
-	text,
-	utils,
-	booleans,
-	expansions,
-	extrusions,
-	hulls,
-	modifiers,
-	transforms,
-};
-
-export {
-	booleans,
-	colors,
-	curves,
-	expansions,
-	extrusions,
-	geometries,
-	hulls,
-	maths,
-	measurements,
-	modifiers,
-	primitives,
-	text,
-	transforms,
-	utils,
-};
+export * as booleans from "./operations/booleans";
+export * as extrusions from "./operations/extrusions";
+export * as hulls from "./operations/hulls";
+export * as modifiers from "./operations/modifiers";
+export * as offsets from "./operations/offsets";
+export * as transforms from "./operations/transforms";

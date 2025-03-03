@@ -1,3 +1,7 @@
+import { colorize, colorNameToRgb, RGB } from "../../modeling/src/colors";
+import { offset as expand } from "../../modeling/src/operations/offsets";
+import { arc, cuboid, rectangle } from "../../modeling/src/primitives";
+
 /**
  * Expanding 2D and 3D Shapes
  * @category Manipulating Shapes
@@ -7,11 +11,6 @@
  * @authors Rene K. Mueller, Simon Clark
  * @licence MIT License
  */
-import rbxcad from "../../modeling/src";
-const { cuboid, arc, rectangle } = rbxcad.primitives;
-const { expand } = rbxcad.expansions;
-const { colorize, colorNameToRgb } = rbxcad.colors;
-
 const main = () => {
 	// 2d paths can be expanded
 	const path2Example = colorize(colorNameToRgb("black") as RGB, arc({ radius: 12, endAngle: math.pi / 2 }));

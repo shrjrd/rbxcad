@@ -1,17 +1,6 @@
-/**
- * Hull and HullChain 3D example
- * @category Creating Shapes
- * @skillLevel 8
- * @description Demonstrating the basics of Hulls in three dimensions
- * @tags hull, hullchain
- * @authors Simon Clark
- * @licence MIT License
- */
-
-import rbxcad from "../../modeling/src";
-const { cuboid, sphere } = rbxcad.primitives;
-const { translate } = rbxcad.transforms;
-const { hull, hullChain } = rbxcad.hulls;
+import { hull, hullChain } from "../../modeling/src/operations/hulls";
+import { translate } from "../../modeling/src/operations/transforms";
+import { cuboid, sphere } from "../../modeling/src/primitives";
 
 const getParameterDefinitions = () => [
 	{
@@ -24,6 +13,15 @@ const getParameterDefinitions = () => [
 	},
 ];
 
+/**
+ * Hull and HullChain 3D example
+ * @category Creating Shapes
+ * @skillLevel 8
+ * @description Demonstrating the basics of Hulls in three dimensions
+ * @tags hull, hullchain
+ * @authors Simon Clark
+ * @licence MIT License
+ */
 const main = (params: { doHull: string }) => {
 	const shapes = [
 		translate([10, 0, 5], sphere({ radius: 2, segments: 16 })),
@@ -32,7 +30,7 @@ const main = (params: { doHull: string }) => {
 		translate([5, 5, -10], cuboid({ size: [15, 17, 2] })),
 	];
 	if (params.doHull === "hull") {
-		return hull(shapes);
+		return hull(shapes)!;
 	} else if (params.doHull === "chain") {
 		return hullChain(shapes);
 	} else {

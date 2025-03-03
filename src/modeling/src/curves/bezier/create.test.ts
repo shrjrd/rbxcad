@@ -12,8 +12,7 @@ test("Linear bezier (straight line between two points)", () => {
 });
 
 test("bezier with non-numbers throws error", () => {
-	//expect(() => bezier.create(["what", 20])).toThrowError(); //({ instanceOf: Error });
-	expect(() => bezier.create(["what", 20] as unknown as number[])).toThrowError();
+	expect(() => bezier.create(["what" as unknown as number, 20])).toThrowError();
 });
 
 test("quadratic bezier (3 control points)", () => {
@@ -35,8 +34,7 @@ test("quadratic bezier (4 control points)", () => {
 });
 
 test("bezier with numbers and array of numbers throws error", () => {
-	//expect(() => bezier.create([[0, 5, 10], 20])).toThrowError(); //({ instanceOf: Error });
-	expect(() => bezier.create([[0, 5, 10], 20] as unknown as number[][])).toThrowError();
+	expect(() => bezier.create([[0, 5, 10], 20] as unknown as number[])).toThrowError();
 });
 
 test("bezier with array of numbers of different size throws error", () => {
@@ -45,7 +43,7 @@ test("bezier with array of numbers of different size throws error", () => {
 			[0, 5, 10],
 			[20, 0],
 		]),
-	).toThrowError(); //({ instanceOf: Error });
+	).toThrowError();
 });
 
 test("quadratic bezier one dimension, 3 control points", () => {

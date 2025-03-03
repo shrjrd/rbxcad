@@ -1,7 +1,11 @@
+import type { Geometry, Geom2, Geom3, Path2 } from "../../geometries/types";
+import type { Vec3 } from "../../maths/types";
 import { expect, test } from "@rbxts/jest-globals";
 
-import { comparePoints, comparePolygonsAsPoints } from "../../../test/helpers";
-import { geom2, geom3, path2 } from "../../geometries";
+import { comparePoints, comparePolygonsAsPoints } from "../../../test/helpers/index";
+import { geom2, geom3, path2 } from "../../geometries/index";
+import { measureAggregateBoundingBox, measureArea, measureVolume } from "../../measurements/index";
+import { square } from "../../primitives/index";
 import { center, centerX, centerY, centerZ } from "./index";
 
 test("center: centering of a path2 produces expected changes to points", () => {
@@ -14,7 +18,7 @@ test("center: centering of a path2 produces expected changes to points", () => {
 	// center about X
 	let centered = center({ axes: [true, false, false] }, geometry) as Path2;
 	let pts = path2.toPoints(centered);
-	const exp: Vec2[] = [
+	const exp = [
 		[3, 0],
 		[-2, 3],
 		[-3, 0],
@@ -29,26 +33,30 @@ test("center: centering of a path2 produces expected changes to points", () => {
 });
 
 test("center: centering of a geom2 produces expected changes to points", () => {
-	const geometry = geom2.fromPoints([
-		[0, 0],
-		[10, 0],
-		[0, 10],
+	const geometry = geom2.create([
+		[
+			[0, 0],
+			[10, 0],
+			[0, 10],
+		],
 	]);
 
 	// center about Y
 	let centered = center({ axes: [false, true, false] }, geometry) as Geom2;
 	let pts = geom2.toPoints(centered);
-	const exp: Vec2[] = [
+	const exp = [
 		[0, -5],
 		[10, -5],
 		[0, 5],
 	];
 	expect(() => geom2.validate(centered)).never.toThrow();
+	expect(measureArea(centered)).toBe(measureArea(geometry));
 	expect(comparePoints(pts, exp)).toBe(true);
 
 	centered = centerY(geometry) as Geom2;
 	pts = geom2.toPoints(centered);
 	expect(() => geom2.validate(centered)).never.toThrow();
+	expect(measureArea(centered)).toBe(measureArea(geometry));
 	expect(comparePoints(pts, exp)).toBe(true);
 });
 
@@ -96,7 +104,7 @@ test("center: centering of a geom3 produces expected changes to polygons", () =>
 	// center about X
 	let centered = center({ axes: [true, false, false] }, geometry) as Geom3;
 	let pts = geom3.toPoints(centered);
-	let exp: Vec3[][] = [
+	let exp = [
 		[
 			[-5, -7, -12],
 			[-5, -7, 18],
@@ -135,11 +143,13 @@ test("center: centering of a geom3 produces expected changes to polygons", () =>
 		],
 	];
 	expect(() => geom3.validate(centered)).never.toThrow();
+	expect(measureVolume(centered)).toBe(measureVolume(geometry));
 	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 
 	centered = centerX(geometry) as Geom3;
 	pts = geom3.toPoints(centered);
 	expect(() => geom3.validate(centered)).never.toThrow();
+	expect(measureVolume(centered)).toBe(measureVolume(geometry));
 	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 
 	// center about Y
@@ -184,11 +194,13 @@ test("center: centering of a geom3 produces expected changes to polygons", () =>
 		],
 	];
 	expect(() => geom3.validate(centered)).never.toThrow();
+	expect(measureVolume(centered)).toBe(measureVolume(geometry));
 	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 
 	centered = centerY(geometry) as Geom3;
 	pts = geom3.toPoints(centered);
 	expect(() => geom3.validate(centered)).never.toThrow();
+	expect(measureVolume(centered)).toBe(measureVolume(geometry));
 	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 
 	// center about Z
@@ -233,39 +245,43 @@ test("center: centering of a geom3 produces expected changes to polygons", () =>
 		],
 	];
 	expect(() => geom3.validate(centered)).never.toThrow();
+	expect(measureVolume(centered)).toBe(measureVolume(geometry));
 	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 
 	centered = centerZ(geometry) as Geom3;
 	pts = geom3.toPoints(centered);
 	expect(() => geom3.validate(centered)).never.toThrow();
+	expect(measureVolume(centered)).toBe(measureVolume(geometry));
 	expect(comparePolygonsAsPoints(pts, exp)).toBe(true);
 });
 
 test("center: centering of multiple objects produces expected changes", () => {
-	const junk = "hello";
+	const junk = "hello" as unknown as Geometry;
 	const geometry1 = path2.fromPoints({}, [
 		[-5, 5],
 		[5, 5],
 		[-5, -5],
 		[10, -5],
 	]);
-	const geometry2 = geom2.fromPoints([
-		[-5, -5],
-		[0, 5],
-		[10, -5],
+	const geometry2 = geom2.create([
+		[
+			[-5, -5],
+			[0, 5],
+			[10, -5],
+		],
 	]);
 
 	const centered = center(
 		{ axes: [true, true, false], relativeTo: [10, 15, 0] },
-		junk as unknown as object,
+		junk,
 		geometry1,
 		geometry2,
-	) as object[];
+	) as Geometry[];
 
 	expect(centered[0]).toBe(junk);
 
 	const pts1 = path2.toPoints(centered[1] as Path2);
-	const exp1: Vec2[] = [
+	const exp1 = [
 		[2.5, 20],
 		[12.5, 20],
 		[2.5, 10],
@@ -275,11 +291,33 @@ test("center: centering of multiple objects produces expected changes", () => {
 	expect(comparePoints(pts1, exp1)).toBe(true);
 
 	const pts2 = geom2.toPoints(centered[2] as Geom2);
-	const exp2: Vec2[] = [
+	const exp2 = [
 		[2.5, 10],
 		[7.5, 20],
 		[17.5, 10],
 	];
 	expect(() => geom2.validate(centered[2] as Geom2)).never.toThrow();
 	expect(comparePoints(pts2, exp2)).toBe(true);
+});
+
+test("center multiple separate", () => {
+	const square1 = square({ size: 4, center: [10, 10] });
+	const square2 = square({ size: 6, center: [-10, -10] });
+	const obs = center({}, square1, square2) as Geom2[];
+	expect(() => obs.map(geom2.validate)).never.toThrow();
+	expect([
+		[-3, -3, 0],
+		[3, 3, 0],
+	]).toEqual(measureAggregateBoundingBox(obs));
+});
+
+test("center multiple grouped", () => {
+	const square1 = square({ size: 4, center: [10, 10] });
+	const square2 = square({ size: 6, center: [-10, -10] });
+	const obs = center({}, [square1, square2]) as Geom2[];
+	expect(() => obs.map(geom2.validate)).never.toThrow();
+	expect([
+		[-12.5, -12.5, 0],
+		[12.5, 12.5, 0],
+	]).toEqual(measureAggregateBoundingBox(obs));
 });

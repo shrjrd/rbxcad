@@ -1,8 +1,13 @@
-import { Error, Object } from "@rbxts/luau-polyfill";
+export interface TriangleOptions {
+	_type?: "AAA" | "AAS" | "ASA" | "SAS" | "SSA" | "SSS" | string;
+	values?: [number, number, number];
+}
 
-import geom2 from "../geometries/geom2";
+import { Object } from "@rbxts/luau-polyfill";
+
+import * as geom2 from "../geometries/geom2/index";
 import { NEPS } from "../maths/constants";
-import vec2 from "../maths/vec2";
+import * as vec2 from "../maths/vec2/index";
 import { isNumberArray } from "./commonChecks";
 
 // returns angle C
@@ -21,7 +26,7 @@ const solveSideFromSAS = (a: number, C: number, b: number) => {
 // AAA is when three angles of a triangle, but no sides
 const solveAAA = (angles: number[]) => {
 	const eps = math.abs(angles[0] + angles[1] + angles[2] - math.pi);
-	if (eps > NEPS) throw new Error("AAA triangles require angles that sum to PI");
+	if (eps > NEPS) throw "AAA triangles require angles that sum to PI";
 
 	const A = angles[0];
 	const B = angles[1];
@@ -42,7 +47,7 @@ const solveAAS = (values: number[]) => {
 	const B = values[1];
 	const C = math.pi + NEPS - A - B;
 
-	if (C < NEPS) throw new Error("AAS triangles require angles that sum to PI");
+	if (C < NEPS) throw "AAS triangles require angles that sum to PI";
 
 	const a = values[2];
 	const b = (a / math.sin(A)) * math.sin(B);
@@ -56,7 +61,7 @@ const solveASA = (values: number[]) => {
 	const B = values[2];
 	const C = math.pi + NEPS - A - B;
 
-	if (C < NEPS) throw new Error("ASA triangles require angles that sum to PI");
+	if (C < NEPS) throw "ASA triangles require angles that sum to PI";
 
 	const c = values[1];
 	const a = (c / math.sin(C)) * math.sin(A);
@@ -96,7 +101,7 @@ const solveSSS = (lengths: number[]) => {
 	const b = lengths[2];
 	const c = lengths[0];
 	if (a + b <= c || b + c <= a || c + a <= b) {
-		throw new Error("SSS triangle is incorrect, as the longest side is longer than the sum of the other sides");
+		throw "SSS triangle is incorrect, as the longest side is longer than the sum of the other sides";
 	}
 
 	const A = solveAngleFromSSS(b, c, a); // solve for A
@@ -110,27 +115,23 @@ const createTriangle = (A: number, B: number, C: number, a: number, b: number, c
 	const p1 = vec2.fromValues(c, 0);
 	const p2 = vec2.fromValues(a, 0);
 	vec2.add(p2, vec2.rotate(p2, p2, [0, 0], math.pi - B), p1);
-	return geom2.fromPoints([p0, p1, p2]);
+	return geom2.create([[p0, p1, p2]]);
 };
 
-type TriangleOptions = {
-	_type: string;
-	values: number[];
-};
 /**
  * Construct a triangle in two dimensional space from the given options.
  * The triangle is always constructed CCW from the origin, [0, 0, 0].
  * @see https://www.mathsisfun.com/algebra/trig-solving-triangles.html
- * @param {Object} [options] - options for construction
- * @param {String} [options.type='SSS'] - type of triangle to construct; A ~ angle, S ~ side
+ * @param {object} [options] - options for construction
+ * @param {string} [options.type='SSS'] - type of triangle to construct; A ~ angle, S ~ side
  * @param {Array} [options.values=[1,1,1]] - angle (radians) of corners or length of sides
- * @returns {geom2} new 2D geometry
+ * @returns {Geom2} new 2D geometry
  * @alias module:modeling/primitives.triangle
  *
  * @example
  * let myshape = triangle({type: 'AAS', values: [degToRad(62), degToRad(35), 7]})
  */
-const triangle = (options?: TriangleOptions) => {
+export const triangle = (options?: TriangleOptions) => {
 	const defaults = {
 		_type: "SSS",
 		values: [1, 1, 1],
@@ -138,23 +139,22 @@ const triangle = (options?: TriangleOptions) => {
 	// eslint-disable-next-line prefer-const
 	let { _type, values } = Object.assign({}, defaults, options);
 
-	if (typeOf(_type) !== "string") throw new Error("triangle type must be a string");
+	if (typeOf(_type) !== "string") throw "triangle type must be a string";
 	_type = _type.upper(); //type.toUpperCase();
 	const t1 = string.sub(_type, 1, 1);
 	const t2 = string.sub(_type, 2, 2);
 	const t3 = string.sub(_type, 3, 3);
-
 	if (
 		!(
 			(t1 === "A" || t1 === "S") && //(type[0] === "A" || type[0] === "S") &&
 			(t2 === "A" || t2 === "S") && //(type[1] === "A" || type[1] === "S") &&
-			(t3 === "A" || t3 === "S") //(type[2] === "A" || type[2] === "S")
+			(t3 === "A" || t3 === "S") //(type[2] === "A" || type[2] === "
 		)
 	)
-		throw new Error("triangle type must contain three letters; A or S");
+		throw "triangle type must contain three letters; A or S";
 
-	if (!isNumberArray(values, 3)) throw new Error("triangle values must contain three values");
-	if (!values.every((n) => n > 0)) throw new Error("triangle values must be greater than zero");
+	if (!isNumberArray(values, 3)) throw "triangle values must contain three values";
+	if (!values.every((n) => n > 0)) throw "triangle values must be greater than zero";
 
 	switch (_type) {
 		case "AAA":
@@ -170,8 +170,6 @@ const triangle = (options?: TriangleOptions) => {
 		case "SSS":
 			return solveSSS(values);
 		default:
-			throw new Error("invalid triangle type, try again");
+			throw "invalid triangle type, try again";
 	}
 };
-
-export default triangle;
