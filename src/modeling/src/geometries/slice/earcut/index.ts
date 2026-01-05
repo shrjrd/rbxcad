@@ -78,7 +78,14 @@ const earcutLinked = (
 		prev = ear.prev;
 		_next = ear.next;
 		// DEVIATION: 0, NaN, and "" are falsy in TS.
-		if (invSize !== undefined && invSize > 0 ? isEarHashed(ear, minX, minY, invSize) : isEar(ear)) {
+		//if (invSize !== undefined && invSize > 0 ? isEarHashed(ear, minX, minY, invSize) : isEar(ear)) {
+		let isEarResult: boolean;
+		if (invSize !== undefined && invSize > 0) {
+			isEarResult = isEarHashed(ear, minX, minY, invSize);
+		} else {
+			isEarResult = isEar(ear);
+		}
+		if (isEarResult) {
 			// cut off the triangle
 			triangles.push(prev.i / dim);
 			triangles.push(ear.i / dim);

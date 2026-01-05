@@ -96,12 +96,24 @@ const findHoleBridge = (hole: Node, outerNode: Node) => {
 	p = m;
 
 	do {
+		/*
 		if (
 			hx >= p.x &&
 			p.x >= mx &&
 			hx !== p.x &&
 			pointInTriangle(hy < my ? hx : qx, hy, mx, my, hy < my ? qx : hx, hy, p.x, p.y)
 		) {
+		*/
+		let triangleX1: number;
+		let triangleX2: number;
+		if (hy < my) {
+			triangleX1 = hx;
+			triangleX2 = qx;
+		} else {
+			triangleX1 = qx;
+			triangleX2 = hx;
+		}
+		if (hx >= p.x && p.x >= mx && hx !== p.x && pointInTriangle(triangleX1, hy, mx, my, triangleX2, hy, p.x, p.y)) {
 			const tan = math.abs(hy - p.y) / (hx - p.x); // tangential
 
 			if (
