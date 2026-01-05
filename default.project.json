@@ -3,7 +3,8 @@
 	"emitLegacyScripts": false,
     "globIgnorePaths": [
         "**/package.json",
-        "**/tsconfig.json"
+        "**/tsconfig.json",
+		"out/examples"
     ],
 	"tree": {
 		"$className": "DataModel",
@@ -18,6 +19,9 @@
 					"$className": "Folder",
 					"@rbxts": {
 						"$path": "node_modules/@rbxts"
+					},
+					"@rbxts-js": {
+						"$path": "node_modules/@rbxts-js"
 					}
 				}
 			},
@@ -27,9 +31,9 @@
 		},
 		"ServerScriptService": {
 			"$className": "ServerScriptService",
-			"dev": {
-				"$path": "dev"
-			}
+			"$properties": {
+                "LoadStringEnabled": true
+            }
 		},
 		"HttpService": {
             "$className": "HttpService",

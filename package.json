@@ -4,9 +4,12 @@
   "homepage": "https://github.com/shrjrd/rbxcad",
   "main": "out/modeling/src/init.luau",
   "scripts": {
-    "dev": "rm -rf out && rbxtsc --type game --rojo default.project.json -w",
-    "buildrbxl": "rm -rf out && rbxtsc --type game --rojo default.project.json && rojo build default.project.json -o Place.rbxl",
-    "testpack": "rm -rf out && rbxtsc && npm pack"
+    "compile": "rbxtsc --type game --rojo default.project.json",
+    "rbxl": "rojo build default.project.json -o rbxcad.rbxl",
+    "serve": "rojo serve",
+    "dev": "npm run compile && npx concurrently \"npm run compile -- -w\" \"npm run serve\"",
+    "test": "npm run compile && npm run rbxl && jestrbx",
+    "test:coverage": "npm run test -- --coverage"
   },
   "keywords": ["rbxts", "roblox", "typescript", "CSG"],
   "author": "shrjrd",
@@ -23,8 +26,10 @@
   },
   "devDependencies": {
     "@rbxts/services": "^1.5.5",
-    "@rbxts/jest": "^0.1.0",
-		"@rbxts/jest-globals": "^0.1.0",
+    "jest-roblox-assassin": "github:Unreal-Works/jest-roblox-assassin",
+    "@rbxts/coverage": "^0.1.2",
+    "@rbxts/jest": "^3.13.3-alpha.2",
+    "@rbxts/jest-globals": "^3.13.3-alpha.2",
     "@rbxts/compiler-types": "^3.0.0-types.0",
     "@rbxts/types": "^1.0.835",
     "@typescript-eslint/eslint-plugin": "^8.24.0",
