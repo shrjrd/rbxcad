@@ -28,14 +28,10 @@ Examples are included in src/examples
 
 ## Running Tests
 
-> [!NOTE]
-> [Jest Lua](https://github.com/jsdotlua/jest-lua) depends on `debug.loadmodule` (`FFlagEnableLoadModule`) to run tests.
-
 ```bash
 npm install
-npm run buildrbxl
+npm run test
 ```
-Open the rbxl in Roblox Studio, then start a playtest session in [Run Mode](https://create.roblox.com/docs/studio/testing-modes#playtest-options) (`F8`).
 
 ## Copyrights
 
